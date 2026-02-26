@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz IFT-SSD - Cours 1</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <h1>Quiz : Concepts Fondamentaux en Sécurité (Cours 1)</h1>
+    
+    <div class="progress-container">
+        <div class="progress-info">
+            <span id="question-counter">Question 1 / 5</span>
+            <div class="progress-stats">
+                <span class="stat-badge incorrect"><span class="stat-icon">✕</span><span id="incorrect-count">0</span></span>
+                <span class="stat-badge correct"><span class="stat-icon">✓</span><span id="correct-count">0</span></span>
+            </div>
+        </div>
+        <div class="progress-bar-wrapper" id="progressBar"></div>
+    </div>
+    
+    <div id="quiz-container" class="card"></div>
+    
+    <div id="feedback" class="feedback-container"></div>
+    
+    <div class="quiz-navigation">
+        <button id="prevBtn" onclick="previousQuestion()">← Précédent</button>
+        <button id="nextBtn" onclick="nextQuestion()">Suivant →</button>
+    </div>
+    
+    <div id="result"></div>
+
+    <script>
+        const questions = [
+            {
+                q: "Qu'est-ce qu'une vulnérabilité en cybersécurité ?",
+                options: [
+                    { text: "Une faiblesse dans un système qui peut être exploitée", explain: "C'est exactement la bonne définition d'une vulnérabilité." },
+                    { text: "Un virus informatique", explain: "Un virus est une menace, pas une vulnérabilité." },
+                    { text: "Une attaque en cours", explain: "Une attaque est une action, pas une vulnérabilité." },
+                    { text: "Une politique de sécurité", explain: "Une politique est une mesure de défense, pas une vulnérabilité." }
+                ],
+                correct: 0,
+                correctExplain: "Une vulnérabilité est une faiblesse qui peut être exploitée par un attaquant pour compromettre la sécurité."
+            },
+            {
+                q: "Le chiffrement AES fonctionne avec quelle taille de clé standard ?",
+                options: [
+                    { text: "64 bits", explain: "64 bits est trop court pour AES." },
+                    { text: "128, 192 ou 256 bits", explain: "AES supporte effectivement ces trois tailles de clé." },
+                    { text: "512 bits", explain: "512 bits dépasse les normes AES." },
+                    { text: "Cela dépend du réseau", explain: "La taille de clé est un paramètre de l'algorithme, non du réseau." }
+                ],
+                correct: 1,
+                correctExplain: "L'AES (Advanced Encryption Standard) supporte des clés de 128, 192 et 256 bits."
+            },
+            {
+                q: "Quel hachage est considéré comme sûr pour les mots de passe ?",
+                options: [
+                    { text: "MD5", explain: "MD5 est cassé et ne doit plus être utilisé." },
+                    { text: "SHA-1", explain: "SHA-1 est faible et pas recommandé pour les mots de passe." },
+                    { text: "bcrypt ou argon2", explain: "Ces fonctions de dérivation sont spécialement conçues pour les mots de passe." },
+                    { text: "ROT13", explain: "ROT13 n'est pas du tout un hachage sécurisé." }
+                ],
+                correct: 2,
+                correctExplain: "bcrypt et argon2 sont des fonctions de coût computationnel élevé, idéales pour stocker les mots de passe."
+            },
+            {
+                q: "Qu'est-ce qu'une attaque par force brute ?",
+                options: [
+                    { text: "Essayer toutes les combinaisons possibles", explain: "C'est la bonne description d'une attaque par force brute." },
+                    { text: "Exploiter une vulnérabilité connue", explain: "C'est plutôt l'exploitation d'une vulnérabilité." },
+                    { text: "Usurper l'identité d'un utilisateur", explain: "C'est de l'usurpation d'identité, pas une force brute." },
+                    { text: "Utiliser un malware", explain: "L'utilisation de malware est une autre catégorie d'attaque." }
+                ],
+                correct: 0,
+                correctExplain: "Une attaque par force brute consiste à tester toutes les combinaisons possibles pour deviner un mot de passe ou une clé."
+            },
+            {
+                q: "Quel est l'objectif principal de l'authentification multifacteur ?",
+                options: [
+                    { text: "Ralentir les utilisateurs", explain: "Bien que MFA ajoute une étape, son objectif n'est pas de ralentir." },
+                    { text: "Augmenter la sécurité en exigeant plusieurs preuves d'identité", explain: "C'est exactement le but de la MFA." },
+                    { text: "Remplacer les mots de passe", explain: "La MFA complète les mots de passe, ne les remplace pas." },
+                    { text: "Chiffrer tous les données", explain: "La MFA concerne l'authentification, pas le chiffrement." }
+                ],
+                correct: 1,
+                correctExplain: "La MFA renforce la sécurité en nécessitant au moins deux facteurs d'authentification indépendants."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let answers = new Array(questions.length).fill(null);
+        let answered = new Array(questions.length).fill(false);
+
+        function displayQuestion() {
+            const container = document.getElementById('quiz-container');
+            const item = questions[currentQuestion];
+            
+            let html = `<div class="question">${currentQuestion + 1}. ${item.q}</div>`;
+            item.options.forEach((opt, i) => {
+                const checked = answers[currentQuestion] === i ? 'checked' : '';
+                const disabled = answered[currentQuestion] ? 'disabled' : '';
+                html += `<label class="option"><input type="radio" name="answer" value="${i}" ${checked} ${disabled} onchange="handleAnswer()"> ${opt.text}</label>`;
+            });
+            
+            container.innerHTML = html;
+            
+            if (answered[currentQuestion]) {
+                showFeedback();
+            } else {
+                document.getElementById('feedback').innerHTML = '';
+                document.getElementById('feedback').classList.remove('show');
+            }
+            
+            updateProgressBar();
+            updateNavigationButtons();
+            updateProgressInfo();
+        }
+
+        function handleAnswer() {
+            const selected = document.querySelector('input[name="answer"]:checked');
+            if (selected) {
+                answers[currentQuestion] = parseInt(selected.value);
+                answered[currentQuestion] = true;
+                
+                document.querySelectorAll('input[name="answer"]').forEach(r => r.disabled = true);
+                
+                showFeedback();
+                updateProgressBar();
+                updateProgressInfo();
+                updateNavigationButtons();
+            }
+        }
+
+        function showFeedback() {
+            const feedbackDiv = document.getElementById('feedback');
+            const item = questions[currentQuestion];
+            const isCorrect = answers[currentQuestion] === item.correct;
+            const selectedOption = item.options[answers[currentQuestion]];
+            
+            feedbackDiv.className = 'feedback-container show ' + (isCorrect ? 'feedback-correct' : 'feedback-incorrect');
+            
+            let html = '';
+            
+            if (isCorrect) {
+                html += `
+                    <div class="feedback-header">Bonne réponse!</div>
+                    <div class="feedback-explanation">${item.correctExplain}</div>
+                `;
+            } else {
+                html += `
+                    <div class="feedback-header">Pas tout à fait</div>
+                    <div class="feedback-explanation">${selectedOption.explain}</div>
+                    <div class="correct-answer-box">
+                        <div class="correct-answer-label">✓ Bonne réponse:</div>
+                        <div>${item.options[item.correct].text}</div>
+                        <div style="margin-top: 8px; font-size: 0.9em;">${item.correctExplain}</div>
+                    </div>
+                `;
+            }
+            
+            feedbackDiv.innerHTML = html;
+        }
+
+        function updateProgressBar() {
+            const progressBar = document.getElementById('progressBar');
+            progressBar.innerHTML = '';
+            
+            for (let i = 0; i < questions.length; i++) {
+                const segment = document.createElement('div');
+                segment.className = 'progress-segment';
+                
+                if (!answered[i]) {
+                    segment.classList.add('unanswered');
+                } else if (answers[i] === questions[i].correct) {
+                    segment.classList.add('correct');
+                } else {
+                    segment.classList.add('incorrect');
+                }
+                
+                progressBar.appendChild(segment);
+            }
+        }
+
+        function updateNavigationButtons() {
+            const isAnswered = answered[currentQuestion];
+            document.getElementById('prevBtn').disabled = currentQuestion === 0 || !isAnswered;
+            document.getElementById('nextBtn').disabled = !isAnswered;
+            
+            if (currentQuestion === questions.length - 1) {
+                document.getElementById('nextBtn').textContent = 'Voir Résultat';
+            } else {
+                document.getElementById('nextBtn').textContent = 'Suivant →';
+            }
+        }
+
+        function updateProgressInfo() {
+            document.getElementById('question-counter').textContent = `Question ${currentQuestion + 1} / ${questions.length}`;
+            
+            let correctCount = 0;
+            let incorrectCount = 0;
+            
+            for (let i = 0; i < answers.length; i++) {
+                if (answered[i]) {
+                    if (answers[i] === questions[i].correct) {
+                        correctCount++;
+                    } else {
+                        incorrectCount++;
+                    }
+                }
+            }
+            
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('incorrect-count').textContent = incorrectCount;
+        }
+
+        function nextQuestion() {
+            if (currentQuestion === questions.length - 1) {
+                showFinalResults();
+                return;
+            }
+            
+            currentQuestion++;
+            displayQuestion();
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        function showFinalResults() {
+            let score = 0;
+            answers.forEach((answer, index) => {
+                if (answer === questions[index].correct) score++;
+            });
+            
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '<div class="question">Quiz terminé!</div>';
+            
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.className = 'feedback-container';
+            feedbackDiv.innerHTML = '';
+            
+            let recapHtml = '<div class="recap-title">Résumé de vos réponses</div>';
+            
+            questions.forEach((question, index) => {
+                const userAnswer = question.options[answers[index]];
+                const correctAnswer = question.options[question.correct];
+                const isCorrect = answers[index] === question.correct;
+                
+                recapHtml += `
+                    <div class="recap-card ${isCorrect ? 'correct' : 'incorrect'}">
+                        <div class="recap-number">Question ${index + 1} / ${questions.length}</div>
+                        <div class="recap-question">${question.q}</div>
+                        <div class="recap-answer-item user">
+                            <span class="recap-label">Votre réponse:</span>
+                            ${userAnswer.text}
+                            <span class="recap-result ${isCorrect ? 'correct' : 'incorrect'}">
+                                ${isCorrect ? '✓ Correct' : '✗ Incorrect'}
+                            </span>
+                        </div>
+                        ${!isCorrect ? `
+                            <div class="recap-answer-item correct-answer">
+                                <span class="recap-label">Bonne réponse:</span>
+                                ${correctAnswer.text}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            
+            document.getElementById('result').innerHTML = `
+                <div style="font-size: 2em; margin: 30px 0 20px;">Votre score : ${score} / ${questions.length}</div>
+                <div style="font-size: 1.1em; color: #555; margin-bottom: 30px;">Réussite : ${Math.round(score / questions.length * 100)}%</div>
+                <div class="recap-container">${recapHtml}</div>
+            `;
+            
+            document.getElementById('prevBtn').disabled = false;
+            document.getElementById('nextBtn').textContent = 'Recommencer';
+            document.getElementById('nextBtn').disabled = false;
+            document.getElementById('nextBtn').onclick = function() { location.reload(); };
+            document.getElementById('prevBtn').onclick = function() {
+                currentQuestion = questions.length - 1;
+                displayQuestion();
+            };
+        }
+
+        displayQuestion();
+    </script>
+</body>
+</html>

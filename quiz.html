@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz Spécialiste de Données - Cours 6</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <h1>Quiz : Planification et Agilité (Cours 6)</h1>
+    
+    <div class="progress-container">
+        <div class="progress-info">
+            <span id="question-counter">Question 1 / 10</span>
+            <div class="progress-stats">
+                <span class="stat-badge incorrect"><span class="stat-icon">✕</span><span id="incorrect-count">0</span></span>
+                <span class="stat-badge correct"><span class="stat-icon">✓</span><span id="correct-count">0</span></span>
+            </div>
+        </div>
+        <div class="progress-bar-wrapper" id="progressBar"></div>
+    </div>
+    
+    <div id="quiz-container" class="card"></div>
+    
+    <div id="feedback" class="feedback-container"></div>
+    
+    <div class="quiz-navigation">
+        <button id="prevBtn" onclick="previousQuestion()">← Précédent</button>
+        <button id="nextBtn" onclick="nextQuestion()">Suivant →</button>
+    </div>
+    
+    <div id="result"></div>
+
+    <script>
+        const questions = [
+            {
+                q: "Quel est le risque de l'approche Cascade en Data Science ?",
+                options: [
+                    { text: "L'effet tunnel", explain: "Le travail s'accumule sans feedback régulier, causant des surprises tardives." },
+                    { text: "Trop de documentation", explain: "Ce n'est pas le risque principal de la Cascade." },
+                    { text: "Outils SQL limités", explain: "Ce n'est pas un risque lié à la méthodologie Cascade." },
+                    { text: "Manque de communication avec les parties prenantes", explain: "C'est plutôt un risque de gestion projet, pas spécifique à la Cascade." }
+                ],
+                correct: 0,
+                correctExplain: "La Cascade crée un effet tunnel où les problèmes ne sont découverts que tard dans le projet."
+            },
+            {
+                q: "L'atelier 'Coin Toss' démontre que réduire la taille des lots...",
+                options: [
+                    { text: "Ralentit le projet", explain: "C'est le contraire : réduire la taille aide à accélérer." },
+                    { text: "Accélère la livraison de valeur", explain: "Des petits lots = feedback rapide = livraison plus fluide." },
+                    { text: "Augmente les coûts", explain: "Ce n'est pas l'objectif de la réduction des lots." },
+                    { text: "Rend les tests plus difficiles", explain: "C'est faux, des petits lots facilitent les tests." }
+                ],
+                correct: 1,
+                correctExplain: "Les petits lots permettent une livraison plus rapide et un feedback client plus fréquent."
+            },
+            {
+                q: "Pourquoi utiliser Fibonacci pour estimer ?",
+                options: [
+                    { text: "C'est la loi", explain: "Fibonacci n'est pas une obligation, c'est un choix méthodologique." },
+                    { text: "Reflète l'incertitude des grosses tâches", explain: "Les écarts se creusent entre les estimations de tâches complexes." },
+                    { text: "Pour le plaisir", explain: "Ce n'est pas une justification professionnelle valide." },
+                    { text: "C'est plus rapide que d'autres méthodes d'estimation", explain: "La vitesse n'est pas la raison : c'est pour mieux gérer l'incertitude." }
+                ],
+                correct: 1,
+                correctExplain: "Fibonacci illustre que plus une tâche est grande, plus l'incertitude augmente de façon non-linéaire."
+            },
+            {
+                q: "Une dépendance externe, c'est...",
+                options: [
+                    { text: "Un bug de code", explain: "Une dépendance est un blocage extérieur au code." },
+                    { text: "Un blocage hors de l'équipe", explain: "C'est exactement ça : quelque chose que l'équipe ne contrôle pas." },
+                    { text: "La pause café", explain: "Ce n'est pas une dépendance au sens agile." },
+                    { text: "Une tâche trop complexe à réaliser seul", explain: "C'est une difficulté interne, pas une dépendance externe." }
+                ],
+                correct: 1,
+                correctExplain: "Une dépendance externe bloque le travail et nécessite une coordination avec d'autres équipes."
+            },
+            {
+                q: "Durée max recommandée d'une tâche découpée ?",
+                options: [
+                    { text: "1 heure", explain: "C'est trop court, les tâches seraient trop atomisées." },
+                    { text: "2 jours", explain: "Cela permet une estimation et une exécution réalistes dans un sprint." },
+                    { text: "2 semaines", explain: "C'est trop long pour une tâche bien découpée." },
+                    { text: "5 jours", explain: "C'est plus approprié pour une tâche globale, pas une tâche découpée." }
+                ],
+                correct: 1,
+                correctExplain: "Une tâche de 2 jours maximum permet une bonne visibilité et des ajustements rapides."
+            },
+            {
+                q: "WIP Limit sert à...",
+                options: [
+                    { text: "Limiter le budget", explain: "Le WIP Limit ne concerne pas les finances." },
+                    { text: "Limiter le travail en cours", explain: "C'est l'objectif principal du WIP Limit." },
+                    { text: "Limiter le café", explain: "C'est une blague, ce n'est pas l'objectif du WIP Limit." },
+                    { text: "Augmenter la productivité par la charge maximale", explain: "C'est l'inverse : limiter le WIP améliore la productivité." }
+                ],
+                correct: 1,
+                correctExplain: "Le WIP Limit focalise l'équipe et réduit les changements de contexte."
+            },
+            {
+                q: "Le Planning Poker mesure...",
+                options: [
+                    { text: "Le temps absolu", explain: "Le Planning Poker ne mesure pas le temps réel." },
+                    { text: "La complexité relative", explain: "Chaque estimation est relative aux autres tâches." },
+                    { text: "Le coût financier", explain: "Le Planning Poker n'est pas un outil financier." },
+                    { text: "Le nombre de jours-homme nécessaires", explain: "Le Planning Poker mesure la complexité, pas les jours-homme." }
+                ],
+                correct: 1,
+                correctExplain: "Le Planning Poker utilise la complexité relative pour une meilleure estimation d'équipe."
+            },
+            {
+                q: "Clé du succès On-site Customer ?",
+                options: [
+                    { text: "Communication directe", explain: "C'est la clé : le client donne du feedback immédiat et continu." },
+                    { text: "Cahier des charges épais", explain: "C'est l'inverse : l'On-site Customer évite la documentation massive." },
+                    { text: "Silence", explain: "Le silence est incompatible avec la philosophie On-site Customer." },
+                    { text: "Un budget illimité", explain: "Le budget n'est pas la clé du succès de l'On-site Customer." }
+                ],
+                correct: 0,
+                correctExplain: "L'On-site Customer réussit grâce à une communication directe et continue."
+            },
+            {
+                q: "Durée d'un Daily Stand-up ?",
+                options: [
+                    { text: "1 heure", explain: "C'est trop long pour un stand-up quotidien." },
+                    { text: "15 minutes", explain: "C'est la durée standard pour rester focalisé et efficace." },
+                    { text: "30 minutes", explain: "C'est déjà trop long pour une réunion de synchronisation." },
+                    { text: "Entre 20 et 25 minutes selon les besoins", explain: "15 minutes reste l'optimal ; dépasser à 20-25 min c'est déjà glisser." }
+                ],
+                correct: 1,
+                correctExplain: "15 minutes est le timing optimal pour synchroniser sans trop impacter le travail."
+            },
+            {
+                q: "Si une tâche est trop complexe, on doit...",
+                options: [
+                    { text: "Travailler 24h/24", explain: "Ce n'est pas une solution viable ni recommandée." },
+                    { text: "Renégocier le périmètre", explain: "Briser la tâche en plus petites parties ou adapter les attentes." },
+                    { text: "Ignorer le test", explain: "Ignorer les tests augmente les risques, ce n'est pas une solution." },
+                    { text: "Demander l'aide d'une autre équipe pour assurer le délai", explain: "Ce n'est pas la bonne approche ; il faut adapter la complexité de la tâche." }
+                ],
+                correct: 1,
+                correctExplain: "Une tâche complexe doit être découpée ou ajustée pour rester gérable."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let answers = new Array(questions.length).fill(null);
+        let answered = new Array(questions.length).fill(false);
+
+        function displayQuestion() {
+            const container = document.getElementById('quiz-container');
+            const item = questions[currentQuestion];
+            
+            let html = `<div class="question">${currentQuestion + 1}. ${item.q}</div>`;
+            item.options.forEach((opt, i) => {
+                const checked = answers[currentQuestion] === i ? 'checked' : '';
+                const disabled = answered[currentQuestion] ? 'disabled' : '';
+                html += `<label class="option"><input type="radio" name="answer" value="${i}" ${checked} ${disabled} onchange="handleAnswer()"> ${opt.text}</label>`;
+            });
+            
+            container.innerHTML = html;
+            
+            // Show feedback if already answered
+            if (answered[currentQuestion]) {
+                showFeedback();
+            } else {
+                document.getElementById('feedback').innerHTML = '';
+                document.getElementById('feedback').classList.remove('show');
+            }
+            
+            updateProgressBar();
+            updateNavigationButtons();
+            updateProgressInfo();
+        }
+
+        function handleAnswer() {
+            const selected = document.querySelector('input[name="answer"]:checked');
+            if (selected) {
+                answers[currentQuestion] = parseInt(selected.value);
+                answered[currentQuestion] = true;
+                
+                // Disable all radios
+                document.querySelectorAll('input[name="answer"]').forEach(r => r.disabled = true);
+                
+                showFeedback();
+                updateProgressBar();
+                updateProgressInfo();
+                updateNavigationButtons();
+            }
+        }
+
+        function showFeedback() {
+            const feedbackDiv = document.getElementById('feedback');
+            const item = questions[currentQuestion];
+            const isCorrect = answers[currentQuestion] === item.correct;
+            const selectedOption = item.options[answers[currentQuestion]];
+            
+            // Ajouter les classes au div parent pour l'afficher
+            feedbackDiv.className = 'feedback-container show ' + (isCorrect ? 'feedback-correct' : 'feedback-incorrect');
+            
+            let html = '';
+            
+            if (isCorrect) {
+                html += `
+                    <div class="feedback-header">Bonne réponse!</div>
+                    <div class="feedback-explanation">${item.correctExplain}</div>
+                `;
+            } else {
+                html += `
+                    <div class="feedback-header">Pas tout à fait</div>
+                    <div class="feedback-explanation">${selectedOption.explain}</div>
+                    <div class="correct-answer-box">
+                        <div class="correct-answer-label">✓ Bonne réponse:</div>
+                        <div>${item.options[item.correct].text}</div>
+                        <div style="margin-top: 8px; font-size: 0.9em;">${item.correctExplain}</div>
+                    </div>
+                `;
+            }
+            
+            feedbackDiv.innerHTML = html;
+        }
+
+        function updateProgressBar() {
+            const progressBar = document.getElementById('progressBar');
+            progressBar.innerHTML = '';
+            
+            for (let i = 0; i < questions.length; i++) {
+                const segment = document.createElement('div');
+                segment.className = 'progress-segment';
+                
+                if (!answered[i]) {
+                    segment.classList.add('unanswered');
+                } else if (answers[i] === questions[i].correct) {
+                    segment.classList.add('correct');
+                } else {
+                    segment.classList.add('incorrect');
+                }
+                
+                progressBar.appendChild(segment);
+            }
+        }
+
+        function updateNavigationButtons() {
+            const isAnswered = answered[currentQuestion];
+            document.getElementById('prevBtn').disabled = currentQuestion === 0 || !isAnswered;
+            document.getElementById('nextBtn').disabled = !isAnswered;
+            
+            if (currentQuestion === questions.length - 1) {
+                document.getElementById('nextBtn').textContent = 'Voir Résultat';
+            } else {
+                document.getElementById('nextBtn').textContent = 'Suivant →';
+            }
+        }
+
+        function updateProgressInfo() {
+            document.getElementById('question-counter').textContent = `Question ${currentQuestion + 1} / ${questions.length}`;
+            
+            // Compter les bonnes et mauvaises réponses
+            let correctCount = 0;
+            let incorrectCount = 0;
+            
+            for (let i = 0; i < answers.length; i++) {
+                if (answered[i]) {
+                    if (answers[i] === questions[i].correct) {
+                        correctCount++;
+                    } else {
+                        incorrectCount++;
+                    }
+                }
+            }
+            
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('incorrect-count').textContent = incorrectCount;
+        }
+
+        function nextQuestion() {
+            if (currentQuestion === questions.length - 1) {
+                showFinalResults();
+                return;
+            }
+            
+            currentQuestion++;
+            displayQuestion();
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        function showFinalResults() {
+            let score = 0;
+            answers.forEach((answer, index) => {
+                if (answer === questions[index].correct) score++;
+            });
+            
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '<div class="question">Quiz terminé!</div>';
+            
+            // Masquer complètement le feedback
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.className = 'feedback-container';
+            feedbackDiv.innerHTML = '';
+            
+            // Générer le résumé des réponses
+            let recapHtml = '<div class="recap-title">Résumé de vos réponses</div>';
+            
+            questions.forEach((question, index) => {
+                const userAnswer = question.options[answers[index]];
+                const correctAnswer = question.options[question.correct];
+                const isCorrect = answers[index] === question.correct;
+                
+                recapHtml += `
+                    <div class="recap-card ${isCorrect ? 'correct' : 'incorrect'}">
+                        <div class="recap-number">Question ${index + 1} / ${questions.length}</div>
+                        <div class="recap-question">${question.q}</div>
+                        <div class="recap-answer-item user">
+                            <span class="recap-label">Votre réponse:</span>
+                            ${userAnswer.text}
+                            <span class="recap-result ${isCorrect ? 'correct' : 'incorrect'}">
+                                ${isCorrect ? '✓ Correct' : '✗ Incorrect'}
+                            </span>
+                        </div>
+                        ${!isCorrect ? `
+                            <div class="recap-answer-item correct-answer">
+                                <span class="recap-label">Bonne réponse:</span>
+                                ${correctAnswer.text}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            
+            // Ajouter le récap après le conteneur du quiz
+            document.getElementById('result').innerHTML = `
+                <div style="font-size: 2em; margin: 30px 0 20px;">Votre score : ${score} / ${questions.length}</div>
+                <div style="font-size: 1.1em; color: #555; margin-bottom: 30px;">Réussite : ${Math.round(score / questions.length * 100)}%</div>
+                <div class="recap-container">${recapHtml}</div>
+            `;
+            
+            document.getElementById('prevBtn').disabled = false;
+            document.getElementById('nextBtn').textContent = 'Recommencer';
+            document.getElementById('nextBtn').disabled = false;
+            document.getElementById('nextBtn').onclick = function() { location.reload(); };
+            document.getElementById('prevBtn').onclick = function() {
+                currentQuestion = questions.length - 1;
+                displayQuestion();
+            };
+        }
+
+        // Initialisation
+        displayQuestion();
+    </script>
+</body>
+</html>
