@@ -17,6 +17,15 @@ h1 {
     letter-spacing: -0.5px;
 }
 
+.global-course-title {
+    font-size: 1.3em;
+    color: #5d6d7b;
+    text-align: center;
+    margin-bottom: 15px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+}
+
 .card {
     background: white;
     padding: 35px;
@@ -36,7 +45,8 @@ h1 {
 }
 
 .option {
-    display: block;
+    display: flex;
+    align-items: center;
     padding: 15px 18px;
     margin: 12px 0;
     border: 2px solid #e1e8ed;
@@ -48,28 +58,54 @@ h1 {
     color: #34495e;
     font-weight: 500;
     position: relative;
-    padding-left: 45px;
+    gap: 15px;
 }
 
-.option input[type="radio"] {
-    position: absolute;
-    left: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    cursor: pointer;
-    width: 18px;
-    height: 18px;
+.option-letter {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    width: 32px;
+    height: 32px;
+    background: #f0f3f7;
+    border-radius: 6px;
+    font-weight: 700;
+    color: #2c3e50;
+    flex-shrink: 0;
 }
 
-.option:hover {
+.option:hover:not(.disabled) {
     background: #f8fafb;
     border-color: #3498db;
     transform: translateX(4px);
     box-shadow: 0 2px 8px rgba(52, 152, 219, 0.1);
 }
 
-.option:has(input:disabled) {
-    opacity: 0.8;
+.option.selected {
+    background: #e3f2fd;
+    border-color: #3498db;
+    box-shadow: 0 2px 8px rgba(52, 152, 219, 0.2);
+}
+
+.option.selected .option-letter {
+    background: #3498db;
+    color: white;
+}
+
+.option.selected.incorrect {
+    background: #f8d7da;
+    border-color: #e74c3c;
+    box-shadow: 0 2px 8px rgba(231, 76, 60, 0.2);
+}
+
+.option.selected.incorrect .option-letter {
+    background: #e74c3c;
+    color: white;
+}
+
+.option.disabled {
+    opacity: 0.85;
     cursor: not-allowed;
 }
 
@@ -304,15 +340,6 @@ button.submit-btn {
     margin-bottom: 8px;
     color: #27ae60;
     font-size: 0.95em;
-}
-
-.option:disabled {
-    cursor: not-allowed;
-    opacity: 0.7;
-}
-
-.option input:disabled {
-    cursor: not-allowed;
 }
 
 .recap-container {

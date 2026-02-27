@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="../../css/style.css">
 </head>
 <body>
+    <div class="global-course-title">[Titre global du cours]</div>
     <h1>Quiz : [Titre du Cours] (Cours X)</h1>
     
     <div class="progress-container">
@@ -66,10 +67,19 @@
             const item = questions[currentQuestion];
             
             let html = `<div class="question">${currentQuestion + 1}. ${item.q}</div>`;
+            const letters = ['A', 'B', 'C', 'D'];
             item.options.forEach((opt, i) => {
-                const checked = answers[currentQuestion] === i ? 'checked' : '';
-                const disabled = answered[currentQuestion] ? 'disabled' : '';
-                html += `<label class="option"><input type="radio" name="answer" value="${i}" ${checked} ${disabled} onchange="handleAnswer()"> ${opt.text}</label>`;
+                let classes = '';
+                if (answers[currentQuestion] === i) {
+                    classes = 'selected ';
+                    if (i === item.correct) {
+                        classes += 'correct';
+                    } else {
+                        classes += 'incorrect';
+                    }
+                }
+                const disabledClass = answered[currentQuestion] ? 'disabled' : '';
+                html += `<div class="option ${classes} ${disabledClass}" onclick="${answered[currentQuestion] ? '' : `handleAnswerClick(${i})`}" style="${answered[currentQuestion] ? 'cursor: not-allowed;' : ''}"><span class="option-letter">${letters[i]}</span> ${opt.text}</div>`;
             });
             
             container.innerHTML = html;
@@ -86,19 +96,17 @@
             updateProgressInfo();
         }
 
-        function handleAnswer() {
-            const selected = document.querySelector('input[name="answer"]:checked');
-            if (selected) {
-                answers[currentQuestion] = parseInt(selected.value);
-                answered[currentQuestion] = true;
-                
-                document.querySelectorAll('input[name="answer"]').forEach(r => r.disabled = true);
-                
-                showFeedback();
-                updateProgressBar();
-                updateProgressInfo();
-                updateNavigationButtons();
-            }
+        function handleAnswerClick(index) {
+            if (answered[currentQuestion]) return;
+            
+            answers[currentQuestion] = index;
+            answered[currentQuestion] = true;
+            
+            showFeedback();
+            updateProgressBar();
+            updateProgressInfo();
+            updateNavigationButtons();
+            displayQuestion();
         }
 
         function showFeedback() {
