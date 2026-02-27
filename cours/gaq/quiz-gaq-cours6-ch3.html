@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz - GAQ Cours 6 Chapitre 3</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <div class="global-course-title">Gestion de l'assurance qualité</div>
+    <h1>Quiz : Test statique (Cours 6 - Chapitre 3)</h1>
+    
+    <div class="progress-container">
+        <div class="progress-info">
+            <span id="question-counter">Question 1 / 20</span>
+            <div class="progress-stats">
+                <span class="stat-badge incorrect"><span class="stat-icon">✕</span><span id="incorrect-count">0</span></span>
+                <span class="stat-badge correct"><span class="stat-icon">✓</span><span id="correct-count">0</span></span>
+            </div>
+        </div>
+        <div class="progress-bar-wrapper" id="progressBar"></div>
+    </div>
+    
+    <div id="quiz-container" class="card"></div>
+    
+    <div id="feedback" class="feedback-container"></div>
+    
+    <div class="quiz-navigation">
+        <button id="prevBtn" onclick="previousQuestion()">← Précédent</button>
+        <button id="nextBtn" onclick="nextQuestion()">Suivant →</button>
+    </div>
+    
+    <div id="result"></div>
+
+    <script>
+        const questions = [
+            {
+                q: "Quelle est la caractéristique principale qui distingue le test statique du test dynamique ?",
+                options: [
+                    { text: "Le test statique nécessite l'exécution du code source.", explain: "C'est la définition du test dynamique." },
+                    { text: "Le test statique examine les produits de travail sans exécuter le code.", explain: "" },
+                    { text: "Le test statique ne peut être effectué que par des testeurs indépendants.", explain: "Il peut être fait par les auteurs, les pairs ou les développeurs." },
+                    { text: "Le test statique se concentre uniquement sur les interfaces utilisateur.", explain: "Il peut porter sur n'importe quel produit de travail (code, spécifs)." }
+                ],
+                correct: 1,
+                correctExplain: "Le test statique repose sur l'examen manuel (revues) ou automatisé des documents ou du code sans exécution logicielle."
+            },
+            {
+                q: "Quel type de défaut est le plus susceptible d'être découvert par un test statique plutôt que par un test dynamique ?",
+                options: [
+                    { text: "Une défaillance de performance sous forte charge.", explain: "La performance se mesure lors de l'exécution." },
+                    { text: "Des contradictions ou des ambiguïtés dans les exigences.", explain: "" },
+                    { text: "Une fuite de mémoire intermittente.", explain: "Cela nécessite une exécution et du monitoring dynamique." },
+                    { text: "Une erreur de calcul lors de l'exécution d'un algorithme.", explain: "Elle est plus souvent révélée par le test dynamique." }
+                ],
+                correct: 1,
+                correctExplain: "Le test statique excelle dans l'identification des imprécisions, contradictions et manques dans les documents de spécifications."
+            },
+            {
+                q: "L'animateur (ou Facilitateur) dans une revue formelle est chargé de :",
+                options: [
+                    { text: "Diriger la réunion et s'assurer du respect du processus.", explain: "" },
+                    { text: "Écrire et évaluer le code du projet.", explain: "C'est la responsabilité du développeur." },
+                    { text: "Corriger tous les défauts identifiés pendant la revue.", explain: "C'est à l'auteur de corriger." },
+                    { text: "Décider si le document est approuvé ou non.", explain: "C'est une décision collective." }
+                ],
+                correct: 0,
+                correctExplain: "L'animateur est la personne clé qui gère les sessions de revue et garantit la neutralité et le respect du planning."
+            },
+            {
+                q: "Quel type de revue est le moins formel ?",
+                options: [
+                    { text: "L'inspection.", explain: "C'est le type de revue le plus formel." },
+                    { text: "La revue technique.", explain: "Elle est formelle et vise un consensus technique." },
+                    { text: "La revue informelle.", explain: "" },
+                    { text: "Le passage en revue (Walkthrough).", explain: "Il est dirigé par l'auteur et suit un certain formalisme." }
+                ],
+                correct: 2,
+                correctExplain: "La revue informelle (ou Buddy Check) n'a pas de processus documenté et est très flexible."
+            },
+            {
+                q: "Une inspection se caractérise par :",
+                options: [
+                    { text: "L'absence totale de métriques collectées.", explain: "L'inspection utilise des métriques pour s'améliorer." },
+                    { text: "L'utilisation de listes de contrôle (checklists) et de rôles définis.", explain: "" },
+                    { text: "Le fait qu'elle soit dirigée par l'auteur du document.", explain: "C'est le walkthrough ; l'inspection est gérée par un animateur." },
+                    { text: "L'exclusion des testeurs de la réunion.", explain: "Les testeurs sont souvent des réviseurs essentiels." }
+                ],
+                correct: 1,
+                correctExplain: "Le formalisme de l'inspection repose sur des règles strictes, des rôles précis et des outils de vérification."
+            },
+            {
+                q: "L'analyse statique effectuée par des outils permet de détecter :",
+                options: [
+                    { text: "Si le client sera satisfait de l'ergonomie.", explain: "C'est subjectif et nécessite une revue humaine." },
+                    { text: "Des variables non utilisées ou du code mort.", explain: "" },
+                    { text: "La rapidité de réponse du serveur en conditions réelles.", explain: "C'est un test de charge dynamique." },
+                    { text: "La justesse métier d'un calcul de taxe.", explain: "L'outil ne connaît pas les règles métier, seulement la syntaxe." }
+                ],
+                correct: 1,
+                correctExplain: "Les outils d'analyse statique détectent les anomalies structurelles et syntaxiques dans le code sans l'exécuter."
+            },
+            {
+                q: "Quelle phase du processus de revue formelle consiste à s'assurer que les critères d'entrée sont remplis ?",
+                options: [
+                    { text: "Lancement (Initiation).", explain: "" },
+                    { text: "Revue individuelle.", explain: "C'est l'examen personnel par les réviseurs." },
+                    { text: "Communication des défauts.", explain: "C'est l'enregistrement des problèmes." },
+                    { text: "Correction (Rework).", explain: "C'est la modification du document par l'auteur." }
+                ],
+                correct: 0,
+                correctExplain: "La phase de lancement permet de vérifier si le produit est suffisamment mûr pour être soumis à une revue."
+            },
+            {
+                q: "Le test statique peut être appliqué :",
+                options: [
+                    { text: "Uniquement sur le code source.", explain: "Il s'applique à tous les documents projet." },
+                    { text: "À n'importe quel stade du cycle de vie du développement.", explain: "" },
+                    { text: "Seulement si le test dynamique a échoué.", explain: "Il doit idéalement précéder le test dynamique." },
+                    { text: "Seulement dans les modèles en cascade.", explain: "Il est tout aussi utile en Agile (revues de code)." }
+                ],
+                correct: 1,
+                correctExplain: "On peut tester statiquement une idée, un besoin, un design ou un code à n'importe quel moment du projet."
+            },
+            {
+                q: "Au cours d'une revue individuelle, un réviseur utilise une liste de points à vérifier. Quelle technique utilise-t-il ?",
+                options: [
+                    { text: "Revue basée sur des scénarios.", explain: "Utiliserait des cas d'utilisation pour parcourir le document." },
+                    { text: "Revue basée sur des listes de contrôle (Checklist-based).", explain: "" },
+                    { text: "Revue basée sur les rôles.", explain: "Le réviseur adopterait le point de vue d'un type d'utilisateur." },
+                    { text: "Lecture basée sur les perspectives.", explain: "On lirait selon le point de vue d'une partie prenante." }
+                ],
+                correct: 1,
+                correctExplain: "Cette technique repose sur un ensemble de questions prédéfinies pour guider l'examen du document."
+            },
+            {
+                q: "Pourquoi la 'Lecture basée sur les perspectives' est-elle très efficace ?",
+                options: [
+                    { text: "Parce qu'elle est la plus rapide à mettre en œuvre.", explain: "C'est une technique exigeante en temps." },
+                    { text: "Parce qu'elle réduit le risque que différents réviseurs trouvent tous les mêmes défauts.", explain: "" },
+                    { text: "Parce qu'elle ne nécessite pas de réunion de groupe.", explain: "Elle peut tout à fait inclure une réunion." },
+                    { text: "Parce qu'elle remplace l'analyse statique automatisée.", explain: "Elles sont complémentaires." }
+                ],
+                correct: 1,
+                correctExplain: "En assignant des perspectives différentes (testeur, architecte), on augmente la couverture globale des défauts détectés."
+            },
+            {
+                q: "Lequel de ces éléments est un facteur de succès pour une revue ?",
+                options: [
+                    { text: "Utiliser la revue pour évaluer la performance individuelle.", explain: "C'est un anti-pattern qui nuit à la qualité." },
+                    { text: "Définir des objectifs clairs et choisir le type de revue adapté.", explain: "" },
+                    { text: "Faire durer les réunions le plus longtemps possible.", explain: "L'efficacité chute après 2h." },
+                    { text: "Éviter d'impliquer les testeurs pour ne pas les surcharger.", explain: "Les testeurs apportent une perspective critique vitale." }
+                ],
+                correct: 1,
+                correctExplain: "Le succès dépend de la clarté du but et du niveau de formalisme choisi en fonction des risques."
+            },
+            {
+                q: "Pendant une réunion de revue, un débat houleux éclate. Que doit faire l'animateur ?",
+                options: [
+                    { text: "Trancher immédiatement en donnant son avis technique.", explain: "L'animateur doit rester neutre." },
+                    { text: "Noter le désaccord et discuter de la solution en dehors de la réunion.", explain: "" },
+                    { text: "Laisser le débat continuer jusqu'à un consensus.", explain: "Cela risque de faire exploser le timing." },
+                    { text: "Demander à l'auteur de quitter la pièce.", explain: "L'auteur est nécessaire pour clarifier certains points." }
+                ],
+                correct: 1,
+                correctExplain: "La réunion de revue sert à identifier les problèmes, pas à concevoir les solutions sur-le-champ."
+            },
+            {
+                q: "Quelle est la responsabilité principale de l'auteur dans le processus de revue ?",
+                options: [
+                    { text: "Décider quels défauts seront corrigés et effectuer les modifications.", explain: "" },
+                    { text: "Valider que le document est prêt pour la production.", explain: "C'est une décision collective." },
+                    { text: "Présenter son travail et répondre aux questions des réviseurs.", explain: "Responsabilité importante mais pas la principale." },
+                    { text: "Noter tous les défauts pendant la revue.", explain: "C'est le rôle du scribe." }
+                ],
+                correct: 0,
+                correctExplain: "L'auteur est le propriétaire du produit et est responsable de sa mise à jour suite aux commentaires reçus."
+            },
+            {
+                q: "Un 'Passage en revue' (Walkthrough) est dirigé par l'auteur. Quel est un de ses objectifs ?",
+                options: [
+                    { text: "Trouver tous les défauts possibles.", explain: "C'est plutôt le rôle de l'inspection." },
+                    { text: "Enseigner et partager le travail avec les participants.", explain: "" },
+                    { text: "Évaluer la productivité de l'équipe.", explain: "Les revues ne doivent jamais évaluer les personnes." },
+                    { text: "Refuser toute critique du travail.", explain: "Les critiques constructives sont essentielles." }
+                ],
+                correct: 1,
+                correctExplain: "Le walkthrough est pédagogique et interactif, permettant à l'auteur de partager sa vision du produit."
+            },
+            {
+                q: "Quelle affirmation sur l'analyse statique est VRAIE ?",
+                options: [
+                    { text: "Elle détecte tous les défauts du code.", explain: "Elle en détecte une partie significative." },
+                    { text: "Elle s'intègre dans les pipelines d'intégration continue.", explain: "" },
+                    { text: "Elle nécessite que le code soit compilé et prêt.", explain: "Elle peut travailler sur du code brut." },
+                    { text: "Elle remplace complètement les revues humaines.", explain: "Elles sont complémentaires." }
+                ],
+                correct: 1,
+                correctExplain: "L'analyse statique outillée s'intègre parfaitement dans les processus d'intégration continue."
+            },
+            {
+                q: "Lequel des éléments suivants NE fait PAS partie des activités de clôture d'une revue ?",
+                options: [
+                    { text: "L'archivage des rapports de revue.", explain: "C'est une activité de clôture importante." },
+                    { text: "Le suivi des actions correctives.", explain: "Suivi essentiel." },
+                    { text: "La distribution initiale du document aux réviseurs.", explain: "" },
+                    { text: "La mise à jour de l'état du document (ex: 'Approuvé').", explain: "C'est l'acte final de clôture." }
+                ],
+                correct: 2,
+                correctExplain: "La distribution du document intervient lors de la phase de lancement ou de préparation, pas en clôture."
+            },
+            {
+                q: "Dans une revue, le rôle du scribe est de :",
+                options: [
+                    { text: "Assurer la traçabilité de tous les défauts identifiés.", explain: "" },
+                    { text: "Valider que tous les défauts sont corrigés.", explain: "C'est un suivi post-revue." },
+                    { text: "Corriger les fautes d'orthographe du document.", explain: "La correction est faite par l'auteur." },
+                    { text: "Diriger la réunion de revue.", explain: "C'est le rôle de l'animateur." }
+                ],
+                correct: 0,
+                correctExplain: "Le scribe assure la traçabilité de tous les problèmes identifiés pendant la réunion de revue."
+            },
+            {
+                q: "Le test statique est souvent considéré comme une forme de 'Prévention'. Pourquoi ?",
+                options: [
+                    { text: "Parce qu'il élimine complètement tous les défauts futurs.", explain: "Aucune technique ne peut les éliminer tous." },
+                    { text: "Parce que corriger une erreur dans les besoins évite qu'elle soit implémentée.", explain: "" },
+                    { text: "Parce qu'il est effectué uniquement par le management.", explain: "C'est l'affaire de toute l'équipe." },
+                    { text: "Parce qu'il coûte moins cher que le test dynamique.", explain: "Coût comparable dans certains cas." }
+                ],
+                correct: 1,
+                correctExplain: "Corriger une erreur dans les besoins évite qu'elle ne soit implémentée, ce qui prévient l'apparition du bug dans le code."
+            },
+            {
+                q: "Quel est l'avantage principal d'une inspection par rapport à un passage en revue (walkthrough) ?",
+                options: [
+                    { text: "L'inspection est moins formelle et plus collaborative.", explain: "C'est l'inverse : l'inspection est plus formelle." },
+                    { text: "L'inspection suit des listes de contrôle et collecte des métriques pour l'amélioration continue.", explain: "" },
+                    { text: "L'inspection n'implique pas l'auteur du document.", explain: "L'auteur peut participer mais n'est pas obligatoirement le leader." },
+                    { text: "L'inspection élimine complètement le besoin de tests dynamiques.", explain: "Les deux approches sont complémentaires." }
+                ],
+                correct: 1,
+                correctExplain: "L'inspection est le type de revue formelle le plus efficace pour identifier les défauts grâce à sa structure, ses rôles bien définis et ses métriques."
+            },
+            {
+                q: "À quel point du cycle de vie le test statique offre-t-il le meilleur retour sur investissement ?",
+                options: [
+                    { text: "À la phase de maintenance, après la mise en production.", explain: "C'est trop tard et beaucoup plus coûteux." },
+                    { text: "Aux premières phases (besoins, spécifications, conception) avant l'implémentation.", explain: "" },
+                    { text: "Uniquement au moment du test unitaire par les développeurs.", explain: "Le test statique démarre bien avant." },
+                    { text: "Seulement si le budget de test est très limité.", explain: "L'intérêt du test statique n'est pas conditionné par le budget." }
+                ],
+                correct: 1,
+                correctExplain: "Plus on applique le test statique tôt (dès le début du projet), plus on réduit les défauts qui auraient coûté très cher à corriger après implémentation."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let answers = new Array(questions.length).fill(null);
+        let answered = new Array(questions.length).fill(false);
+
+        function displayQuestion() {
+            const container = document.getElementById('quiz-container');
+            const item = questions[currentQuestion];
+            
+            let html = `<div class="question">${currentQuestion + 1}. ${item.q}</div>`;
+            const letters = ['A', 'B', 'C', 'D'];
+            item.options.forEach((opt, i) => {
+                let classes = '';
+                if (answers[currentQuestion] === i) {
+                    classes = 'selected ';
+                    if (i === item.correct) {
+                        classes += 'correct';
+                    } else {
+                        classes += 'incorrect';
+                    }
+                }
+                const disabledClass = answered[currentQuestion] ? 'disabled' : '';
+                html += `<div class="option ${classes} ${disabledClass}" onclick="${answered[currentQuestion] ? '' : `handleAnswerClick(${i})`}" style="${answered[currentQuestion] ? 'cursor: not-allowed;' : ''}"><span class="option-letter">${letters[i]}</span> ${opt.text}</div>`;
+            });
+            
+            container.innerHTML = html;
+            
+            if (answered[currentQuestion]) {
+                showFeedback();
+            } else {
+                document.getElementById('feedback').innerHTML = '';
+                document.getElementById('feedback').classList.remove('show');
+            }
+            
+            updateProgressBar();
+            updateNavigationButtons();
+            updateProgressInfo();
+        }
+
+        function handleAnswerClick(index) {
+            if (answered[currentQuestion]) return;
+            
+            answers[currentQuestion] = index;
+            answered[currentQuestion] = true;
+            
+            showFeedback();
+            updateProgressBar();
+            updateProgressInfo();
+            updateNavigationButtons();
+            displayQuestion();
+        }
+
+        function showFeedback() {
+            const feedbackDiv = document.getElementById('feedback');
+            const item = questions[currentQuestion];
+            const isCorrect = answers[currentQuestion] === item.correct;
+            const selectedOption = item.options[answers[currentQuestion]];
+            
+            feedbackDiv.className = 'feedback-container show ' + (isCorrect ? 'feedback-correct' : 'feedback-incorrect');
+            
+            let html = '';
+            
+            if (isCorrect) {
+                html += `
+                    <div class="feedback-header">Bonne réponse!</div>
+                    <div class="feedback-explanation">${item.correctExplain}</div>
+                `;
+            } else {
+                html += `
+                    <div class="feedback-header">Pas tout à fait</div>
+                    <div class="feedback-explanation">${selectedOption.explain}</div>
+                    <div class="correct-answer-box">
+                        <div class="correct-answer-label">✓ Bonne réponse:</div>
+                        <div>${item.options[item.correct].text}</div>
+                        <div style="margin-top: 8px; font-size: 0.9em;">${item.correctExplain}</div>
+                    </div>
+                `;
+            }
+            
+            feedbackDiv.innerHTML = html;
+        }
+
+        function updateProgressBar() {
+            const progressBar = document.getElementById('progressBar');
+            progressBar.innerHTML = '';
+            
+            for (let i = 0; i < questions.length; i++) {
+                const segment = document.createElement('div');
+                segment.className = 'progress-segment';
+                
+                if (!answered[i]) {
+                    segment.classList.add('unanswered');
+                } else if (answers[i] === questions[i].correct) {
+                    segment.classList.add('correct');
+                } else {
+                    segment.classList.add('incorrect');
+                }
+                
+                progressBar.appendChild(segment);
+            }
+        }
+
+        function updateNavigationButtons() {
+            const isAnswered = answered[currentQuestion];
+            document.getElementById('prevBtn').disabled = currentQuestion === 0 || !isAnswered;
+            document.getElementById('nextBtn').disabled = !isAnswered;
+            
+            if (currentQuestion === questions.length - 1) {
+                document.getElementById('nextBtn').textContent = 'Voir Résultat';
+            } else {
+                document.getElementById('nextBtn').textContent = 'Suivant →';
+            }
+        }
+
+        function updateProgressInfo() {
+            document.getElementById('question-counter').textContent = `Question ${currentQuestion + 1} / ${questions.length}`;
+            
+            let correctCount = 0;
+            let incorrectCount = 0;
+            
+            for (let i = 0; i < answers.length; i++) {
+                if (answered[i]) {
+                    if (answers[i] === questions[i].correct) {
+                        correctCount++;
+                    } else {
+                        incorrectCount++;
+                    }
+                }
+            }
+            
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('incorrect-count').textContent = incorrectCount;
+        }
+
+        function nextQuestion() {
+            if (currentQuestion === questions.length - 1) {
+                showFinalResults();
+                return;
+            }
+            
+            currentQuestion++;
+            displayQuestion();
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        function showFinalResults() {
+            let score = 0;
+            answers.forEach((answer, index) => {
+                if (answer === questions[index].correct) score++;
+            });
+            
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '<div class="question">Quiz terminé!</div>';
+            
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.className = 'feedback-container';
+            feedbackDiv.innerHTML = '';
+            
+            let recapHtml = '<div class="recap-title">Résumé de vos réponses</div>';
+            
+            questions.forEach((question, index) => {
+                const userAnswer = question.options[answers[index]];
+                const correctAnswer = question.options[question.correct];
+                const isCorrect = answers[index] === question.correct;
+                
+                recapHtml += `
+                    <div class="recap-card ${isCorrect ? 'correct' : 'incorrect'}">
+                        <div class="recap-number">Question ${index + 1} / ${questions.length}</div>
+                        <div class="recap-question">${question.q}</div>
+                        <div class="recap-answer-item user">
+                            <span class="recap-label">Votre réponse:</span>
+                            ${userAnswer.text}
+                            <span class="recap-result ${isCorrect ? 'correct' : 'incorrect'}">
+                                ${isCorrect ? '✓ Correct' : '✗ Incorrect'}
+                            </span>
+                        </div>
+                        ${!isCorrect ? `
+                            <div class="recap-answer-item correct-answer">
+                                <span class="recap-label">Bonne réponse:</span>
+                                ${correctAnswer.text}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            
+            document.getElementById('result').innerHTML = `
+                <div style="font-size: 2em; margin: 30px 0 20px;">Votre score : ${score} / ${questions.length}</div>
+                <div style="font-size: 1.1em; color: #555; margin-bottom: 30px;">Réussite : ${Math.round(score / questions.length * 100)}%</div>
+                <div class="recap-container">${recapHtml}</div>
+            `;
+            
+            document.getElementById('prevBtn').disabled = false;
+            document.getElementById('nextBtn').textContent = 'Recommencer';
+            document.getElementById('nextBtn').disabled = false;
+            document.getElementById('nextBtn').onclick = function() { location.reload(); };
+            document.getElementById('prevBtn').onclick = function() {
+                currentQuestion = questions.length - 1;
+                displayQuestion();
+            };
+        }
+
+        displayQuestion();
+    </script>
+</body>
+</html>

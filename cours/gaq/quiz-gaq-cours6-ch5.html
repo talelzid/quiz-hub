@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz - GAQ Cours 6 Chapitre 5</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <div class="global-course-title">Gestion de l'assurance qualité</div>
+    <h1>Quiz : Gestion des activités de test (Cours 6 - Chapitre 5)</h1>
+    
+    <div class="progress-container">
+        <div class="progress-info">
+            <span id="question-counter">Question 1 / 20</span>
+            <div class="progress-stats">
+                <span class="stat-badge incorrect"><span class="stat-icon">✕</span><span id="incorrect-count">0</span></span>
+                <span class="stat-badge correct"><span class="stat-icon">✓</span><span id="correct-count">0</span></span>
+            </div>
+        </div>
+        <div class="progress-bar-wrapper" id="progressBar"></div>
+    </div>
+    
+    <div id="quiz-container" class="card"></div>
+    
+    <div id="feedback" class="feedback-container"></div>
+    
+    <div class="quiz-navigation">
+        <button id="prevBtn" onclick="previousQuestion()">← Précédent</button>
+        <button id="nextBtn" onclick="nextQuestion()">Suivant →</button>
+    </div>
+    
+    <div id="result"></div>
+
+    <script>
+        const questions = [
+            {
+                q: "Qu'est-ce que la planification des tests ?",
+                options: [
+                    { text: "La définition des objectifs, de la portée et du calendrier du test avant le début des activités de test", explain: "" },
+                    { text: "L'exécution de tous les cas de test disponibles", explain: "" },
+                    { text: "La documentation des défauts découverts", explain: "" },
+                    { text: "La validation des exigences du client", explain: "" }
+                ],
+                correct: 0,
+                correctExplain: "La planification des tests établit les objectifs, la portée, les ressources, le calendrier et les stratégies pour les activités de test."
+            },
+            {
+                q: "Quel est un objectif clé de la phase de planification des tests ?",
+                options: [
+                    { text: "Identifier et documenter tous les défauts possibles", explain: "" },
+                    { text: "Établir des critères clairs pour déterminer la fin des tests", explain: "" },
+                    { text: "Exécuter immédiatement tous les cas de test", explain: "" },
+                    { text: "Valider le code source du système", explain: "" }
+                ],
+                correct: 1,
+                correctExplain: "La planification des tests définit des critères d'entrée, de sortie et des objectifs mesurables pour guider l'exécution."
+            },
+            {
+                q: "Qu'est-ce que la gestion des risques en test ?",
+                options: [
+                    { text: "L'élimination complète de tous les risques du projet", explain: "" },
+                    { text: "L'identification, l'analyse et la mitigation des risques relatifs à la qualité du logiciel", explain: "" },
+                    { text: "La documentation des défauts trouvés pendant le test", explain: "" },
+                    { text: "La répartition des testeurs entre les modules", explain: "" }
+                ],
+                correct: 1,
+                correctExplain: "La gestion des risques en test identifie les zones à haut risque et alloue les ressources de test en conséquence pour les atténuer."
+            },
+            {
+                q: "Qu'est-ce qu'un critère de sortie (exit criteria) en test ?",
+                options: [
+                    { text: "Les conditions qui doivent être satisfaites pour terminer les tests", explain: "" },
+                    { text: "La date limite pour commencer les tests", explain: "" },
+                    { text: "Le nombre maximum de défauts acceptables", explain: "" },
+                    { text: "Le rapport final remis au client", explain: "" }
+                ],
+                correct: 0,
+                correctExplain: "Les critères de sortie définissent les conditions précises (couverture, défauts critiques, etc.) qui doivent être atteintes avant de déclarer les tests terminés."
+            },
+            {
+                q: "Qu'est-ce qu'une métrique de test ?",
+                options: [
+                    { text: "Une mesure quantitative utilisée pour évaluer la progression et la qualité du test", explain: "" },
+                    { text: "Un type de défaut spécifique au logiciel", explain: "" },
+                    { text: "Une technique de test automatisé", explain: "" },
+                    { text: "Un calendrier pour les activités de test", explain: "" }
+                ],
+                correct: 0,
+                correctExplain: "Les métriques de test fournissent des données quantitatives sur la couverture, la densité de défauts, le taux de détection et la progression de test."
+            },
+            {
+                q: "Quel est un exemple courant de métrique de test ?",
+                options: [
+                    { text: "Le nombre de défauts trouvés par heure de test", explain: "" },
+                    { text: "La couleur préférée du testeur", explain: "" },
+                    { text: "Le nombre de développeurs affectés au projet", explain: "" },
+                    { text: "La taille du repository code", explain: "" }
+                ],
+                correct: 0,
+                correctExplain: "La densité de défauts (nombre de défauts par heure ou unité de code) est une métrique de test important pour évaluer l'efficacité du test."
+            },
+            {
+                q: "Qu'est-ce qu'un rapport de défaut (bug report) ?",
+                options: [
+                    { text: "Un document qui enregistre une anomalie découverte pendant le test et le suivi de sa résolution", explain: "" },
+                    { text: "Une évaluation de la performance du testeur", explain: "" },
+                    { text: "Un plan pour éviter tous les défauts futurs", explain: "" },
+                    { text: "Une justification pour arrêter les tests", explain: "" }
+                ],
+                correct: 0,
+                correctExplain: "Un rapport de défaut documente le problème découvert, les étapes pour le reproduire, l'impact et suit la résolution jusqu'à la fermeture."
+            },
+            {
+                q: "Quels éléments essentiels doit contenir un rapport de défaut ?",
+                options: [
+                    { text: "Uniquement la description du problème", explain: "" },
+                    { text: "Titre, description, étapes de reproduction, environnement, sévérité et priorité", explain: "" },
+                    { text: "Seulement la date et l'heure de découverte", explain: "" },
+                    { text: "Uniquement le nom du testeur qui l'a trouvé", explain: "" }
+                ],
+                correct: 1,
+                correctExplain: "Un bon rapport de défaut inclut tous les éléments nécessaires pour reproduire et comprendre le problème : titre, étapes, environnement, sévérité, priorité."
+            },
+            {
+                q: "Qu'est-ce que la traçabilité des exigences en test ?",
+                options: [
+                    { text: "Le suivi et l'enregistrement du respect de chaque exigence par au moins un cas de test", explain: "" },
+                    { text: "La documentation de l'historique des modifications de code", explain: "" },
+                    { text: "Le suivi des heures de travail des testeurs", explain: "" },
+                    { text: "La livraison des exigences au client", explain: "" }
+                ],
+                correct: 0,
+                correctExplain: "La traçabilité des exigences établit une correspondance bidirectionnelle entre chaque exigence et les cas de test qui la couvrent."
+            },
+            {
+                q: "Qu'est-ce qu'une stratégie de test ?",
+                options: [
+                    { text: "Un plan détaillé décrivant l'approche générale, les niveaux de test, les types de test et les dépendances", explain: "" },
+                    { text: "L'exécution immédiate de tous les cas de test sans préparation", explain: "" },
+                    { text: "La documentation des résultats de test", explain: "" },
+                    { text: "Un outil pour automatiser les tests", explain: "" }
+                ],
+                correct: 0,
+                correctExplain: "La stratégie de test définit l'approche globale, les niveaux (unitaire, intégration, système), types (fonctionnel, sécurité, performance) et la portée."
+            },
+            {
+                q: "Qu'est-ce que le test de régression et sa gestion ?",
+                options: [
+                    { text: "Vérifier que les anciennes fonctionnalités continuent à marcher après des modifications", explain: "" },
+                    { text: "Tester uniquement les nouvelles fonctionnalités ajoutées", explain: "" },
+                    { text: "Arrêter les tests après la première exécution", explain: "" },
+                    { text: "Évaluer la performance du système", explain: "" }
+                ],
+                correct: 0,
+                correctExplain: "Le test de régression vérifie que les modifications ou corrections n'ont pas introduit de nouvelles défauts dans les fonctionnalités existantes."
+            },
+            {
+                q: "Comment doit-on gérer les cas de test de régression ?",
+                options: [
+                    { text: "Les ignorer puisque le code a déjà été testé", explain: "" },
+                    { text: "Les sélectionner intelligemment selon les changements effectués et automatiser leur exécution si possible", explain: "" },
+                    { text: "Tous les relancer intégralement à chaque changement sans sélection", explain: "" },
+                    { text: "Les exécuter seulement une fois par an", explain: "" }
+                ],
+                correct: 1,
+                correctExplain: "La gestion efficace du test de régression implique une sélection intelligente des cas basée sur l'impact des modifications et l'automatisation."
+            },
+            {
+                q: "Qu'est-ce que la sévérité d'un défaut ?",
+                options: [
+                    { text: "L'impact qu'a le défaut sur la fonctionnalité du système", explain: "" },
+                    { text: "L'impoli du testeur qui a trouvé le défaut", explain: "" },
+                    { text: "La date de découverte du défaut", explain: "" },
+                    { text: "Le nombre de fois que le défaut s'est produit", explain: "" }
+                ],
+                correct: 0,
+                correctExplain: "La sévérité mesure l'impact technique du défaut sur le système (critique, majeur, mineur, cosmétique)."
+            },
+            {
+                q: "Qu'est-ce que la priorité d'un défaut ?",
+                options: [
+                    { text: "L'urgence de correction du défaut selon le contexte métier et commercial", explain: "" },
+                    { text: "L'ordre alphabétique du nom du défaut", explain: "" },
+                    { text: "Le nombre de lignes de code affectées", explain: "" },
+                    { text: "La date limite pour tester", explain: "" }
+                ],
+                correct: 0,
+                correctExplain: "La priorité indique l'urgence de correction : critique, haute, moyenne, basse selon l'impact commercial et les blocages utilisateur."
+            },
+            {
+                q: "Qu'est-ce qu'un rapport de synthèse des tests ?",
+                options: [
+                    { text: "Une présentation résumée des résultats globaux, découvertes clés, métriques et recommandations", explain: "" },
+                    { text: "La liste détaillée de chaque cas de test exécuté", explain: "" },
+                    { text: "Un document contenant les erreurs de syntaxe du code", explain: "" },
+                    { text: "Un formulaire d'évaluation des testeurs", explain: "" }
+                ],
+                correct: 0,
+                correctExplain: "Le rapport de synthèse résume l'activité de test, les métriques clés, la couverture, les défauts et les recommandations pour la release."
+            },
+            {
+                q: "Qu'est-ce que la gestion de la configuration des tests ?",
+                options: [
+                    { text: "Le contrôle des versions du code source uniquement", explain: "" },
+                    { text: "Le suivi des versions des cas de test, données de test et environnements de test", explain: "" },
+                    { text: "La configuration des ordinateurs des testeurs", explain: "" },
+                    { text: "La modification des exigences pendant le test", explain: "" }
+                ],
+                correct: 1,
+                correctExplain: "La gestion de la configuration de test maintient la traçabilité et l'intégrité des artefacts de test : cas, données, scripts et environnements."
+            },
+            {
+                q: "Qu'est-ce qu'un groupe de tests (test cycle) dans la gestion des tests ?",
+                options: [
+                    { text: "Une période spécifique d'exécution de tests avec des objectifs définis", explain: "" },
+                    { text: "Un groupe d'amis qui font les tests ensemble", explain: "" },
+                    { text: "Un type de défaut persistant", explain: "" },
+                    { text: "Une réunion de planification hebdomadaire", explain: "" }
+                ],
+                correct: 0,
+                correctExplain: "Un cycle de test est une période distincte d'exécution de tests, souvent liée à une version ou phase du projet avec ses propres objectifs."
+            },
+            {
+                q: "Quel est le rôle du testeur dans la gestion des défauts ?",
+                options: [
+                    { text: "Corriger tous les défauts trouvés", explain: "" },
+                    { text: "Découvrir, documenter et assurer le suivi jusqu'à la résolution des défauts", explain: "" },
+                    { text: "Ignorer les défauts mineurs", explain: "" },
+                    { text: "Décider seul de la sévérité des défauts sans concertation", explain: "" }
+                ],
+                correct: 1,
+                correctExplain: "Le testeur découvre les défauts, les documente complètement et assure le suivi de leur résolution avec les développeurs."
+            },
+            {
+                q: "Qu'est-ce qu'une session de test en test exploratoire ?",
+                options: [
+                    { text: "Une période limitée d'exploration guidée du système pour découvrir des défauts", explain: "" },
+                    { text: "Une pause pendant les tests", explain: "" },
+                    { text: "Une réunion avec le client", explain: "" },
+                    { text: "Un document de planification long terme", explain: "" }
+                ],
+                correct: 0,
+                correctExplain: "Une session de test exploratoire est une période limitée (1-2 heures) de test guidé où le testeur explore et documente les trouvailles."
+            },
+            {
+                q: "Comment évaluer l'efficacité des activités de test ?",
+                options: [
+                    { text: "Uniquement par le temps dépensé en test", explain: "" },
+                    { text: "Par des métriques comme la couverture, la densité de défauts, le taux de détection et la satisfaction client", explain: "" },
+                    { text: "Par le nombre de testeurs affectés", explain: "" },
+                    { text: "Par l'avis personnel du responsable de test", explain: "" }
+                ],
+                correct: 1,
+                correctExplain: "L'efficacité se mesure par des métriques quantitatives : couverture des exigences, défauts détectés, taux d'acceptation et satisfaction utilisateur."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let answers = new Array(questions.length).fill(null);
+        let answered = new Array(questions.length).fill(false);
+
+        function displayQuestion() {
+            const container = document.getElementById('quiz-container');
+            const item = questions[currentQuestion];
+            
+            let html = `<div class="question">${currentQuestion + 1}. ${item.q}</div>`;
+            const letters = ['A', 'B', 'C', 'D'];
+            item.options.forEach((opt, i) => {
+                let classes = '';
+                if (answers[currentQuestion] === i) {
+                    classes = 'selected ';
+                    if (i === item.correct) {
+                        classes += 'correct';
+                    } else {
+                        classes += 'incorrect';
+                    }
+                }
+                const disabledClass = answered[currentQuestion] ? 'disabled' : '';
+                html += `<div class="option ${classes} ${disabledClass}" onclick="${answered[currentQuestion] ? '' : `handleAnswerClick(${i})`}" style="${answered[currentQuestion] ? 'cursor: not-allowed;' : ''}"><span class="option-letter">${letters[i]}</span> ${opt.text}</div>`;
+            });
+            
+            container.innerHTML = html;
+            
+            if (answered[currentQuestion]) {
+                showFeedback();
+            } else {
+                document.getElementById('feedback').innerHTML = '';
+                document.getElementById('feedback').classList.remove('show');
+            }
+            
+            updateProgressBar();
+            updateNavigationButtons();
+            updateProgressInfo();
+        }
+
+        function handleAnswerClick(index) {
+            if (answered[currentQuestion]) return;
+            
+            answers[currentQuestion] = index;
+            answered[currentQuestion] = true;
+            
+            showFeedback();
+            updateProgressBar();
+            updateProgressInfo();
+            updateNavigationButtons();
+            displayQuestion();
+        }
+
+        function showFeedback() {
+            const feedbackDiv = document.getElementById('feedback');
+            const item = questions[currentQuestion];
+            const isCorrect = answers[currentQuestion] === item.correct;
+            const selectedOption = item.options[answers[currentQuestion]];
+            
+            feedbackDiv.className = 'feedback-container show ' + (isCorrect ? 'feedback-correct' : 'feedback-incorrect');
+            
+            let html = '';
+            
+            if (isCorrect) {
+                html += `
+                    <div class="feedback-header">Bonne réponse!</div>
+                    <div class="feedback-explanation">${item.correctExplain}</div>
+                `;
+            } else {
+                html += `
+                    <div class="feedback-header">Pas tout à fait</div>
+                    <div class="feedback-explanation">${selectedOption.explain}</div>
+                    <div class="correct-answer-box">
+                        <div class="correct-answer-label">✓ Bonne réponse:</div>
+                        <div>${item.options[item.correct].text}</div>
+                        <div style="margin-top: 8px; font-size: 0.9em;">${item.correctExplain}</div>
+                    </div>
+                `;
+            }
+            
+            feedbackDiv.innerHTML = html;
+        }
+
+        function updateProgressBar() {
+            const progressBar = document.getElementById('progressBar');
+            progressBar.innerHTML = '';
+            
+            for (let i = 0; i < questions.length; i++) {
+                const segment = document.createElement('div');
+                segment.className = 'progress-segment';
+                
+                if (!answered[i]) {
+                    segment.classList.add('unanswered');
+                } else if (answers[i] === questions[i].correct) {
+                    segment.classList.add('correct');
+                } else {
+                    segment.classList.add('incorrect');
+                }
+                
+                progressBar.appendChild(segment);
+            }
+        }
+
+        function updateNavigationButtons() {
+            const isAnswered = answered[currentQuestion];
+            document.getElementById('prevBtn').disabled = currentQuestion === 0 || !isAnswered;
+            document.getElementById('nextBtn').disabled = !isAnswered;
+            
+            if (currentQuestion === questions.length - 1) {
+                document.getElementById('nextBtn').textContent = 'Voir Résultat';
+            } else {
+                document.getElementById('nextBtn').textContent = 'Suivant →';
+            }
+        }
+
+        function updateProgressInfo() {
+            document.getElementById('question-counter').textContent = `Question ${currentQuestion + 1} / ${questions.length}`;
+            const correctCount = answers.filter((a, i) => a === questions[i].correct).length;
+            const incorrectCount = answers.filter((a, i) => a !== null && a !== questions[i].correct).length;
+            
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('incorrect-count').textContent = incorrectCount;
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                displayQuestion();
+            } else {
+                showFinalResults();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        function showFinalResults() {
+            let score = 0;
+            answers.forEach((answer, index) => {
+                if (answer === questions[index].correct) score++;
+            });
+            
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '<div class="question">Quiz terminé!</div>';
+            
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.className = 'feedback-container';
+            feedbackDiv.innerHTML = '';
+            
+            let recapHtml = '<div class="recap-title">Résumé de vos réponses</div>';
+            
+            questions.forEach((question, index) => {
+                const userAnswer = question.options[answers[index]];
+                const correctAnswer = question.options[question.correct];
+                const isCorrect = answers[index] === question.correct;
+                
+                recapHtml += `
+                    <div class="recap-card ${isCorrect ? 'correct' : 'incorrect'}">
+                        <div class="recap-number">Question ${index + 1} / ${questions.length}</div>
+                        <div class="recap-question">${question.q}</div>
+                        <div class="recap-answer-item user">
+                            <span class="recap-label">Votre réponse:</span>
+                            ${userAnswer.text}
+                            <span class="recap-result ${isCorrect ? 'correct' : 'incorrect'}">
+                                ${isCorrect ? '✓ Correct' : '✗ Incorrect'}
+                            </span>
+                        </div>
+                        ${!isCorrect ? `
+                            <div class="recap-answer-item correct-answer">
+                                <span class="recap-label">Bonne réponse:</span>
+                                ${correctAnswer.text}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            
+            document.getElementById('result').innerHTML = `
+                <div style="font-size: 2em; margin: 30px 0 20px;">Votre score : ${score} / ${questions.length}</div>
+                <div style="font-size: 1.1em; color: #555; margin-bottom: 30px;">Réussite : ${Math.round(score / questions.length * 100)}%</div>
+                <div class="recap-container">${recapHtml}</div>
+            `;
+            
+            document.getElementById('prevBtn').disabled = false;
+            document.getElementById('nextBtn').textContent = 'Recommencer';
+            document.getElementById('nextBtn').disabled = false;
+            document.getElementById('nextBtn').onclick = function() { location.reload(); };
+            document.getElementById('prevBtn').onclick = function() {
+                currentQuestion = questions.length - 1;
+                displayQuestion();
+            };
+        }
+
+        displayQuestion();
+    </script>
+</body>
+</html>

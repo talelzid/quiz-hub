@@ -40,5 +40,46 @@
     "lesson": 7,
     "title": "Gestion du temps et productivité",
     "path": "cours/ift-ssd/quiz-ift-ssd-cours7.html"
+  },
+  "h8z1a3b9": {
+    "course": "ET",
+    "lesson": 6,
+    "title": "Élaboration des tests",
+    "path": "cours/et/quiz-et-cours6.html"
+  },
+  "i1j2k3l4": {
+    "course": "GAQ",
+    "lesson": 6,
+    "chapter": 1,
+    "title": "Les fondamentaux du test",
+    "path": "cours/gaq/quiz-gaq-cours6-ch1.html"
+  },
+  "m5n6o7p8": {
+    "course": "GAQ",
+    "lesson": 6,
+    "chapter": 2,
+    "title": "Tester tout au long du cycle de vie du développement logiciel",
+    "path": "cours/gaq/quiz-gaq-cours6-ch2.html"
+  },
+  "q9r0s1t2": {
+    "course": "GAQ",
+    "lesson": 6,
+    "chapter": 3,
+    "title": "Test statique",
+    "path": "cours/gaq/quiz-gaq-cours6-ch3.html"
+  },
+  "u3v4w5x6": {
+    "course": "GAQ",
+    "lesson": 6,
+    "chapter": 4,
+    "title": "Analyse et conception des tests",
+    "path": "cours/gaq/quiz-gaq-cours6-ch4.html"
+  },
+  "y7z8a9b0": {
+    "course": "GAQ",
+    "lesson": 6,
+    "chapter": 5,
+    "title": "Gestion des activités de test",
+    "path": "cours/gaq/quiz-gaq-cours6-ch5.html"
   }
 }

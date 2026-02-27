@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz - GAQ Cours 6 Chapitre 1</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <div class="global-course-title">Gestion de l'assurance qualité</div>
+    <h1>Quiz : Les fondamentaux du test (Cours 6 - Chapitre 1)</h1>
+    
+    <div class="progress-container">
+        <div class="progress-info">
+            <span id="question-counter">Question 1 / 15</span>
+            <div class="progress-stats">
+                <span class="stat-badge incorrect"><span class="stat-icon">✕</span><span id="incorrect-count">0</span></span>
+                <span class="stat-badge correct"><span class="stat-icon">✓</span><span id="correct-count">0</span></span>
+            </div>
+        </div>
+        <div class="progress-bar-wrapper" id="progressBar"></div>
+    </div>
+    
+    <div id="quiz-container" class="card"></div>
+    
+    <div id="feedback" class="feedback-container"></div>
+    
+    <div class="quiz-navigation">
+        <button id="prevBtn" onclick="previousQuestion()">← Précédent</button>
+        <button id="nextBtn" onclick="nextQuestion()">Suivant →</button>
+    </div>
+    
+    <div id="result"></div>
+
+    <script>
+        const questions = [
+            {
+                q: "Quelle est la principale différence entre une erreur, un défaut et une défaillance ?",
+                options: [
+                    { text: "Ce sont des synonymes utilisés de manière interchangeable.", explain: "L'ISTQB fait une distinction précise entre l'origine humaine, la présence dans le code et la manifestation extérieure." },
+                    { text: "Une erreur humaine produit un défaut dans le code, qui peut causer une défaillance lors de l'exécution.", explain: "" },
+                    { text: "Une défaillance cause un défaut qui est ensuite appelé erreur par le développeur.", explain: "C'est l'ordre inverse : l'erreur est la cause racine." },
+                    { text: "L'erreur est dans le document, le défaut est dans l'esprit du testeur.", explain: "Le défaut est une anomalie physique dans un produit de travail." }
+                ],
+                correct: 1,
+                correctExplain: "L'erreur est l'action humaine (méprise). Elle génère un défaut (bug statique). Si ce code est exécuté, cela peut provoquer une défaillance (comportement incorrect du système)."
+            },
+            {
+                q: "L'un des 7 principes du test stipule que 'le test exhaustif est impossible'. Pourquoi ?",
+                options: [
+                    { text: "Parce que les testeurs n'ont pas assez de diplômes.", explain: "Cela n'a aucun lien avec la théorie du test." },
+                    { text: "À cause du trop grand nombre de combinaisons d'entrées et de préconditions.", explain: "" },
+                    { text: "Parce que les outils d'automatisation sont trop lents.", explain: "Même avec des outils ultra-rapides, le nombre de combinaisons peut tendre vers l'infini." },
+                    { text: "Parce que le code change trop souvent.", explain: "C'est une difficulté de projet, mais pas la raison théorique de l'impossibilité de l'exhaustivité." }
+                ],
+                correct: 1,
+                correctExplain: "Sauf pour des cas triviaux, tester toutes les combinaisons de données et de chemins est mathématiquement irréalisable. On utilise donc l'analyse des risques pour prioriser."
+            },
+            {
+                q: "Lequel des éléments suivants est un objectif classique du test ?",
+                options: [
+                    { text: "Prouver que le logiciel ne contient aucun défaut.", explain: "Le test montre la présence de défauts, pas leur absence." },
+                    { text: "Évaluer les produits de travail pour identifier et corriger des défauts.", explain: "" },
+                    { text: "Augmenter le coût du projet pour garantir la qualité.", explain: "L'objectif est de réduire les coûts à long terme, pas de les augmenter inutilement." },
+                    { text: "Remplacer l'étape de développement par l'étape de vérification.", explain: "Le test complète le développement, il ne le remplace pas." }
+                ],
+                correct: 1,
+                correctExplain: "Le test vise à fournir des informations sur la qualité, à identifier les défauts et à instaurer la confiance dans le niveau de qualité du système."
+            },
+            {
+                q: "Qu'est-ce que le 'Paradoxe du Pesticide' ?",
+                options: [
+                    { text: "Le fait que les bugs mutent pour devenir plus résistants.", explain: "Les bugs ne mutent pas d'eux-mêmes, c'est l'efficacité des tests qui diminue." },
+                    { text: "Si on répète les mêmes tests, ils finiront par ne plus trouver de nouveaux défauts.", explain: "" },
+                    { text: "L'utilisation de produits chimiques dans les salles de serveurs.", explain: "C'est une métaphore, pas une réalité chimique." },
+                    { text: "Le fait que trop de testeurs sur un projet ralentit la livraison.", explain: "Il s'agit là de la loi de Brooks, pas du paradoxe du pesticide." }
+                ],
+                correct: 1,
+                correctExplain: "Pour rester efficaces, les tests doivent être régulièrement revus et mis à jour pour couvrir de nouvelles zones du logiciel."
+            },
+            {
+                q: "Le principe 'Le test dépend du contexte' signifie que :",
+                options: [
+                    { text: "On teste de la même manière un site web et un logiciel de pilotage d'avion.", explain: "Le niveau de criticité impose des approches radicalement différentes." },
+                    { text: "L'approche de test doit être adaptée selon le type de logiciel et les risques associés.", explain: "" },
+                    { text: "Le testeur doit travailler dans le même bureau que le développeur.", explain: "C'est une question d'organisation, pas de contexte de test théorique." },
+                    { text: "On ne teste que ce qui est facile à tester.", explain: "C'est l'inverse : on doit tester ce qui est risqué selon le contexte." }
+                ],
+                correct: 1,
+                correctExplain: "Un logiciel de sécurité critique sera testé de manière beaucoup plus rigoureuse qu'une application de jeu mobile, par exemple."
+            },
+            {
+                q: "Dans le processus de test, quelle activité vient APRÈS l'analyse des tests ?",
+                options: [
+                    { text: "La clôture des tests.", explain: "C'est la toute dernière phase." },
+                    { text: "La conception des tests.", explain: "" },
+                    { text: "La planification des tests.", explain: "La planification précède l'analyse." },
+                    { text: "Le choix de l'outil d'automatisation.", explain: "C'est une activité de support qui peut arriver à n'importe quel moment." }
+                ],
+                correct: 1,
+                correctExplain: "L'analyse définit 'quoi' tester, la conception définit 'comment' (en créant les cas de test)."
+            },
+            {
+                q: "Le test dynamique se distingue du test statique par :",
+                options: [
+                    { text: "Le fait qu'il est effectué par des robots.", explain: "Le test dynamique peut être manuel ou automatisé." },
+                    { text: "L'exécution du code sur un ordinateur.", explain: "" },
+                    { text: "L'utilisation de documents papier.", explain: "C'est le propre du test statique." },
+                    { text: "La rapidité de détection des fautes d'orthographe.", explain: "C'est souvent plus efficace en test statique (revue)." }
+                ],
+                correct: 1,
+                correctExplain: "Le test dynamique nécessite de faire tourner le logiciel pour observer son comportement."
+            },
+            {
+                q: "Pourquoi dit-on que 'l'absence d'erreurs est une illusion' ?",
+                options: [
+                    { text: "Parce que les développeurs cachent volontairement des bugs.", explain: "Affirmation infondée." },
+                    { text: "Trouver des bugs ne garantit pas que le système répond aux besoins de l'utilisateur.", explain: "" },
+                    { text: "Parce que les outils de test sont eux-mêmes buggés.", explain: "C'est possible, mais ce n'est pas le sens de ce principe ISTQB." },
+                    { text: "Parce que le code est écrit en binaire.", explain: "Aucun rapport." }
+                ],
+                correct: 1,
+                correctExplain: "Même si on ne trouve plus de défauts techniques, si le système n'est pas utilisable ou ne fait pas ce qu'on attend de lui, il est un échec."
+            },
+            {
+                q: "Quelle activité consiste à vérifier si les tests ont atteint les objectifs fixés (critères de sortie) ?",
+                options: [
+                    { text: "Analyse des tests.", explain: "Identifie les conditions de test." },
+                    { text: "Pilotage et contrôle des tests.", explain: "" },
+                    { text: "Exécution des tests.", explain: "Lancement des scripts." },
+                    { text: "Implémentation des tests.", explain: "Préparation des procédures." }
+                ],
+                correct: 1,
+                correctExplain: "Le pilotage compare l'avancement aux objectifs et le contrôle prend les mesures correctives nécessaires."
+            },
+            {
+                q: "L'activité de 'Clôture des tests' comprend :",
+                options: [
+                    { text: "L'écriture du code de l'application.", explain: "Activité de développement." },
+                    { text: "L'archivage des scripts de test et le bilan des leçons apprises.", explain: "" },
+                    { text: "La recherche de nouveaux bugs critiques.", explain: "C'est l'exécution." },
+                    { text: "L'embauche de nouveaux testeurs.", explain: "Activité RH." }
+                ],
+                correct: 1,
+                correctExplain: "En fin de projet, on s'assure que tout est documenté, archivé et on analyse comment s'améliorer pour le futur."
+            },
+            {
+                q: "Quelle est la différence entre 'Vérification' et 'Validation' ?",
+                options: [
+                    { text: "Ce sont deux mots pour dire la même chose.", explain: "L'ISTQB les distingue." },
+                    { text: "Vérification : 'Le produit est-il conforme ?' / Validation : 'Est-ce le bon produit pour l'utilisateur ?'", explain: "" },
+                    { text: "Validation est pour le code, Vérification pour les documents.", explain: "Les deux s'appliquent aux deux." },
+                    { text: "La vérification est faite par le client.", explain: "C'est souvent l'inverse (Validation d'acceptation)." }
+                ],
+                correct: 1,
+                correctExplain: "La vérification s'assure du respect des spécifications techniques. La validation s'assure que le besoin métier est réellement satisfait."
+            },
+            {
+                q: "Un testeur trouve un bug. Le développeur ne parvient pas à le reproduire. Quelle est l'action la plus importante ?",
+                options: [
+                    { text: "Supprimer le rapport de bug.", explain: "Le bug existe toujours, il faut juste mieux le documenter." },
+                    { text: "Fournir des étapes de reproduction claires et des données de test précises.", explain: "" },
+                    { text: "Crier sur le développeur.", explain: "Nuit à la collaboration." },
+                    { text: "Ignorer le problème et passer à autre chose.", explain: "Risque de laisser un bug critique en production." }
+                ],
+                correct: 1,
+                correctExplain: "La qualité de la communication et la précision des informations sont vitales pour la correction des défauts."
+            },
+            {
+                q: "Le principe du 'Regroupement des défauts' (Cluster) suggère que :",
+                options: [
+                    { text: "Les bugs se cachent souvent dans un petit nombre de modules critiques.", explain: "" },
+                    { text: "Tous les modules ont exactement le même nombre de bugs.", explain: "Faux, la complexité varie selon les modules." },
+                    { text: "Les bugs se déplacent d'un module à l'autre.", explain: "Ils ne se déplacent pas seuls." },
+                    { text: "On ne doit tester qu'un seul module par projet.", explain: "Incohérent." }
+                ],
+                correct: 0,
+                correctExplain: "Souvent, 80% des défaillances proviennent de 20% des modules (Loi de Pareto appliquée au test)."
+            },
+            {
+                q: "Quelle compétence 'douce' (soft skill) est essentielle pour un testeur ?",
+                options: [
+                    { text: "Savoir coder en 10 langages différents.", explain: "C'est une compétence technique (hard skill)." },
+                    { text: "Une communication diplomatique et constructive.", explain: "" },
+                    { text: "La capacité à taper très vite au clavier.", explain: "Peu d'impact sur la qualité du test." },
+                    { text: "Savoir configurer un serveur réseau.", explain: "C'est une compétence technique." }
+                ],
+                correct: 1,
+                correctExplain: "Le testeur doit annoncer des 'mauvaises nouvelles' aux développeurs. Il doit donc être factuel et constructif pour maintenir une bonne collaboration."
+            },
+            {
+                q: "L'assurance qualité (QA) se concentre principalement sur :",
+                options: [
+                    { text: "L'exécution des tests à la fin du projet.", explain: "C'est le contrôle qualité (QC)." },
+                    { text: "L'amélioration des processus pour éviter l'apparition de défauts.", explain: "" },
+                    { text: "La correction immédiate du code source.", explain: "C'est la tâche du développeur." },
+                    { text: "Le licenciement des mauvais développeurs.", explain: "Pas un objectif de QA." }
+                ],
+                correct: 1,
+                correctExplain: "Le QA est préventif et orienté processus. Le Test est orienté produit (détection)."
+            },
+            {
+                q: "Parmi ces activités, laquelle fait partie de l'implémentation des tests ?",
+                options: [
+                    { text: "Définir les objectifs de haut niveau.", explain: "C'est de la planification." },
+                    { text: "Créer et ordonnancer les procédures de test (scripts).", explain: "" },
+                    { text: "Identifier les conditions de test.", explain: "C'est de l'analyse." },
+                    { text: "Analyser les bugs trouvés par les utilisateurs.", explain: "C'est de la maintenance ou du support." }
+                ],
+                correct: 1,
+                correctExplain: "L'implémentation prépare tout le nécessaire pour pouvoir enfin lancer l'exécution."
+            },
+            {
+                q: "Le principe 'Le test précoce permet d'économiser du temps et de l'argent' encourage à :",
+                options: [
+                    { text: "Tester uniquement quand le logiciel est en production.", explain: "C'est le moment le plus coûteux pour corriger un bug." },
+                    { text: "Démarrer les activités de test (revues) dès le début du cycle de vie.", explain: "" },
+                    { text: "Réduire le nombre de testeurs au début du projet.", explain: "C'est l'inverse : on a besoin d'eux pour les revues précoces." },
+                    { text: "Ne pas faire de spécifications.", explain: "Sans spécification, pas de test précoce possible." }
+                ],
+                correct: 1,
+                correctExplain: "Plus un défaut est trouvé tôt (par exemple dans un document d'exigence), moins il coûte cher à corriger."
+            },
+            {
+                q: "L'indépendance du testeur permet de :",
+                options: [
+                    { text: "Trouver des défauts que l'auteur du code n'a pas vus à cause de ses propres biais.", explain: "" },
+                    { text: "Faire le travail plus vite que le développeur.", explain: "Pas nécessairement." },
+                    { text: "Ne pas avoir à lire les spécifications.", explain: "Le testeur doit toujours lire la base de test." },
+                    { text: "Gagner plus d'argent.", explain: "Aucun lien direct." }
+                ],
+                correct: 0,
+                correctExplain: "Un œil externe est plus apte à remettre en question les suppositions faites pendant le développement."
+            },
+            {
+                q: "Quelle est la principale différence entre le test et le débogage (debugging) ?",
+                options: [
+                    { text: "C'est la même chose effectuée par des personnes différentes.", explain: "Les activités sont de nature différente." },
+                    { text: "Le test montre le défaut ; le débogage trouve la cause et la corrige.", explain: "" },
+                    { text: "Le débogage est fait par les testeurs, le test par les développeurs.", explain: "C'est l'inverse." },
+                    { text: "Le test est automatique, le débogage est manuel.", explain: "Les deux peuvent être automatisés ou manuels." }
+                ],
+                correct: 1,
+                correctExplain: "Le testeur détecte une défaillance. Le développeur effectue le débogage pour localiser la faute dans le code."
+            },
+            {
+                q: "Pourquoi est-il important d'avoir une traçabilité entre la base de test et les cas de test ?",
+                options: [
+                    { text: "Pour pouvoir accuser quelqu'un en cas d'erreur.", explain: "La traçabilité n'est pas un outil de blâme." },
+                    { text: "Pour analyser l'impact des changements et vérifier la couverture des exigences.", explain: "" },
+                    { text: "Pour rendre le plan de test plus volumineux.", explain: "La quantité ne fait pas la qualité." },
+                    { text: "C'est une exigence optionnelle de l'ISTQB.", explain: "C'est une exigence fondamentale pour le pilotage." }
+                ],
+                correct: 1,
+                correctExplain: "La traçabilité permet de savoir quelles exigences sont testées et lesquelles sont impactées si une spécification change."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let answers = new Array(questions.length).fill(null);
+        let answered = new Array(questions.length).fill(false);
+
+        function displayQuestion() {
+            const container = document.getElementById('quiz-container');
+            const item = questions[currentQuestion];
+            
+            let html = `<div class="question">${currentQuestion + 1}. ${item.q}</div>`;
+            const letters = ['A', 'B', 'C', 'D'];
+            item.options.forEach((opt, i) => {
+                let classes = '';
+                if (answers[currentQuestion] === i) {
+                    classes = 'selected ';
+                    if (i === item.correct) {
+                        classes += 'correct';
+                    } else {
+                        classes += 'incorrect';
+                    }
+                }
+                const disabledClass = answered[currentQuestion] ? 'disabled' : '';
+                html += `<div class="option ${classes} ${disabledClass}" onclick="${answered[currentQuestion] ? '' : `handleAnswerClick(${i})`}" style="${answered[currentQuestion] ? 'cursor: not-allowed;' : ''}"><span class="option-letter">${letters[i]}</span> ${opt.text}</div>`;
+            });
+            
+            container.innerHTML = html;
+            
+            if (answered[currentQuestion]) {
+                showFeedback();
+            } else {
+                document.getElementById('feedback').innerHTML = '';
+                document.getElementById('feedback').classList.remove('show');
+            }
+            
+            updateProgressBar();
+            updateNavigationButtons();
+            updateProgressInfo();
+        }
+
+        function handleAnswerClick(index) {
+            if (answered[currentQuestion]) return;
+            
+            answers[currentQuestion] = index;
+            answered[currentQuestion] = true;
+            
+            showFeedback();
+            updateProgressBar();
+            updateProgressInfo();
+            updateNavigationButtons();
+            displayQuestion();
+        }
+
+        function showFeedback() {
+            const feedbackDiv = document.getElementById('feedback');
+            const item = questions[currentQuestion];
+            const isCorrect = answers[currentQuestion] === item.correct;
+            const selectedOption = item.options[answers[currentQuestion]];
+            
+            feedbackDiv.className = 'feedback-container show ' + (isCorrect ? 'feedback-correct' : 'feedback-incorrect');
+            
+            let html = '';
+            
+            if (isCorrect) {
+                html += `
+                    <div class="feedback-header">Bonne réponse!</div>
+                    <div class="feedback-explanation">${item.correctExplain}</div>
+                `;
+            } else {
+                html += `
+                    <div class="feedback-header">Pas tout à fait</div>
+                    <div class="feedback-explanation">${selectedOption.explain}</div>
+                    <div class="correct-answer-box">
+                        <div class="correct-answer-label">✓ Bonne réponse:</div>
+                        <div>${item.options[item.correct].text}</div>
+                        <div style="margin-top: 8px; font-size: 0.9em;">${item.correctExplain}</div>
+                    </div>
+                `;
+            }
+            
+            feedbackDiv.innerHTML = html;
+        }
+
+        function updateProgressBar() {
+            const progressBar = document.getElementById('progressBar');
+            progressBar.innerHTML = '';
+            
+            for (let i = 0; i < questions.length; i++) {
+                const segment = document.createElement('div');
+                segment.className = 'progress-segment';
+                
+                if (!answered[i]) {
+                    segment.classList.add('unanswered');
+                } else if (answers[i] === questions[i].correct) {
+                    segment.classList.add('correct');
+                } else {
+                    segment.classList.add('incorrect');
+                }
+                
+                progressBar.appendChild(segment);
+            }
+        }
+
+        function updateNavigationButtons() {
+            const isAnswered = answered[currentQuestion];
+            document.getElementById('prevBtn').disabled = currentQuestion === 0 || !isAnswered;
+            document.getElementById('nextBtn').disabled = !isAnswered;
+            
+            if (currentQuestion === questions.length - 1) {
+                document.getElementById('nextBtn').textContent = 'Voir Résultat';
+            } else {
+                document.getElementById('nextBtn').textContent = 'Suivant →';
+            }
+        }
+
+        function updateProgressInfo() {
+            document.getElementById('question-counter').textContent = `Question ${currentQuestion + 1} / ${questions.length}`;
+            
+            let correctCount = 0;
+            let incorrectCount = 0;
+            
+            for (let i = 0; i < answers.length; i++) {
+                if (answered[i]) {
+                    if (answers[i] === questions[i].correct) {
+                        correctCount++;
+                    } else {
+                        incorrectCount++;
+                    }
+                }
+            }
+            
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('incorrect-count').textContent = incorrectCount;
+        }
+
+        function nextQuestion() {
+            if (currentQuestion === questions.length - 1) {
+                showFinalResults();
+                return;
+            }
+            
+            currentQuestion++;
+            displayQuestion();
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        function showFinalResults() {
+            let score = 0;
+            answers.forEach((answer, index) => {
+                if (answer === questions[index].correct) score++;
+            });
+            
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '<div class="question">Quiz terminé!</div>';
+            
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.className = 'feedback-container';
+            feedbackDiv.innerHTML = '';
+            
+            let recapHtml = '<div class="recap-title">Résumé de vos réponses</div>';
+            
+            questions.forEach((question, index) => {
+                const userAnswer = question.options[answers[index]];
+                const correctAnswer = question.options[question.correct];
+                const isCorrect = answers[index] === question.correct;
+                
+                recapHtml += `
+                    <div class="recap-card ${isCorrect ? 'correct' : 'incorrect'}">
+                        <div class="recap-number">Question ${index + 1} / ${questions.length}</div>
+                        <div class="recap-question">${question.q}</div>
+                        <div class="recap-answer-item user">
+                            <span class="recap-label">Votre réponse:</span>
+                            ${userAnswer.text}
+                            <span class="recap-result ${isCorrect ? 'correct' : 'incorrect'}">
+                                ${isCorrect ? '✓ Correct' : '✗ Incorrect'}
+                            </span>
+                        </div>
+                        ${!isCorrect ? `
+                            <div class="recap-answer-item correct-answer">
+                                <span class="recap-label">Bonne réponse:</span>
+                                ${correctAnswer.text}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            
+            document.getElementById('result').innerHTML = `
+                <div style="font-size: 2em; margin: 30px 0 20px;">Votre score : ${score} / ${questions.length}</div>
+                <div style="font-size: 1.1em; color: #555; margin-bottom: 30px;">Réussite : ${Math.round(score / questions.length * 100)}%</div>
+                <div class="recap-container">${recapHtml}</div>
+            `;
+            
+            document.getElementById('prevBtn').disabled = false;
+            document.getElementById('nextBtn').textContent = 'Recommencer';
+            document.getElementById('nextBtn').disabled = false;
+            document.getElementById('nextBtn').onclick = function() { location.reload(); };
+            document.getElementById('prevBtn').onclick = function() {
+                currentQuestion = questions.length - 1;
+                displayQuestion();
+            };
+        }
+
+        displayQuestion();
+    </script>
+</body>
+</html>

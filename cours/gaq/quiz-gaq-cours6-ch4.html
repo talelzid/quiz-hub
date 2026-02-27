@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz - GAQ Cours 6 Chapitre 4</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <div class="global-course-title">Gestion de l'assurance qualité</div>
+    <h1>Quiz : Analyse et conception des tests (Cours 6 - Chapitre 4)</h1>
+    
+    <div class="progress-container">
+        <div class="progress-info">
+            <span id="question-counter">Question 1 / 20</span>
+            <div class="progress-stats">
+                <span class="stat-badge incorrect"><span class="stat-icon">✕</span><span id="incorrect-count">0</span></span>
+                <span class="stat-badge correct"><span class="stat-icon">✓</span><span id="correct-count">0</span></span>
+            </div>
+        </div>
+        <div class="progress-bar-wrapper" id="progressBar"></div>
+    </div>
+    
+    <div id="quiz-container" class="card"></div>
+    
+    <div id="feedback" class="feedback-container"></div>
+    
+    <div class="quiz-navigation">
+        <button id="prevBtn" onclick="previousQuestion()">← Précédent</button>
+        <button id="nextBtn" onclick="nextQuestion()">Suivant →</button>
+    </div>
+    
+    <div id="result"></div>
+
+    <script>
+        const questions = [
+            {
+                q: "Qu'est-ce que le test de boîte noire ?",
+                options: [
+                    { text: "Une technique qui teste uniquement le code source", explain: "" },
+                    { text: "Une technique qui teste les fonctionnalités sans connaître la structure interne du système", explain: "" },
+                    { text: "Une technique réservée aux défaillances système", explain: "" },
+                    { text: "Une méthode de test utilisée uniquement pour les interfaces", explain: "" }
+                ],
+                correct: 1,
+                correctExplain: "Le test de boîte noire évalue la fonctionnalité globale du système sans accès au code interne, en se concentrant sur les entrées et les sorties attendues."
+            },
+            {
+                q: "Quel est l'objectif principal du test de boîte blanche ?",
+                options: [
+                    { text: "Tester uniquement l'interface utilisateur", explain: "" },
+                    { text: "Examiner la structure interne du code et les chemins d'exécution", explain: "" },
+                    { text: "Valider la documentation du système", explain: "" },
+                    { text: "Vérifier la performance du système", explain: "" }
+                ],
+                correct: 1,
+                correctExplain: "Le test de boîte blanche (ou test structurel) examine le code interne, les chemins logiques et les structures de données pour assurer une couverture complète."
+            },
+            {
+                q: "Qu'est-ce que la partition d'équivalence ?",
+                options: [
+                    { text: "Une technique qui divise les données d'entrée en groupes qui devraient être traités de manière identique", explain: "" },
+                    { text: "Une méthode pour partager les responsabilités de test", explain: "" },
+                    { text: "Une technique de gestion des défauts", explain: "" },
+                    { text: "Un processus de répartition des tâches de test", explain: "" }
+                ],
+                correct: 0,
+                correctExplain: "La partition d'équivalence divise les données d'entrée en classes où les éléments doivent être traités identiquement, réduisant ainsi le nombre de cas de test nécessaires."
+            },
+            {
+                q: "Quel est l'avantage principal du test aux valeurs limites ?",
+                options: [
+                    { text: "Il teste tous les chemins du code", explain: "" },
+                    { text: "Il cible les défauts qui apparaissent généralement aux limites des domaines de données", explain: "" },
+                    { text: "Il élimine le besoin de tests de régression", explain: "" },
+                    { text: "Il garantit une couverture complète de tous les scénarios", explain: "" }
+                ],
+                correct: 1,
+                correctExplain: "Le test aux valeurs limites se concentre sur les frontières des domaines de données car c'est où les défauts apparaissent le plus souvent."
+            },
+            {
+                q: "Qu'est-ce qu'une table de décision en test ?",
+                options: [
+                    { text: "Un tableau qui énumère toutes les combinaisons de causes et leurs effets correspondants", explain: "" },
+                    { text: "Une liste des décisions prises par l'équipe de test", explain: "" },
+                    { text: "Un document qui planifie les dates de test", explain: "" },
+                    { text: "Un outil pour documenter les défauts trouvés", explain: "" }
+                ],
+                correct: 0,
+                correctExplain: "Une table de décision est une technique de test systématique qui représente les combinaisons de conditions d'entrée et les actions résultantes de manière tabulaire."
+            },
+            {
+                q: "Qu'est-ce que la couverture de code (code coverage) ?",
+                options: [
+                    { text: "Une mesure indiquant le pourcentage de code exécuté pendant les tests", explain: "" },
+                    { text: "La documentation fournie avec le code source", explain: "" },
+                    { text: "La protection du code contre les accès non autorisés", explain: "" },
+                    { text: "Le processus d'optimisation du code", explain: "" }
+                ],
+                correct: 0,
+                correctExplain: "La couverture de code mesure le pourcentage du code source qui a été exécuté lors des tests, guidant l'adéquation des cas de test."
+            },
+            {
+                q: "Quel type de couverture teste tous les chemins indépendants du plus court au plus long ?",
+                options: [
+                    { text: "Couverture de ligne", explain: "" },
+                    { text: "Couverture de branche", explain: "" },
+                    { text: "Couverture de chemin", explain: "" },
+                    { text: "Couverture de condition", explain: "" }
+                ],
+                correct: 2,
+                correctExplain: "La couverture de chemin teste tous les chemins d'exécution indépendants du code, ce qui est le critère de couverture le plus strict."
+            },
+            {
+                q: "En test de cause-effet (arbre de décision), qu'est-ce qu'une cause ?",
+                options: [
+                    { text: "Un résultat attendu du système", explain: "" },
+                    { text: "Une condition ou un événement d'entrée", explain: "" },
+                    { text: "Un défaut découvert pendant le test", explain: "" },
+                    { text: "Une limite du domaine de données", explain: "" }
+                ],
+                correct: 1,
+                correctExplain: "La cause représente une condition ou un événement d'entrée, tandis que l'effet représente le résultat observable du système."
+            },
+            {
+                q: "Qu'est-ce que la technique de transposition de limites (boundary shift) ?",
+                options: [
+                    { text: "Tester les valeurs juste avant et après les limites identifiées", explain: "" },
+                    { text: "Déplacer les limites des domaines de données lors du test", explain: "" },
+                    { text: "Une technique de réorganisation des cas de test", explain: "" },
+                    { text: "Une méthode pour augmenter la couverture de code", explain: "" }
+                ],
+                correct: 0,
+                correctExplain: "La transposition de limites teste les valeurs juste avant et après les frontières des domaines pour détecter les défauts liés aux limites."
+            },
+            {
+                q: "Qu'est-ce que l'analyse statique du code ?",
+                options: [
+                    { text: "L'exécution du code dans tous les environnements possibles", explain: "" },
+                    { text: "L'examen du code source sans l'exécuter", explain: "" },
+                    { text: "Le test du code statique uniquement", explain: "" },
+                    { text: "La vérification des performances du code", explain: "" }
+                ],
+                correct: 1,
+                correctExplain: "L'analyse statique est une méthode de vérification du code sans l'exécuter, utilisant des outils pour détecter les problèmes, violations de style et vulnerabilités."
+            },
+            {
+                q: "Quel est le but du test exploratoire ?",
+                options: [
+                    { text: "Exécuter uniquement les cas de test prédéfinis", explain: "" },
+                    { text: "Explorer le système d'une manière semi-structurée tout en concevant et exécutant les tests simultanément", explain: "" },
+                    { text: "Tester exclusivement les nouvelles fonctionnalités", explain: "" },
+                    { text: "Valider la documentation des utilisateurs", explain: "" }
+                ],
+                correct: 1,
+                correctExplain: "Le test exploratoire combine la planification, la conception et l'exécution dans une approche simultanée, permettant une découverte créative et adaptative des défauts."
+            },
+            {
+                q: "Qu'est-ce que la couverture de ligne en test ?",
+                options: [
+                    { text: "Le pourcentage de lignes de code exécutées pendant les tests", explain: "" },
+                    { text: "Le nombre de lignes dans le document de test", explain: "" },
+                    { text: "La longueur des cas de test", explain: "" },
+                    { text: "Le nombre de fichiers sources testés", explain: "" }
+                ],
+                correct: 0,
+                correctExplain: "La couverture de ligne mesure le pourcentage de lignes de code réellement exécutées lors des tests."
+            },
+            {
+                q: "En test de mutation, qu'est-ce qu'une mutation ?",
+                options: [
+                    { text: "Un comportement anormal du système", explain: "" },
+                    { text: "Une modification intentionnelle du code source pour vérifier l'efficacité des cas de test", explain: "" },
+                    { text: "Une technique pour améliorer les performances", explain: "" },
+                    { text: "Une erreur découverte dans la documentation", explain: "" }
+                ],
+                correct: 1,
+                correctExplain: "Le test de mutation applique des modifications intentionnelles (mutations) au code pour vérifier si les cas de test sont suffisants pour détecter ces changements."
+            },
+            {
+                q: "Quel est l'objectif du test de régression ?",
+                options: [
+                    { text: "Analyser les performances du système", explain: "" },
+                    { text: "Vérifier que les modifications apportées n'ont pas cassé les fonctionnalités existantes", explain: "" },
+                    { text: "Tester uniquement les nouvelles fonctionnalités", explain: "" },
+                    { text: "Valider l'interface utilisateur", explain: "" }
+                ],
+                correct: 1,
+                correctExplain: "Le test de régression vérifie qu'après une modification, les fonctionnalités existantes continuent à fonctionner correctement."
+            },
+            {
+                q: "Qu'est-ce que le test de conformité ?",
+                options: [
+                    { text: "Un test pour vérifier que le système se conforme aux standards et régulations applicables", explain: "" },
+                    { text: "Un test pour vérifier la conformité entre testeurs", explain: "" },
+                    { text: "Un test qui utilise uniquement des outils de test", explain: "" },
+                    { text: "Un test pour évaluer la satisfaction utilisateur", explain: "" }
+                ],
+                correct: 0,
+                correctExplain: "Le test de conformité vérifie que le système respecte les normes, standards, régulations et exigences légales applicables."
+            },
+            {
+                q: "En partition d'équivalence, combien de cas de test minimum pour 3 classes d'équivalence valides et 2 invalides ?",
+                options: [
+                    { text: "3 cas de test", explain: "" },
+                    { text: "5 cas de test", explain: "" },
+                    { text: "6 cas de test", explain: "" },
+                    { text: "8 cas de test", explain: "" }
+                ],
+                correct: 1,
+                correctExplain: "Pour la partition d'équivalence, il faut au minimum 1 cas de test par classe valide (3) plus 1 par classe invalide (2), soit 5 cas au minimum."
+            },
+            {
+                q: "Qu'est-ce que le test basé sur les risques (risk-based testing) ?",
+                options: [
+                    { text: "Un test qui identifie et atténue les risques potentiels par une conception et une exécution de test ciblées", explain: "" },
+                    { text: "Un test qui élimine tous les risques du système", explain: "" },
+                    { text: "Un test utilisé uniquement pour la sécurité", explain: "" },
+                    { text: "Une méthode de gestion des défauts", explain: "" }
+                ],
+                correct: 0,
+                correctExplain: "Le test basé sur les risques priorise les efforts de test en fonction des risques identifiés, allouant plus de ressources aux zones à haut risque."
+            },
+            {
+                q: "Quel est le critère minimum de couverture de branche considéré comme acceptable ?",
+                options: [
+                    { text: "50%", explain: "" },
+                    { text: "75%", explain: "" },
+                    { text: "80%", explain: "" },
+                    { text: "100%", explain: "" }
+                ],
+                correct: 2,
+                correctExplain: "Généralement, 80% de couverture de branche est considéré comme un objectif acceptable pour garantir une couverture raisonnable du code."
+            },
+            {
+                q: "Qu'est-ce que le test de smoke (test de fumée) ?",
+                options: [
+                    { text: "Un test rapide et superficiel pour vérifier que les fonctionnalités critiques fonctionnent", explain: "" },
+                    { text: "Un test qui identifie les défauts fumant (critiques)", explain: "" },
+                    { text: "Un test réalisé avant la compilation du code", explain: "" },
+                    { text: "Un test qui évalue la stabilité du système sous charge", explain: "" }
+                ],
+                correct: 0,
+                correctExplain: "Le test de smoke est un test rapide et basique exécuté après une compilation ou déploiement pour s'assurer que les fonctionnalités critiques sont opérationnelles."
+            },
+            {
+                q: "En test de tables de décision, combien de colonnes pour 2 conditions et une action ?",
+                options: [
+                    { text: "2 colonnes", explain: "" },
+                    { text: "3 colonnes", explain: "" },
+                    { text: "4 colonnes", explain: "" },
+                    { text: "5 colonnes", explain: "" }
+                ],
+                correct: 3,
+                correctExplain: "Pour 2 conditions et une action : colonne 1 (condition 1), colonne 2 (condition 2), colonne 3 (action), colonne 4 (règle de décision), colonne 5 (résultat)."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let answers = new Array(questions.length).fill(null);
+        let answered = new Array(questions.length).fill(false);
+
+        function displayQuestion() {
+            const container = document.getElementById('quiz-container');
+            const item = questions[currentQuestion];
+            
+            let html = `<div class="question">${currentQuestion + 1}. ${item.q}</div>`;
+            const letters = ['A', 'B', 'C', 'D'];
+            item.options.forEach((opt, i) => {
+                let classes = '';
+                if (answers[currentQuestion] === i) {
+                    classes = 'selected ';
+                    if (i === item.correct) {
+                        classes += 'correct';
+                    } else {
+                        classes += 'incorrect';
+                    }
+                }
+                const disabledClass = answered[currentQuestion] ? 'disabled' : '';
+                html += `<div class="option ${classes} ${disabledClass}" onclick="${answered[currentQuestion] ? '' : `handleAnswerClick(${i})`}" style="${answered[currentQuestion] ? 'cursor: not-allowed;' : ''}"><span class="option-letter">${letters[i]}</span> ${opt.text}</div>`;
+            });
+            
+            container.innerHTML = html;
+            
+            if (answered[currentQuestion]) {
+                showFeedback();
+            } else {
+                document.getElementById('feedback').innerHTML = '';
+                document.getElementById('feedback').classList.remove('show');
+            }
+            
+            updateProgressBar();
+            updateNavigationButtons();
+            updateProgressInfo();
+        }
+
+        function handleAnswerClick(index) {
+            if (answered[currentQuestion]) return;
+            
+            answers[currentQuestion] = index;
+            answered[currentQuestion] = true;
+            
+            showFeedback();
+            updateProgressBar();
+            updateProgressInfo();
+            updateNavigationButtons();
+            displayQuestion();
+        }
+
+        function showFeedback() {
+            const feedbackDiv = document.getElementById('feedback');
+            const item = questions[currentQuestion];
+            const isCorrect = answers[currentQuestion] === item.correct;
+            const selectedOption = item.options[answers[currentQuestion]];
+            
+            feedbackDiv.className = 'feedback-container show ' + (isCorrect ? 'feedback-correct' : 'feedback-incorrect');
+            
+            let html = '';
+            
+            if (isCorrect) {
+                html += `
+                    <div class="feedback-header">Bonne réponse!</div>
+                    <div class="feedback-explanation">${item.correctExplain}</div>
+                `;
+            } else {
+                html += `
+                    <div class="feedback-header">Pas tout à fait</div>
+                    <div class="feedback-explanation">${selectedOption.explain}</div>
+                    <div class="correct-answer-box">
+                        <div class="correct-answer-label">✓ Bonne réponse:</div>
+                        <div>${item.options[item.correct].text}</div>
+                        <div style="margin-top: 8px; font-size: 0.9em;">${item.correctExplain}</div>
+                    </div>
+                `;
+            }
+            
+            feedbackDiv.innerHTML = html;
+        }
+
+        function updateProgressBar() {
+            const progressBar = document.getElementById('progressBar');
+            progressBar.innerHTML = '';
+            
+            for (let i = 0; i < questions.length; i++) {
+                const segment = document.createElement('div');
+                segment.className = 'progress-segment';
+                
+                if (!answered[i]) {
+                    segment.classList.add('unanswered');
+                } else if (answers[i] === questions[i].correct) {
+                    segment.classList.add('correct');
+                } else {
+                    segment.classList.add('incorrect');
+                }
+                
+                progressBar.appendChild(segment);
+            }
+        }
+
+        function updateNavigationButtons() {
+            const isAnswered = answered[currentQuestion];
+            document.getElementById('prevBtn').disabled = currentQuestion === 0 || !isAnswered;
+            document.getElementById('nextBtn').disabled = !isAnswered;
+            
+            if (currentQuestion === questions.length - 1) {
+                document.getElementById('nextBtn').textContent = 'Voir Résultat';
+            } else {
+                document.getElementById('nextBtn').textContent = 'Suivant →';
+            }
+        }
+
+        function updateProgressInfo() {
+            document.getElementById('question-counter').textContent = `Question ${currentQuestion + 1} / ${questions.length}`;
+            const correctCount = answers.filter((a, i) => a === questions[i].correct).length;
+            const incorrectCount = answers.filter((a, i) => a !== null && a !== questions[i].correct).length;
+            
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('incorrect-count').textContent = incorrectCount;
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                displayQuestion();
+            } else {
+                showFinalResults();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        function showFinalResults() {
+            let score = 0;
+            answers.forEach((answer, index) => {
+                if (answer === questions[index].correct) score++;
+            });
+            
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '<div class="question">Quiz terminé!</div>';
+            
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.className = 'feedback-container';
+            feedbackDiv.innerHTML = '';
+            
+            let recapHtml = '<div class="recap-title">Résumé de vos réponses</div>';
+            
+            questions.forEach((question, index) => {
+                const userAnswer = question.options[answers[index]];
+                const correctAnswer = question.options[question.correct];
+                const isCorrect = answers[index] === question.correct;
+                
+                recapHtml += `
+                    <div class="recap-card ${isCorrect ? 'correct' : 'incorrect'}">
+                        <div class="recap-number">Question ${index + 1} / ${questions.length}</div>
+                        <div class="recap-question">${question.q}</div>
+                        <div class="recap-answer-item user">
+                            <span class="recap-label">Votre réponse:</span>
+                            ${userAnswer.text}
+                            <span class="recap-result ${isCorrect ? 'correct' : 'incorrect'}">
+                                ${isCorrect ? '✓ Correct' : '✗ Incorrect'}
+                            </span>
+                        </div>
+                        ${!isCorrect ? `
+                            <div class="recap-answer-item correct-answer">
+                                <span class="recap-label">Bonne réponse:</span>
+                                ${correctAnswer.text}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            
+            document.getElementById('result').innerHTML = `
+                <div style="font-size: 2em; margin: 30px 0 20px;">Votre score : ${score} / ${questions.length}</div>
+                <div style="font-size: 1.1em; color: #555; margin-bottom: 30px;">Réussite : ${Math.round(score / questions.length * 100)}%</div>
+                <div class="recap-container">${recapHtml}</div>
+            `;
+            
+            document.getElementById('prevBtn').disabled = false;
+            document.getElementById('nextBtn').textContent = 'Recommencer';
+            document.getElementById('nextBtn').disabled = false;
+            document.getElementById('nextBtn').onclick = function() { location.reload(); };
+            document.getElementById('prevBtn').onclick = function() {
+                currentQuestion = questions.length - 1;
+                displayQuestion();
+            };
+        }
+
+        displayQuestion();
+    </script>
+</body>
+</html>

@@ -2,12 +2,12 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Quiz - Le modèle relationnel</title>
+    <title>Quiz - Élaboration des tests</title>
     <link rel="stylesheet" href="../../css/style.css">
 </head>
 <body>
-    <div class="global-course-title">Initiation à la fonction de travail d'un spécialiste de solutions de données</div>
-    <h1>Quiz : IA et Spécialisation de Données (Cours 5)</h1>
+    <div class="global-course-title">Élaboration des tests</div>
+    <h1>Quiz : Les scénarios de tests (Cours 6)</h1>
     
     <div class="progress-container">
         <div class="progress-info">
@@ -34,114 +34,114 @@
     <script>
         const questions = [
             {
-                q: "Quelle est la principale différence entre un spécialiste de données 'classique' et un spécialiste 'augmenté' ?",
+                q: "Quelle est la principale différence entre un scénario de test et un cas de test dans une approche moderne ?",
                 options: [
-                    { text: "Le spécialiste augmenté ne sait plus programmer manuellement.", explain: "Au contraire, il doit comprendre le code pour le valider." },
-                    { text: "Le spécialiste augmenté utilise l'IA pour automatiser l'exécution et se concentre sur la supervision.", explain: "" },
-                    { text: "Le spécialiste augmenté est remplacé par un robot.", explain: "L'IA est un outil, pas un remplaçant du jugement humain." },
-                    { text: "Le spécialiste augmenté travaille uniquement sur la création de modèles d'IA.", explain: "Il utilise l'IA pour ses tâches de données, pas seulement pour créer des modèles." }
-                ],
-                correct: 1,
-                correctExplain: "Le spécialiste augmenté délègue les tâches répétitives à l'IA pour se concentrer sur la stratégie, l'architecture et la validation."
-            },
-            {
-                q: "Qu'est-ce qu'un LLM (Large Language Model) dans le contexte du développement ?",
-                options: [
-                    { text: "Un type de base de données très rapide.", explain: "Il s'agit d'un modèle de langage, pas d'un système de stockage." },
-                    { text: "Un modèle d'IA capable de comprendre et générer du langage humain et informatique.", explain: "" },
-                    { text: "Un protocole de sécurité pour le Cloud.", explain: "Les protocoles de sécurité sont différents des modèles de langage." },
-                    { text: "Un logiciel de nettoyage de données automatique sans intervention humaine.", explain: "Bien qu'il puisse aider, ce n'est pas sa définition première." }
-                ],
-                correct: 1,
-                correctExplain: "Les LLM comme GPT ou Claude sont entraînés sur du texte et du code, ce qui leur permet de comprendre la logique de programmation."
-            },
-            {
-                q: "Parmi ces outils, lequel est un assistant de code directement intégré dans l'éditeur (IDE) ?",
-                options: [
-                    { text: "Gemini", explain: "Gemini est principalement une interface web (agent conversationnel)." },
-                    { text: "ChatGPT", explain: "C'est un agent conversationnel généraliste." },
-                    { text: "GitHub Copilot", explain: "" },
-                    { text: "Claude", explain: "Claude est un agent conversationnel, pas une extension d'éditeur." }
-                ],
-                correct: 2,
-                correctExplain: "GitHub Copilot est conçu pour suggérer du code en temps réel à l'intérieur de VS Code ou d'autres éditeurs."
-            },
-            {
-                q: "Pourquoi est-il dangereux de copier-coller des données client dans une IA publique comme ChatGPT ?",
-                options: [
-                    { text: "Parce que l'IA va supprimer les données par erreur.", explain: "Le risque n'est pas la perte, mais la fuite d'information." },
-                    { text: "Parce que les données pourraient être utilisées pour entraîner l'IA et devenir publiques.", explain: "" },
-                    { text: "Parce que l'IA ne sait pas lire les noms de famille.", explain: "L'IA sait très bien les lire, c'est justement le problème de confidentialité." },
-                    { text: "Parce que cela coûte trop cher en électricité.", explain: "Ce n'est pas l'enjeu principal de sécurité pour l'entreprise." }
-                ],
-                correct: 1,
-                correctExplain: "La confidentialité est primordiale. Les données envoyées aux modèles publics peuvent être stockées et réutilisées, ce qui viole souvent les politiques d'entreprise."
-            },
-            {
-                q: "Dans le Workflow du spécialiste augmenté, quelle est la règle d'or ?",
-                options: [
-                    { text: "L'IA a toujours raison car elle a accès à tout Internet.", explain: "L'IA peut 'halluciner' et inventer des solutions fausses." },
-                    { text: "Ne jamais utiliser l'IA pour du code de production.", explain: "On peut l'utiliser, mais avec une méthode rigoureuse." },
-                    { text: "Faire confiance, mais vérifier (Trust but Verify).", explain: "" },
-                    { text: "Demander à l'IA de vérifier son propre travail sans intervention humaine.", explain: "Une validation humaine reste indispensable pour le contexte métier." }
-                ],
-                correct: 2,
-                correctExplain: "L'humain reste le pilote. Il doit tester et valider chaque suggestion de l'IA avant de l'intégrer."
-            },
-            {
-                q: "Comment l'IA peut-elle aider le rôle de 'Testeur' (QA) dans un projet de données ?",
-                options: [
-                    { text: "En générant des jeux de données fictifs pour tester les limites du système.", explain: "" },
-                    { text: "En remplaçant le testeur pour signer les contrats.", explain: "Le testeur ne signe pas les contrats et l'IA ne prend pas de décisions juridiques." },
-                    { text: "En réparant automatiquement les serveurs en panne.", explain: "C'est plutôt le rôle de l'équipe infrastructure/DevOps, souvent manuellement." },
-                    { text: "L'IA ne peut pas aider les testeurs.", explain: "L'IA est excellente pour imaginer des scénarios de test." }
+                    { text: "Le scénario décrit l'intention logique alors que le cas de test est l'instanciation avec des données précises.", explain: "" },
+                    { text: "Le scénario est écrit par le développeur et le cas de test par le QA.", explain: "Les deux sont généralement sous la responsabilité de l'équipe qualité ou rédigés de manière collaborative." },
+                    { text: "Il n'y a aucune différence, ce sont deux synonymes exacts.", explain: "Dans un outil de gestion de tests, on distingue l'actif de test (le ticket) de son exécution (le run)." },
+                    { text: "Le scénario est obligatoire dans Jira, mais pas le cas de test.", explain: "Les deux concepts sont nécessaires pour assurer une exécution et une traçabilité rigoureuse." }
                 ],
                 correct: 0,
-                correctExplain: "L'IA peut créer rapidement des milliers de lignes de données de test (noms, adresses, prix) pour vérifier la robustesse des flux de données."
+                correctExplain: "Le scénario est une 'coquille' descriptive (le quoi) alors que le cas de test correspond à une exécution concrète (le comment) sur un environnement donné avec des jeux de données."
             },
             {
-                q: "Qu'est-ce qu'une 'hallucination' dans le contexte d'une IA générative ?",
+                q: "Dans Jira, quel type de lien est généralement utilisé pour lier un Test à une User Story afin de calculer la couverture ?",
                 options: [
-                    { text: "Quand l'ordinateur s'éteint brusquement.", explain: "C'est une panne matérielle ou logicielle classique." },
-                    { text: "Quand l'IA génère une réponse qui semble correcte mais qui est techniquement fausse.", explain: "" },
-                    { text: "Quand l'IA refuse de répondre à une question.", explain: "C'est un refus de sécurité ou une limite de filtre, pas une hallucination." },
-                    { text: "Quand l'IA répond trop rapidement.", explain: "La vitesse n'a aucun lien avec la véracité du contenu." }
+                    { text: "Relates to", explain: "Ce lien est trop générique et n'est pas comptabilisé par les outils comme Xray ou Zephyr pour la couverture." },
+                    { text: "Is tested by / Tests", explain: "" },
+                    { text: "Blocks", explain: "Ce lien est utilisé lorsqu'un ticket empêche l'avancement d'un autre, généralement pour des bugs bloquants." },
+                    { text: "Clones", explain: "Le clonage crée une copie identique mais n'établit pas de relation de vérification fonctionnelle." }
                 ],
                 correct: 1,
-                correctExplain: "L'hallucination est un risque majeur : l'IA peut inventer une fonction de programmation qui n'existe pas avec beaucoup d'assurance."
+                correctExplain: "C'est le lien sémantique standard qui permet aux outils de reporting de lier l'exigence au résultat de validation pour générer la matrice de couverture."
             },
             {
-                q: "Quelle tâche est la plus adaptée à l'IA lors d'une migration de données ?",
+                q: "Qu'est-ce qu'un scénario de type 'Nominal' ?",
                 options: [
-                    { text: "Convaincre le client de changer de logiciel.", explain: "C'est une tâche relationnelle humaine." },
-                    { text: "Porter les serveurs physiques d'un bureau à un autre.", explain: "L'IA n'a pas de corps physique." },
-                    { text: "Convertir un fichier XML complexe en format CSV ou JSON.", explain: "" },
-                    { text: "Décider du budget final du projet.", explain: "Le budget est une décision humaine de gestion." }
-                ],
-                correct: 2,
-                correctExplain: "La conversion de formats et le reformatage de structures de données sont des forces majeures des LLM."
-            },
-            {
-                q: "Pour documenter un code complexe, que peut-on fournir à l'IA ?",
-                options: [
-                    { text: "Seulement le titre du projet.", explain: "Ce n'est pas suffisant pour que l'IA comprenne la logique interne." },
-                    { text: "Le code source avec une demande de générer un tableau explicatif.", explain: "" },
-                    { text: "Rien, l'IA doit deviner ce que fait le code sur mon ordinateur.", explain: "L'IA n'a pas accès à vos fichiers locaux sans que vous les fournissiez." },
-                    { text: "Une photo de l'écran avec du code flou.", explain: "La qualité du résultat dépend de la clarté des données fournies." }
+                    { text: "Un test qui vérifie uniquement les messages d'erreur.", explain: "Cela correspondrait plutôt à un scénario d'exception." },
+                    { text: "Un parcours où l'utilisateur suit le flux principal sans erreur (Happy Path).", explain: "" },
+                    { text: "Un test qui ne contient pas de données de test.", explain: "Tout test exécutable nécessite des données, quel que soit son type." },
+                    { text: "Un test nommé par l'identifiant unique de Jira.", explain: "Le nommage est une règle de rédaction, pas une typologie de parcours." }
                 ],
                 correct: 1,
-                correctExplain: "En lui soumettant le code, l'IA peut analyser les variables et les fonctions pour rédiger une documentation technique claire."
+                correctExplain: "Le scénario nominal (ou Happy Path) valide que la fonctionnalité répond au besoin de base pour lequel elle a été conçue sans rencontrer d'obstacles."
             },
             {
-                q: "Quel est l'impact de l'IA sur la phase de 'Nettoyage' (Data Cleaning) ?",
+                q: "Pourquoi la section 'Post-conditions' est-elle cruciale lors de l'exécution d'une suite de tests ?",
                 options: [
-                    { text: "Elle rend le nettoyage inutile car les données deviennent parfaites par magie.", explain: "Les données sources restent sales, il faut toujours les traiter." },
-                    { text: "Elle permet de détecter des anomalies et de suggérer des corrections de formats.", explain: "" },
-                    { text: "Elle empêche les utilisateurs de faire des erreurs de saisie.", explain: "L'IA intervient après la saisie, elle n'empêche pas l'erreur humaine à la source." },
-                    { text: "Elle ralentit le processus car elle pose trop de questions.", explain: "Au contraire, elle accélère considérablement cette phase ingrate." }
+                    { text: "Elle permet de rédiger le rapport de test final.", explain: "Le rapport est une synthèse globale, pas une étape technique de nettoyage." },
+                    { text: "Elle garantit que l'environnement est nettoyé pour éviter que les traces d'un test ne fassent échouer le suivant.", explain: "" },
+                    { text: "Elle sert à définir le mot de passe de l'utilisateur.", explain: "La définition des accès se situe normalement dans les pré-conditions." },
+                    { text: "Elle est optionnelle et ne sert qu'à l'automatisation.", explain: "Même en test manuel, le nettoyage est indispensable pour la reproductibilité." }
                 ],
                 correct: 1,
-                correctExplain: "L'IA est excellente pour repérer des incohérences (ex: un numéro de téléphone à 5 chiffres) et proposer des scripts de correction."
+                correctExplain: "L'isolation des tests prévient les 'faux négatifs' causés par des données polluantes restées en base de données après un test précédent."
+            },
+            {
+                q: "Lors de la transformation d'un critère d'acceptation Gherkin 'Etant donné (Given)' en test Jira, où place-t-on généralement cette information ?",
+                options: [
+                    { text: "Dans le résumé (Summary).", explain: "Le résumé doit être court ; le 'Given' est souvent trop détaillé pour cela." },
+                    { text: "Dans les pré-conditions.", explain: "" },
+                    { text: "Dans le résultat attendu de la dernière étape.", explain: "Le résultat attendu correspond au 'Then' du Gherkin." },
+                    { text: "Dans les commentaires du ticket.", explain: "Les éléments structurants du test doivent être dans des champs dédiés." }
+                ],
+                correct: 1,
+                correctExplain: "Le 'Given' définit l'état initial requis du système, ce qui correspond exactement au rôle des pré-conditions dans un cas de test."
+            },
+            {
+                q: "Que signifie une User Story avec le statut de couverture 'UNCOVERED' ?",
+                options: [
+                    { text: "Qu'aucun test n'a encore été créé ou lié pour vérifier cette exigence.", explain: "" },
+                    { text: "Que le développeur n'a pas fini de coder l'US.", explain: "Le statut de couverture concerne les tests, pas l'avancement du développement." },
+                    { text: "Que les tests ont été exécutés mais ont échoué.", explain: "Dans ce cas, le statut de couverture serait 'FAILED'." },
+                    { text: "Que l'US est trop complexe pour être testée.", explain: "Toute US doit pouvoir être testée ; 'Uncovered' est un manque d'association." }
+                ],
+                correct: 0,
+                correctExplain: "Cela indique un risque majeur de qualité : l'exigence existe dans le backlog mais aucun test n'a été conçu pour la valider."
+            },
+            {
+                q: "Quelle est la règle d'or pour la rédaction des étapes (Steps) d'un test ?",
+                options: [
+                    { text: "Chaque étape doit comporter plusieurs actions pour gagner du temps.", explain: "Cela rend le test difficile à suivre et l'origine de l'échec difficile à diagnostiquer." },
+                    { text: "Chaque étape doit être atomique : une action précise pour un résultat attendu précis.", explain: "" },
+                    { text: "Il ne faut jamais mettre de données de test dans les étapes.", explain: "Au contraire, les valeurs limites ou spécifiques doivent être mentionnées pour guider l'exécuteur." },
+                    { text: "Les étapes doivent être rédigées uniquement en anglais.", explain: "La langue dépend des conventions de l'équipe et du projet." }
+                ],
+                correct: 1,
+                correctExplain: "L'atomicité permet une précision maximale lors du passage du test : si l'étape échoue, on sait exactement quelle action a posé problème."
+            },
+            {
+                q: "Dans Jira, quelle est l'utilité principale des 'Labels' pour un QA ?",
+                options: [
+                    { text: "Remplacer les liens vers les User Stories.", explain: "Les labels ne permettent pas de calculer la couverture structurelle des exigences." },
+                    { text: "Organiser des suites de tests dynamiques (ex: Smoke_Test, Regression).", explain: "" },
+                    { text: "Définir qui est responsable du test.", explain: "Le champ 'Assignee' est réservé à cet usage." },
+                    { text: "Indiquer le temps passé sur le test.", explain: "Le 'Log Work' est utilisé pour le suivi du temps." }
+                ],
+                correct: 1,
+                correctExplain: "Les labels sont des marqueurs flexibles qui permettent de filtrer et de sélectionner rapidement des tests pour des campagnes spécifiques (ex: Sanity Check)."
+            },
+            {
+                q: "Qu'est-ce qu'un critère de succès (ou critère d'évaluation) dans un scénario ?",
+                options: [
+                    { text: "Le nom du testeur qui a réussi le test.", explain: "C'est une métadonnée d'exécution, pas un critère de qualité." },
+                    { text: "La validation globale que l'objectif du scénario est atteint et le système est dans l'état final attendu.", explain: "" },
+                    { text: "Le temps de réponse du serveur uniquement.", explain: "C'est un critère de performance, pas forcément le critère de succès fonctionnel." },
+                    { text: "Une liste de tous les bugs trouvés pendant le test.", explain: "Le succès se définit par l'atteinte de l'objectif, pas par la liste des échecs." }
+                ],
+                correct: 1,
+                correctExplain: "Le critère de succès est la condition finale qui permet de dire si l'exigence métier est satisfaite à la fin du parcours."
+            },
+            {
+                q: "Un scénario 'Alternatif' est défini par :",
+                options: [
+                    { text: "L'utilisation d'un chemin différent pour atteindre le même but fonctionnel.", explain: "" },
+                    { text: "Une erreur système majeure qui arrête le test.", explain: "Cela correspond à un scénario d'exception ou à un blocage." },
+                    { text: "Le fait de tester sur un autre navigateur que Chrome.", explain: "C'est une variation d'environnement, pas une variante de flux fonctionnel." },
+                    { text: "Un test qui n'est pas lié à une User Story.", explain: "L'absence de lien est une erreur de traçabilité, pas un type de scénario." }
+                ],
+                correct: 0,
+                correctExplain: "Un scénario alternatif explore une variante valide du flux (ex: payer par carte au lieu de virement). Le but est atteint, mais par un chemin différent."
             }
         ];
 

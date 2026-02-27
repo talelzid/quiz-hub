@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz - GAQ Cours 6 Chapitre 2</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <div class="global-course-title">Gestion de l'assurance qualité</div>
+    <h1>Quiz : Tester tout au long du cycle de vie du développement logiciel (Cours 6 - Chapitre 2)</h1>
+    
+    <div class="progress-container">
+        <div class="progress-info">
+            <span id="question-counter">Question 1 / 21</span>
+            <div class="progress-stats">
+                <span class="stat-badge incorrect"><span class="stat-icon">✕</span><span id="incorrect-count">0</span></span>
+                <span class="stat-badge correct"><span class="stat-icon">✓</span><span id="correct-count">0</span></span>
+            </div>
+        </div>
+        <div class="progress-bar-wrapper" id="progressBar"></div>
+    </div>
+    
+    <div id="quiz-container" class="card"></div>
+    
+    <div id="feedback" class="feedback-container"></div>
+    
+    <div class="quiz-navigation">
+        <button id="prevBtn" onclick="previousQuestion()">← Précédent</button>
+        <button id="nextBtn" onclick="nextQuestion()">Suivant →</button>
+    </div>
+    
+    <div id="result"></div>
+
+    <script>
+        const questions = [
+            {
+                q: "Quel est l'impact principal d'un modèle de cycle de vie logiciel (SDLC) sur le test ?",
+                options: [
+                    { text: "Il détermine le nombre exact de bugs que les testeurs doivent trouver.", explain: "Le nombre de défauts dépend de la qualité du code, pas du modèle de cycle de vie choisi." },
+                    { text: "Il définit le moment, la portée et la planification des activités de test.", explain: "" },
+                    { text: "Il impose l'utilisation d'outils d'automatisation spécifiques.", explain: "Le choix des outils est indépendant du modèle, même si certains facilitent l'automatisation." },
+                    { text: "Il remplace le besoin de rédiger un plan de test.", explain: "Peu importe le modèle, la planification reste une activité fondamentale." }
+                ],
+                correct: 1,
+                correctExplain: "Le modèle de cycle de vie (séquentiel ou itératif) influence directement quand les tests commencent, quelle est leur étendue et comment ils sont planifiés."
+            },
+            {
+                q: "Dans un modèle séquentiel (comme le modèle en V), quand les tests doivent-ils être préparés ?",
+                options: [
+                    { text: "Uniquement lorsque le code est entièrement terminé.", explain: "C'est une erreur classique ; l'ISTQB préconise une préparation précoce dès la phase documentaire." },
+                    { text: "En parallèle de l'activité de développement correspondante.", explain: "" },
+                    { text: "Juste avant la mise en production.", explain: "C'est beaucoup trop tard pour réduire les coûts de correction." },
+                    { text: "Après la phase de maintenance.", explain: "La maintenance intervient après la livraison initiale." }
+                ],
+                correct: 1,
+                correctExplain: "Le modèle en V montre que la conception des tests commence dès l'analyse des spécifications correspondantes (Test précoce)."
+            },
+            {
+                q: "Lequel des éléments suivants est un niveau de test standard ?",
+                options: [
+                    { text: "Test de performance.", explain: "C'est un type de test (non-fonctionnel), pas un niveau." },
+                    { text: "Test système.", explain: "" },
+                    { text: "Test de boîte noire.", explain: "C'est une technique de test, pas un niveau." },
+                    { text: "Test de régression.", explain: "C'est un type de test lié au changement." }
+                ],
+                correct: 1,
+                correctExplain: "Les quatre niveaux de test reconnus sont : composants (unitaire), intégration, système et acceptation."
+            },
+            {
+                q: "Quel est l'objectif principal des tests unitaires (ou tests de composants) ?",
+                options: [
+                    { text: "Vérifier que le système complet répond aux besoins métier.", explain: "C'est l'objectif des tests d'acceptation." },
+                    { text: "Réduire les risques et vérifier le comportement des modules individuels.", explain: "" },
+                    { text: "Tester les interactions entre les différents sous-systèmes.", explain: "C'est l'objectif des tests d'intégration." },
+                    { text: "S'assurer que le logiciel est facile à utiliser pour l'utilisateur final.", explain: "Il s'agit là de tests d'utilisabilité." }
+                ],
+                correct: 1,
+                correctExplain: "Les tests de composants se concentrent sur les plus petites unités de code isolées pour réduire les risques au plus bas niveau."
+            },
+            {
+                q: "Les tests d'acceptation utilisateur (UAT) sont généralement effectués par :",
+                options: [
+                    { text: "Les développeurs système.", explain: "Les développeurs se concentrent sur les tests unitaires et d'intégration." },
+                    { text: "Les clients ou les futurs utilisateurs du logiciel.", explain: "" },
+                    { text: "L'équipe d'assurance qualité indépendante uniquement.", explain: "L'UAT nécessite l'implication des parties prenantes métier." },
+                    { text: "Le département marketing.", explain: "Bien qu'ils puissent donner un avis, ils ne sont pas les acteurs principaux définis." }
+                ],
+                correct: 1,
+                correctExplain: "L'objectif est de confirmer que le système est prêt à être utilisé par ses destinataires finaux dans un contexte réel."
+            },
+            {
+                q: "Un test qui vérifie 'ce que le système fait' est classé comme :",
+                options: [
+                    { text: "Test non-fonctionnel.", explain: "Le non-fonctionnel vérifie 'comment' le système fonctionne (vitesse, sécurité)." },
+                    { text: "Test fonctionnel.", explain: "" },
+                    { text: "Test structurel.", explain: "Le structurel se base sur l'architecture interne ou le code." },
+                    { text: "Test de maintenance.", explain: "C'est une catégorie liée au cycle de vie, pas à la nature de la caractéristique." }
+                ],
+                correct: 1,
+                correctExplain: "Les tests fonctionnels se basent sur les fonctions, les tâches ou les processus métier décrits dans les spécifications."
+            },
+            {
+                q: "Qu'est-ce qu'un test de confirmation (ou re-test) ?",
+                options: [
+                    { text: "Un test pour vérifier qu'une nouvelle fonctionnalité n'a pas cassé l'existant.", explain: "C'est la définition du test de non-régression." },
+                    { text: "Un test exécuté après la correction d'un défaut pour vérifier qu'il est bien résolu.", explain: "" },
+                    { text: "Une relecture du plan de test par le chef de projet.", explain: "Il s'agit d'une revue (test statique)." },
+                    { text: "Un test automatisé lancé chaque nuit.", explain: "L'automatisation nocturne est souvent de la régression." }
+                ],
+                correct: 1,
+                correctExplain: "Le test de confirmation vise spécifiquement à valider la correction d'un bug précédemment identifié."
+            },
+            {
+                q: "L'approche 'Shift-Left' suggère que le test doit :",
+                options: [
+                    { text: "Être déplacé vers la fin du cycle de développement.", explain: "C'est l'inverse ; 'Left' représente le début du cycle." },
+                    { text: "Commencer le plus tôt possible dans le cycle de vie.", explain: "" },
+                    { text: "Être effectué uniquement par les développeurs.", explain: "Le Shift-Left implique tout le monde mais ne supprime pas les testeurs." },
+                    { text: "Utiliser uniquement des outils open-source.", explain: "C'est une question de timing, pas de licence logicielle." }
+                ],
+                correct: 1,
+                correctExplain: "Le Shift-Left consiste à intégrer le test dès les phases de conception et de spécification pour détecter les défauts au plus tôt."
+            },
+            {
+                q: "Dans quel contexte parle-t-on de 'Tests de maintenance' ?",
+                options: [
+                    { text: "Lorsqu'on développe la toute première version d'un nouveau logiciel.", explain: "C'est du développement initial." },
+                    { text: "Après le déploiement, pour des modifications, des migrations ou des retraits.", explain: "" },
+                    { text: "Uniquement lorsque les serveurs tombent en panne.", explain: "La maintenance inclut aussi les évolutions fonctionnelles." },
+                    { text: "Pendant la phase de tests unitaires.", explain: "Cela fait partie du développement initial." }
+                ],
+                correct: 1,
+                correctExplain: "La maintenance intervient sur un système déjà opérationnel pour le modifier, le migrer ou le retirer du service."
+            },
+            {
+                q: "Lequel des éléments suivants est un test non-fonctionnel ?",
+                options: [
+                    { text: "Vérifier que le bouton 'Payer' traite la transaction.", explain: "C'est un test fonctionnel." },
+                    { text: "Vérifier la consommation de mémoire de l'application sous forte charge.", explain: "" },
+                    { text: "Vérifier que le message d'erreur s'affiche en rouge.", explain: "C'est généralement une exigence d'UI ou fonctionnelle." },
+                    { text: "Vérifier que l'utilisateur peut se connecter avec un mot de passe valide.", explain: "C'est une fonctionnalité de base." }
+                ],
+                correct: 1,
+                correctExplain: "L'efficacité des ressources, la performance et la sécurité sont des attributs de qualité dits non-fonctionnels."
+            },
+            {
+                q: "Vous travaillez dans une équipe Agile. À quel moment effectuez-vous les tests de régression ?",
+                options: [
+                    { text: "Uniquement tous les six mois lors d'une 'Release' majeure.", explain: "En Agile, les cycles sont courts et les vérifications doivent être fréquentes." },
+                    { text: "À chaque itération, idéalement de manière automatisée.", explain: "" },
+                    { text: "Seulement si un développeur demande explicitement une vérification.", explain: "La régression doit être systématique, pas à la demande." },
+                    { text: "L'Agile interdit les tests de régression pour gagner du temps.", explain: "Au contraire, l'Agile repose lourdement sur la non-régression." }
+                ],
+                correct: 1,
+                correctExplain: "Le changement fréquent de code en Agile impose des vérifications constantes pour éviter les effets de bord sur les fonctions existantes."
+            },
+            {
+                q: "Quelle est la principale différence entre les tests d'intégration de composants et les tests d'intégration système ?",
+                options: [
+                    { text: "Les tests système sont toujours faits par les développeurs.", explain: "L'intégration système est souvent gérée par des testeurs indépendants." },
+                    { text: "L'intégration de composants teste les interactions entre modules ; l'intégration système teste les interactions entre différents systèmes.", explain: "" },
+                    { text: "Il n'y a pas de différence, ce sont deux termes pour la même chose.", explain: "L'ISTQB les distingue clairement par leur périmètre." },
+                    { text: "L'un est fait manuellement et l'autre est obligatoirement automatisé.", explain: "Les deux peuvent être automatisés ou manuels." }
+                ],
+                correct: 1,
+                correctExplain: "C'est une distinction d'échelle : l'un est interne au logiciel développé, l'autre concerne ses frontières avec l'extérieur."
+            },
+            {
+                q: "Le 'Test-Driven Development' (TDD) est une approche où :",
+                options: [
+                    { text: "Le testeur écrit les cas de test après que le développeur a fini le code.", explain: "C'est l'approche traditionnelle séquentielle." },
+                    { text: "Le test est écrit avant le code de l'application.", explain: "" },
+                    { text: "Le code est testé uniquement par des robots.", explain: "Le TDD est une méthode de conception avant tout humaine (développeur)." },
+                    { text: "Le plan de test conduit l'ensemble du projet.", explain: "Le TDD se concentre sur le développement au niveau unitaire." }
+                ],
+                correct: 1,
+                correctExplain: "Le cycle TDD consiste à écrire un test, le voir échouer, écrire le code pour le réussir, puis refactoriser."
+            },
+            {
+                q: "Une banque décide de changer son système de base de données. Quels tests de maintenance sont les plus appropriés ?",
+                options: [
+                    { text: "Tests de nouvelles fonctionnalités.", explain: "Il n'y a pas forcément de nouvelle fonction, mais un changement technique." },
+                    { text: "Tests de migration incluant des tests opérationnels sur la nouvelle plateforme.", explain: "" },
+                    { text: "Tests unitaires sur les anciens modules uniquement.", explain: "Cela ne garantit pas la compatibilité avec la nouvelle base." },
+                    { text: "Tests de retrait (mise hors service).", explain: "Le retrait intervient quand on supprime un système sans le remplacer." }
+                ],
+                correct: 1,
+                correctExplain: "Lorsqu'on change d'infrastructure, on teste la migration des données et le comportement opérationnel sur la nouvelle plateforme."
+            },
+            {
+                q: "Dans le modèle en V, quelle base de test est utilisée pour dériver les tests système ?",
+                options: [
+                    { text: "Les spécifications de composants.", explain: "Elles servent pour les tests unitaires." },
+                    { text: "La spécification des besoins (système).", explain: "" },
+                    { text: "Le code source.", explain: "C'est la base pour les tests boîte blanche (composants)." },
+                    { text: "Les besoins métier de haut niveau.", explain: "Ils servent de base pour les tests d'acceptation." }
+                ],
+                correct: 1,
+                correctExplain: "Les tests système vérifient le produit par rapport à l'ensemble de ses spécifications fonctionnelles et techniques globales."
+            },
+            {
+                q: "Parmi ces options, laquelle décrit le mieux une 'Analyse d'impact' ?",
+                options: [
+                    { text: "Mesurer la vitesse de frappe des testeurs.", explain: "Sans intérêt pour la qualité logicielle." },
+                    { text: "Identifier les parties du système affectées par un changement pour cibler les tests de régression.", explain: "" },
+                    { text: "Évaluer le coût financier du projet en cas de retard.", explain: "C'est une analyse de risque projet." },
+                    { text: "Calculer le nombre de lignes de code écrites par jour.", explain: "C'est une métrique de productivité." }
+                ],
+                correct: 1,
+                correctExplain: "L'analyse d'impact permet d'optimiser l'effort de test en identifiant ce qui a pu être cassé par une modification."
+            },
+            {
+                q: "Les tests de boîte blanche sont souvent plus efficaces à quel niveau de test ?",
+                options: [
+                    { text: "Test d'acceptation utilisateur.", explain: "L'utilisateur teste en boîte noire sans voir le code." },
+                    { text: "Test unitaire (composants).", explain: "" },
+                    { text: "Test de migration.", explain: "La migration se teste souvent via les données (boîte noire)." },
+                    { text: "Test bêta.", explain: "Le bêta-test est effectué par des utilisateurs externes en boîte noire." }
+                ],
+                correct: 1,
+                correctExplain: "C'est au niveau unitaire que l'on peut le plus facilement analyser la structure interne du code et sa couverture."
+            },
+            {
+                q: "Quel est le principal avantage de l'indépendance des tests ?",
+                options: [
+                    { text: "Les testeurs n'ont plus besoin de parler aux développeurs.", explain: "Faux, la communication reste essentielle." },
+                    { text: "Un regard neuf permet de détecter des défauts que les développeurs ont pu ignorer par habitude.", explain: "" },
+                    { text: "Cela coûte moins cher car les testeurs sont moins payés.", explain: "L'indépendance peut au contraire augmenter certains coûts." },
+                    { text: "Les tests sont finis plus rapidement.", explain: "Pas nécessairement, cela peut ajouter des étapes de coordination." }
+                ],
+                correct: 1,
+                correctExplain: "L'indépendance réduit les biais cognitifs et l'attachement au code, favorisant la détection d'erreurs logiques."
+            },
+            {
+                q: "Qu'est-ce qu'un test 'Bêta' ?",
+                options: [
+                    { text: "Un test interne fait par l'équipe de développement.", explain: "C'est un test Alpha." },
+                    { text: "Un test effectué par des clients potentiels sur leur propre site.", explain: "" },
+                    { text: "Un test automatique sur le matériel.", explain: "Il s'agit d'un test physique ou de performance." },
+                    { text: "Un test qui ne trouve que des bugs mineurs.", explain: "Le nom n'a rien à voir avec la sévérité des bugs." }
+                ],
+                correct: 1,
+                correctExplain: "Le test Bêta intervient en conditions réelles chez des utilisateurs finaux externes avant la sortie officielle."
+            },
+            {
+                q: "Quel critère de sortie pourrait être utilisé pour décider de l'arrêt d'un niveau de test ?",
+                options: [
+                    { text: "Le fait que les développeurs n'aient plus envie de coder.", explain: "Ce n'est pas un critère de qualité professionnel." },
+                    { text: "L'atteinte d'un niveau de couverture de code défini (ex: 80%).", explain: "" },
+                    { text: "La fin de la semaine de travail.", explain: "C'est une contrainte de calendrier, pas un critère de qualité." },
+                    { text: "Le moment où le budget est totalement épuisé.", explain: "C'est une réalité économique, pas un critère de complétude technique." }
+                ],
+                correct: 1,
+                correctExplain: "Un critère de sortie est une condition objective (couverture, nombre de bugs résolus) à remplir pour clore une phase."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let answers = new Array(questions.length).fill(null);
+        let answered = new Array(questions.length).fill(false);
+
+        function displayQuestion() {
+            const container = document.getElementById('quiz-container');
+            const item = questions[currentQuestion];
+            
+            let html = `<div class="question">${currentQuestion + 1}. ${item.q}</div>`;
+            const letters = ['A', 'B', 'C', 'D'];
+            item.options.forEach((opt, i) => {
+                let classes = '';
+                if (answers[currentQuestion] === i) {
+                    classes = 'selected ';
+                    if (i === item.correct) {
+                        classes += 'correct';
+                    } else {
+                        classes += 'incorrect';
+                    }
+                }
+                const disabledClass = answered[currentQuestion] ? 'disabled' : '';
+                html += `<div class="option ${classes} ${disabledClass}" onclick="${answered[currentQuestion] ? '' : `handleAnswerClick(${i})`}" style="${answered[currentQuestion] ? 'cursor: not-allowed;' : ''}"><span class="option-letter">${letters[i]}</span> ${opt.text}</div>`;
+            });
+            
+            container.innerHTML = html;
+            
+            if (answered[currentQuestion]) {
+                showFeedback();
+            } else {
+                document.getElementById('feedback').innerHTML = '';
+                document.getElementById('feedback').classList.remove('show');
+            }
+            
+            updateProgressBar();
+            updateNavigationButtons();
+            updateProgressInfo();
+        }
+
+        function handleAnswerClick(index) {
+            if (answered[currentQuestion]) return;
+            
+            answers[currentQuestion] = index;
+            answered[currentQuestion] = true;
+            
+            showFeedback();
+            updateProgressBar();
+            updateProgressInfo();
+            updateNavigationButtons();
+            displayQuestion();
+        }
+
+        function showFeedback() {
+            const feedbackDiv = document.getElementById('feedback');
+            const item = questions[currentQuestion];
+            const isCorrect = answers[currentQuestion] === item.correct;
+            const selectedOption = item.options[answers[currentQuestion]];
+            
+            feedbackDiv.className = 'feedback-container show ' + (isCorrect ? 'feedback-correct' : 'feedback-incorrect');
+            
+            let html = '';
+            
+            if (isCorrect) {
+                html += `
+                    <div class="feedback-header">Bonne réponse!</div>
+                    <div class="feedback-explanation">${item.correctExplain}</div>
+                `;
+            } else {
+                html += `
+                    <div class="feedback-header">Pas tout à fait</div>
+                    <div class="feedback-explanation">${selectedOption.explain}</div>
+                    <div class="correct-answer-box">
+                        <div class="correct-answer-label">✓ Bonne réponse:</div>
+                        <div>${item.options[item.correct].text}</div>
+                        <div style="margin-top: 8px; font-size: 0.9em;">${item.correctExplain}</div>
+                    </div>
+                `;
+            }
+            
+            feedbackDiv.innerHTML = html;
+        }
+
+        function updateProgressBar() {
+            const progressBar = document.getElementById('progressBar');
+            progressBar.innerHTML = '';
+            
+            for (let i = 0; i < questions.length; i++) {
+                const segment = document.createElement('div');
+                segment.className = 'progress-segment';
+                
+                if (!answered[i]) {
+                    segment.classList.add('unanswered');
+                } else if (answers[i] === questions[i].correct) {
+                    segment.classList.add('correct');
+                } else {
+                    segment.classList.add('incorrect');
+                }
+                
+                progressBar.appendChild(segment);
+            }
+        }
+
+        function updateNavigationButtons() {
+            const isAnswered = answered[currentQuestion];
+            document.getElementById('prevBtn').disabled = currentQuestion === 0 || !isAnswered;
+            document.getElementById('nextBtn').disabled = !isAnswered;
+            
+            if (currentQuestion === questions.length - 1) {
+                document.getElementById('nextBtn').textContent = 'Voir Résultat';
+            } else {
+                document.getElementById('nextBtn').textContent = 'Suivant →';
+            }
+        }
+
+        function updateProgressInfo() {
+            document.getElementById('question-counter').textContent = `Question ${currentQuestion + 1} / ${questions.length}`;
+            
+            let correctCount = 0;
+            let incorrectCount = 0;
+            
+            for (let i = 0; i < answers.length; i++) {
+                if (answered[i]) {
+                    if (answers[i] === questions[i].correct) {
+                        correctCount++;
+                    } else {
+                        incorrectCount++;
+                    }
+                }
+            }
+            
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('incorrect-count').textContent = incorrectCount;
+        }
+
+        function nextQuestion() {
+            if (currentQuestion === questions.length - 1) {
+                showFinalResults();
+                return;
+            }
+            
+            currentQuestion++;
+            displayQuestion();
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        function showFinalResults() {
+            let score = 0;
+            answers.forEach((answer, index) => {
+                if (answer === questions[index].correct) score++;
+            });
+            
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '<div class="question">Quiz terminé!</div>';
+            
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.className = 'feedback-container';
+            feedbackDiv.innerHTML = '';
+            
+            let recapHtml = '<div class="recap-title">Résumé de vos réponses</div>';
+            
+            questions.forEach((question, index) => {
+                const userAnswer = question.options[answers[index]];
+                const correctAnswer = question.options[question.correct];
+                const isCorrect = answers[index] === question.correct;
+                
+                recapHtml += `
+                    <div class="recap-card ${isCorrect ? 'correct' : 'incorrect'}">
+                        <div class="recap-number">Question ${index + 1} / ${questions.length}</div>
+                        <div class="recap-question">${question.q}</div>
+                        <div class="recap-answer-item user">
+                            <span class="recap-label">Votre réponse:</span>
+                            ${userAnswer.text}
+                            <span class="recap-result ${isCorrect ? 'correct' : 'incorrect'}">
+                                ${isCorrect ? '✓ Correct' : '✗ Incorrect'}
+                            </span>
+                        </div>
+                        ${!isCorrect ? `
+                            <div class="recap-answer-item correct-answer">
+                                <span class="recap-label">Bonne réponse:</span>
+                                ${correctAnswer.text}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            
+            document.getElementById('result').innerHTML = `
+                <div style="font-size: 2em; margin: 30px 0 20px;">Votre score : ${score} / ${questions.length}</div>
+                <div style="font-size: 1.1em; color: #555; margin-bottom: 30px;">Réussite : ${Math.round(score / questions.length * 100)}%</div>
+                <div class="recap-container">${recapHtml}</div>
+            `;
+            
+            document.getElementById('prevBtn').disabled = false;
+            document.getElementById('nextBtn').textContent = 'Recommencer';
+            document.getElementById('nextBtn').disabled = false;
+            document.getElementById('nextBtn').onclick = function() { location.reload(); };
+            document.getElementById('prevBtn').onclick = function() {
+                currentQuestion = questions.length - 1;
+                displayQuestion();
+            };
+        }
+
+        displayQuestion();
+    </script>
+</body>
+</html>
