@@ -1,0 +1,44 @@
+{
+  "a7f9e2b1": {
+    "course": "IFT-SSD",
+    "lesson": 1,
+    "title": "Introduction au métier de spécialiste en solutions de données",
+    "path": "cours/ift-ssd/quiz-ift-ssd-cours1.html"
+  },
+  "b3f4c2e7": {
+    "course": "IFT-SSD",
+    "lesson": 2,
+    "title": "Cycle de vie des projets de données",
+    "path": "cours/ift-ssd/quiz-ift-ssd-cours2.html"
+  },
+  "c5d8e3f2": {
+    "course": "IFT-SSD",
+    "lesson": 3,
+    "title": "Bases de données et SQL",
+    "path": "cours/ift-ssd/quiz-ift-ssd-cours3.html"
+  },
+  "d9k4l1m6": {
+    "course": "IFT-SSD",
+    "lesson": 4,
+    "title": "Compétences et éthique",
+    "path": "cours/ift-ssd/quiz-ift-ssd-cours4.html"
+  },
+  "e2p7r3s9": {
+    "course": "IFT-SSD",
+    "lesson": 5,
+    "title": "IA et spécialisation de données",
+    "path": "cours/ift-ssd/quiz-ift-ssd-cours5.html"
+  },
+  "f6t1u8v4": {
+    "course": "IFT-SSD",
+    "lesson": 6,
+    "title": "Analyse de données et visualisation",
+    "path": "cours/ift-ssd/quiz-ift-ssd-cours6.html"
+  },
+  "g3w5x2y7": {
+    "course": "IFT-SSD",
+    "lesson": 7,
+    "title": "Gestion du temps et productivité",
+    "path": "cours/ift-ssd/quiz-ift-ssd-cours7.html"
+  }
+}

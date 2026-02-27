@@ -157,13 +157,13 @@
                 name: "IFT-SSD",
                 title: "Initiation à la fonction de travail d'un spécialiste en solutions de données",
                 quizzes: [
-                    { course: 1, path: "cours/ift-ssd/quiz-ift-ssd-cours1.html" },
-                    { course: 2, path: "cours/ift-ssd/quiz-ift-ssd-cours2.html" },
-                    { course: 3, path: "cours/ift-ssd/quiz-ift-ssd-cours3.html" },
-                    { course: 4, path: "cours/ift-ssd/quiz-ift-ssd-cours4.html" },
-                    { course: 5, path: "cours/ift-ssd/quiz-ift-ssd-cours5.html" },
-                    { course: 6, path: "cours/ift-ssd/quiz-ift-ssd-cours6.html" },
-                    { course: 7, path: "cours/ift-ssd/quiz-ift-ssd-cours7.html" }
+                    { course: 1, id: "a7f9e2b1" },
+                    { course: 2, id: "b3f4c2e7" },
+                    { course: 3, id: "c5d8e3f2" },
+                    { course: 4, id: "d9k4l1m6" },
+                    { course: 5, id: "e2p7r3s9" },
+                    { course: 6, id: "f6t1u8v4" },
+                    { course: 7, id: "g3w5x2y7" }
                 ]
             },
             {
@@ -232,7 +232,7 @@
                             ${course.quizzes.length > 0 
                                 ? course.quizzes.map(quiz => `
                                     <div class="quiz-item">
-                                        <a href="${quiz.path}" class="quiz-link">
+                                        <a href="quiz.html?id=${quiz.id}" class="quiz-link">
                                             📝 Cours ${quiz.course}
                                         </a>
                                     </div>
