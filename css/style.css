@@ -455,3 +455,214 @@ button.submit-btn {
     color: #721c24;
 }
 
+/* ======================================
+   RESPONSIVE DESIGN - Mobile
+   ====================================== */
+
+@media (max-width: 768px) {
+    body {
+        padding: 15px 10px;
+    }
+
+    h1 {
+        font-size: 1.5em;
+        margin-bottom: 20px;
+    }
+
+    .global-course-title {
+        font-size: 1.1em;
+        margin-bottom: 10px;
+    }
+
+    .card {
+        padding: 20px 15px;
+        margin-bottom: 15px;
+    }
+
+    .question {
+        font-size: 1.1em;
+        margin-bottom: 18px;
+    }
+
+    .option {
+        padding: 12px 12px;
+        margin: 10px 0;
+        gap: 10px;
+        font-size: 0.95em;
+        min-height: 44px;
+    }
+
+    .option-letter {
+        min-width: 28px;
+        width: 28px;
+        height: 28px;
+        font-size: 0.9em;
+    }
+
+    button {
+        padding: 14px 16px;
+        font-size: 0.9em;
+        min-height: 44px;
+        touch-action: manipulation;
+    }
+
+    .quiz-navigation {
+        gap: 10px;
+        margin-top: 20px;
+        flex-direction: column;
+    }
+
+    #prevBtn,
+    #nextBtn {
+        width: 100%;
+    }
+
+    .progress-container {
+        margin-bottom: 25px;
+    }
+
+    .progress-info {
+        margin-bottom: 10px;
+        font-size: 0.85em;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .progress-bar-wrapper {
+        height: 28px;
+        gap: 2px;
+    }
+
+    .progress-segment {
+        margin: 2px;
+    }
+
+    .stat-badge {
+        padding: 5px 10px;
+        font-size: 0.8em;
+    }
+
+    .feedback-container {
+        margin-top: 18px;
+        padding: 15px;
+        font-size: 0.9em;
+    }
+
+    .feedback-header {
+        font-size: 1.05em;
+        margin-bottom: 10px;
+    }
+
+    .feedback-explanation {
+        margin-bottom: 12px;
+        font-size: 0.9em;
+    }
+
+    .correct-answer-box {
+        padding: 12px;
+        margin-top: 12px;
+    }
+
+    .correct-answer-label {
+        font-size: 0.9em;
+        margin-bottom: 6px;
+    }
+
+    .recap-container {
+        margin-top: 20px;
+    }
+
+    .recap-title {
+        font-size: 1.2em;
+        margin-bottom: 15px;
+    }
+
+    .recap-card {
+        padding: 15px;
+        margin-bottom: 12px;
+        border-radius: 8px;
+    }
+
+    .recap-number {
+        font-size: 0.8em;
+        margin-bottom: 6px;
+    }
+
+    .recap-question {
+        font-size: 1em;
+        margin-bottom: 12px;
+    }
+
+    .recap-answer-item {
+        margin-bottom: 10px;
+        padding-left: 25px;
+        font-size: 0.9em;
+    }
+
+    .recap-label {
+        font-size: 0.8em;
+        margin-bottom: 4px;
+    }
+
+    .recap-result {
+        padding: 3px 8px;
+        font-size: 0.75em;
+        margin-left: 8px;
+    }
+
+    #result {
+        font-size: 1.3em;
+        margin-top: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding: 10px 8px;
+    }
+
+    h1 {
+        font-size: 1.3em;
+        margin-bottom: 15px;
+    }
+
+    .card {
+        padding: 15px 12px;
+        border-radius: 8px;
+    }
+
+    .question {
+        font-size: 1em;
+        margin-bottom: 15px;
+        line-height: 1.4;
+    }
+
+    .option {
+        padding: 10px 10px;
+        margin: 8px 0;
+        gap: 8px;
+        font-size: 0.9em;
+    }
+
+    .option-letter {
+        min-width: 26px;
+        width: 26px;
+        height: 26px;
+        font-size: 0.85em;
+    }
+
+    button {
+        padding: 12px 14px;
+        font-size: 0.85em;
+        min-height: 44px;
+    }
+
+    .progress-bar-wrapper {
+        height: 24px;
+    }
+
+    #result {
+        font-size: 1.2em;
+    }
+}
+

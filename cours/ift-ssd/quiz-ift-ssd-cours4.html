@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz - Cours 4</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <div class="global-course-title">IFT-SSD</div>
+    <h1>Quiz : Compétences et Éthique en Spécialisation de Données (Cours 4)</h1>
+    
+    <div class="progress-container">
+        <div class="progress-info">
+            <span id="question-counter">Question 1 / 10</span>
+            <div class="progress-stats">
+                <span class="stat-badge incorrect"><span class="stat-icon">✕</span><span id="incorrect-count">0</span></span>
+                <span class="stat-badge correct"><span class="stat-icon">✓</span><span id="correct-count">0</span></span>
+            </div>
+        </div>
+        <div class="progress-bar-wrapper" id="progressBar"></div>
+    </div>
+    
+    <div id="quiz-container" class="card"></div>
+    
+    <div id="feedback" class="feedback-container"></div>
+    
+    <div class="quiz-navigation">
+        <button id="prevBtn" onclick="previousQuestion()">← Précédent</button>
+        <button id="nextBtn" onclick="nextQuestion()">Suivant →</button>
+    </div>
+    
+    <div id="result"></div>
+
+    <script>
+        const questions = [
+            {
+                q: "Lequel des éléments suivants est considéré comme une 'Hard Skill' essentielle pour un spécialiste de solutions de données ?",
+                options: [
+                    { text: "La maîtrise du langage SQL", explain: "" },
+                    { text: "La capacité de persuasion", explain: "C'est une compétence relationnelle (soft skill), pas technique." },
+                    { text: "Le leadership d'équipe", explain: "C'est une compétence de gestion humaine." },
+                    { text: "La ponctualité", explain: "C'est une qualité professionnelle générale." }
+                ],
+                correct: 0,
+                correctExplain: "Le SQL est l'outil technique fondamental pour interroger, manipuler et structurer les bases de données au quotidien."
+            },
+            {
+                q: "Que signifie le concept de spécialiste de données 'bilingue' ?",
+                options: [
+                    { text: "Parler couramment le français et l'anglais", explain: "Bien que l'anglais soit utile, ce n'est pas le sens de ce concept métier." },
+                    { text: "Maîtriser à la fois Python et Java", explain: "C'est de la polyvalence technique, pas du 'bilinguisme' métier/technique." },
+                    { text: "Savoir communiquer avec les équipes techniques et les décideurs d'affaires", explain: "" },
+                    { text: "Écrire du code et concevoir des interfaces graphiques", explain: "Cela concerne davantage le développement Web/Mobile." }
+                ],
+                correct: 2,
+                correctExplain: "Le spécialiste doit traduire des besoins d'affaires complexes en solutions techniques et expliquer les contraintes techniques en termes de valeur métier."
+            },
+            {
+                q: "Dans une startup, le rôle du spécialiste de données est généralement :",
+                options: [
+                    { text: "Très spécialisé sur une seule tâche précise", explain: "La spécialisation étroite se trouve plutôt dans les grandes institutions." },
+                    { text: "Généraliste et polyvalent (touche-à-tout)", explain: "" },
+                    { text: "Uniquement focalisé sur la rédaction de rapports administratifs", explain: "Le rôle reste avant tout technique." },
+                    { text: "Dédié exclusivement à la surveillance des serveurs physiques", explain: "C'est la responsabilité de l'administrateur système." }
+                ],
+                correct: 1,
+                correctExplain: "En startup, les équipes sont réduites : vous devez souvent gérer tout le cycle de vie, du pipeline à la visualisation."
+            },
+            {
+                q: "Quelle 'Soft Skill' est la plus sollicitée lorsqu'un script échoue et qu'il faut en trouver la cause ?",
+                options: [
+                    { text: "L'empathie", explain: "Utile pour l'humain, pas pour le code." },
+                    { text: "La capacité de résolution de problèmes (Problem Solving)", explain: "" },
+                    { text: "L'aisance oratoire", explain: "Parler ne résout pas le bug technique." },
+                    { text: "Le sens artistique", explain: "Utile pour le design, pas pour la logique système." }
+                ],
+                correct: 1,
+                correctExplain: "Le 'Problem Solving' permet de décomposer logiquement un échec pour isoler et corriger la source de l'erreur."
+            },
+            {
+                q: "Le principe du 'moindre privilège' en sécurité des données consiste à :",
+                options: [
+                    { text: "Donner accès à toutes les données à tout le monde", explain: "C'est une faille de sécurité majeure." },
+                    { text: "Ne donner accès qu'aux données strictement nécessaires pour effectuer une tâche", explain: "" },
+                    { text: "Réserver l'accès aux données uniquement aux directeurs", explain: "Le personnel technique a besoin d'accès pour travailler." },
+                    { text: "Supprimer les données dès qu'elles ont été lues une fois", explain: "C'est une règle de rétention, pas de privilège." }
+                ],
+                correct: 1,
+                correctExplain: "Cela limite les risques de fuites massives ou d'erreurs humaines en restreignant l'exposition des données au strict nécessaire."
+            },
+            {
+                q: "La Loi 25 au Québec concerne principalement :",
+                options: [
+                    { text: "La vitesse de connexion internet", explain: "C'est une question d'infrastructure télécom." },
+                    { text: "La protection des renseignements personnels et la vie privée", explain: "" },
+                    { text: "Les taxes sur les logiciels importés", explain: "C'est une question de fiscalité." },
+                    { text: "Le droit d'auteur sur le code informatique", explain: "C'est régi par la propriété intellectuelle." }
+                ],
+                correct: 1,
+                correctExplain: "Elle impose aux organisations des obligations strictes sur la manière dont elles collectent, utilisent et protègent les données des citoyens."
+            },
+            {
+                q: "Qu'est-ce que l'anonymisation des données ?",
+                options: [
+                    { text: "Changer le mot de passe de la base", explain: "C'est de la sécurité d'accès." },
+                    { text: "Supprimer ou masquer les identifiants permettant de reconnaître une personne", explain: "" },
+                    { text: "Traduire les noms des colonnes en anglais", explain: "C'est de la normalisation de nommage." },
+                    { text: "Compresser les fichiers", explain: "C'est de l'optimisation de stockage." }
+                ],
+                correct: 1,
+                correctExplain: "L'anonymisation permet d'utiliser les données pour analyse tout en garantissant que l'on ne peut pas remonter à l'individu."
+            },
+            {
+                q: "Pourquoi la 'curiosité intellectuelle' est-elle vitale dans ce métier ?",
+                options: [
+                    { text: "Pour espionner les données des concurrents", explain: "C'est une pratique illégale et non éthique." },
+                    { text: "Parce que les technologies de données évoluent très rapidement", explain: "" },
+                    { text: "Pour poser des questions personnelles aux clients", explain: "C'est contraire au respect de la vie privée." },
+                    { text: "Parce que c'est une exigence du code du travail", explain: "C'est une qualité professionnelle, pas une loi." }
+                ],
+                correct: 1,
+                correctExplain: "Le domaine des données change constamment ; la veille technologique est nécessaire pour rester compétent."
+            },
+            {
+                q: "L'interopérabilité des systèmes est un défi qui consiste à :",
+                options: [
+                    { text: "Acheter uniquement des ordinateurs de la même marque", explain: "C'est une standardisation matérielle, pas logicielle." },
+                    { text: "Faire en sorte que des systèmes différents puissent échanger des données", explain: "" },
+                    { text: "Interdire les téléphones personnels au travail", explain: "C'est une règle de sécurité interne (BYOD)." },
+                    { text: "Augmenter la vitesse des processeurs", explain: "C'est une question de performance brute." }
+                ],
+                correct: 1,
+                correctExplain: "Le spécialiste doit créer des ponts entre des systèmes hétérogènes (Cloud, local, ERP) pour que l'information circule sans erreur."
+            },
+            {
+                q: "Quelle est la meilleure réaction face à une demande 'non éthique' d'un supérieur ?",
+                options: [
+                    { text: "Obéir sans poser de questions", explain: "Vous engagez votre responsabilité professionnelle." },
+                    { text: "Proposer une alternative technique respectant l'éthique et le besoin d'affaires", explain: "" },
+                    { text: "Supprimer discrètement les données", explain: "C'est un acte de sabotage professionnel." },
+                    { text: "Ignorer la demande et espérer qu'il oublie", explain: "Cela ne règle pas le problème et crée un risque futur." }
+                ],
+                correct: 1,
+                correctExplain: "Le rôle de spécialiste inclut un devoir de conseil : trouver une solution qui atteint l'objectif sans compromettre les valeurs morales ou légales."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let answers = new Array(questions.length).fill(null);
+        let answered = new Array(questions.length).fill(false);
+
+        function displayQuestion() {
+            const container = document.getElementById('quiz-container');
+            const item = questions[currentQuestion];
+            
+            let html = `<div class="question">${currentQuestion + 1}. ${item.q}</div>`;
+            const letters = ['A', 'B', 'C', 'D'];
+            item.options.forEach((opt, i) => {
+                let classes = '';
+                if (answers[currentQuestion] === i) {
+                    classes = 'selected ';
+                    if (i === item.correct) {
+                        classes += 'correct';
+                    } else {
+                        classes += 'incorrect';
+                    }
+                }
+                const disabledClass = answered[currentQuestion] ? 'disabled' : '';
+                html += `<div class="option ${classes} ${disabledClass}" onclick="${answered[currentQuestion] ? '' : `handleAnswerClick(${i})`}" style="${answered[currentQuestion] ? 'cursor: not-allowed;' : ''}"><span class="option-letter">${letters[i]}</span> ${opt.text}</div>`;
+            });
+            
+            container.innerHTML = html;
+            
+            if (answered[currentQuestion]) {
+                showFeedback();
+            } else {
+                document.getElementById('feedback').innerHTML = '';
+                document.getElementById('feedback').classList.remove('show');
+            }
+            
+            updateProgressBar();
+            updateNavigationButtons();
+            updateProgressInfo();
+        }
+
+        function handleAnswerClick(index) {
+            if (answered[currentQuestion]) return;
+            
+            answers[currentQuestion] = index;
+            answered[currentQuestion] = true;
+            
+            showFeedback();
+            updateProgressBar();
+            updateProgressInfo();
+            updateNavigationButtons();
+            displayQuestion();
+        }
+
+        function showFeedback() {
+            const feedbackDiv = document.getElementById('feedback');
+            const item = questions[currentQuestion];
+            const isCorrect = answers[currentQuestion] === item.correct;
+            const selectedOption = item.options[answers[currentQuestion]];
+            
+            feedbackDiv.className = 'feedback-container show ' + (isCorrect ? 'feedback-correct' : 'feedback-incorrect');
+            
+            let html = '';
+            
+            if (isCorrect) {
+                html += `
+                    <div class="feedback-header">Bonne réponse!</div>
+                    <div class="feedback-explanation">${item.correctExplain}</div>
+                `;
+            } else {
+                html += `
+                    <div class="feedback-header">Pas tout à fait</div>
+                    <div class="feedback-explanation">${selectedOption.explain}</div>
+                    <div class="correct-answer-box">
+                        <div class="correct-answer-label">✓ Bonne réponse:</div>
+                        <div>${item.options[item.correct].text}</div>
+                        <div style="margin-top: 8px; font-size: 0.9em;">${item.correctExplain}</div>
+                    </div>
+                `;
+            }
+            
+            feedbackDiv.innerHTML = html;
+        }
+
+        function updateProgressBar() {
+            const progressBar = document.getElementById('progressBar');
+            progressBar.innerHTML = '';
+            
+            for (let i = 0; i < questions.length; i++) {
+                const segment = document.createElement('div');
+                segment.className = 'progress-segment';
+                
+                if (!answered[i]) {
+                    segment.classList.add('unanswered');
+                } else if (answers[i] === questions[i].correct) {
+                    segment.classList.add('correct');
+                } else {
+                    segment.classList.add('incorrect');
+                }
+                
+                progressBar.appendChild(segment);
+            }
+        }
+
+        function updateNavigationButtons() {
+            const isAnswered = answered[currentQuestion];
+            document.getElementById('prevBtn').disabled = currentQuestion === 0 || !isAnswered;
+            document.getElementById('nextBtn').disabled = !isAnswered;
+            
+            if (currentQuestion === questions.length - 1) {
+                document.getElementById('nextBtn').textContent = 'Voir Résultat';
+            } else {
+                document.getElementById('nextBtn').textContent = 'Suivant →';
+            }
+        }
+
+        function updateProgressInfo() {
+            document.getElementById('question-counter').textContent = `Question ${currentQuestion + 1} / ${questions.length}`;
+            
+            let correctCount = 0;
+            let incorrectCount = 0;
+            
+            for (let i = 0; i < answers.length; i++) {
+                if (answered[i]) {
+                    if (answers[i] === questions[i].correct) {
+                        correctCount++;
+                    } else {
+                        incorrectCount++;
+                    }
+                }
+            }
+            
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('incorrect-count').textContent = incorrectCount;
+        }
+
+        function nextQuestion() {
+            if (currentQuestion === questions.length - 1) {
+                showFinalResults();
+                return;
+            }
+            
+            currentQuestion++;
+            displayQuestion();
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        function showFinalResults() {
+            let score = 0;
+            answers.forEach((answer, index) => {
+                if (answer === questions[index].correct) score++;
+            });
+            
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '<div class="question">Quiz terminé!</div>';
+            
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.className = 'feedback-container';
+            feedbackDiv.innerHTML = '';
+            
+            let recapHtml = '<div class="recap-title">Résumé de vos réponses</div>';
+            
+            questions.forEach((question, index) => {
+                const userAnswer = question.options[answers[index]];
+                const correctAnswer = question.options[question.correct];
+                const isCorrect = answers[index] === question.correct;
+                
+                recapHtml += `
+                    <div class="recap-card ${isCorrect ? 'correct' : 'incorrect'}">
+                        <div class="recap-number">Question ${index + 1} / ${questions.length}</div>
+                        <div class="recap-question">${question.q}</div>
+                        <div class="recap-answer-item user">
+                            <span class="recap-label">Votre réponse:</span>
+                            ${userAnswer.text}
+                            <span class="recap-result ${isCorrect ? 'correct' : 'incorrect'}">
+                                ${isCorrect ? '✓ Correct' : '✗ Incorrect'}
+                            </span>
+                        </div>
+                        ${!isCorrect ? `
+                            <div class="recap-answer-item correct-answer">
+                                <span class="recap-label">Bonne réponse:</span>
+                                ${correctAnswer.text}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            
+            document.getElementById('result').innerHTML = `
+                <div style="font-size: 2em; margin: 30px 0 20px;">Votre score : ${score} / ${questions.length}</div>
+                <div style="font-size: 1.1em; color: #555; margin-bottom: 30px;">Réussite : ${Math.round(score / questions.length * 100)}%</div>
+                <div class="recap-container">${recapHtml}</div>
+            `;
+            
+            document.getElementById('prevBtn').disabled = false;
+            document.getElementById('nextBtn').textContent = 'Recommencer';
+            document.getElementById('nextBtn').disabled = false;
+            document.getElementById('nextBtn').onclick = function() { location.reload(); };
+            document.getElementById('prevBtn').onclick = function() {
+                currentQuestion = questions.length - 1;
+                displayQuestion();
+            };
+        }
+
+        displayQuestion();
+    </script>
+</body>
+</html>

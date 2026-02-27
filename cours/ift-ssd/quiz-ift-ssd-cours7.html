@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz - Cours 7</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <div class="global-course-title">IFT-SSD</div>
+    <h1>Quiz : Gestion du Temps et Productivité (Cours 7)</h1>
+    
+    <div class="progress-container">
+        <div class="progress-info">
+            <span id="question-counter">Question 1 / 10</span>
+            <div class="progress-stats">
+                <span class="stat-badge incorrect"><span class="stat-icon">✕</span><span id="incorrect-count">0</span></span>
+                <span class="stat-badge correct"><span class="stat-icon">✓</span><span id="correct-count">0</span></span>
+            </div>
+        </div>
+        <div class="progress-bar-wrapper" id="progressBar"></div>
+    </div>
+    
+    <div id="quiz-container" class="card"></div>
+    
+    <div id="feedback" class="feedback-container"></div>
+    
+    <div class="quiz-navigation">
+        <button id="prevBtn" onclick="previousQuestion()">← Précédent</button>
+        <button id="nextBtn" onclick="nextQuestion()">Suivant →</button>
+    </div>
+    
+    <div id="result"></div>
+
+    <script>
+        const questions = [
+            {
+                q: "Selon la loi de Carlson, pourquoi les interruptions sont-elles si coûteuses pour la productivité ?",
+                options: [
+                    { text: "Elles augmentent la fatigue physique immédiatement.", explain: "Bien que fatigantes, l'impact principal décrit par Carlson concerne la perte de concentration et le temps nécessaire pour se replonger dans la tâche." },
+                    { text: "Un travail interrompu prend plus de temps et d'énergie que s'il est fait en continu.", explain: "" },
+                    { text: "Elles forcent à déléguer les tâches importantes.", explain: "La délégation est une stratégie de gestion de priorité, pas une conséquence directe de la loi de Carlson." },
+                    { text: "Elles réduisent la qualité des données collectées.", explain: "La loi de Carlson se concentre sur l'efficacité temporelle plutôt que sur la qualité intrinsèque des données." }
+                ],
+                correct: 1,
+                correctExplain: "La loi de Carlson stipule qu'un travail réalisé en continu prend moins de temps et d'énergie que s'il est fragmenté par des interruptions, car chaque coupure nécessite un temps de 'remise en route'."
+            },
+            {
+                q: "Quelle est la définition de la loi de Parkinson ?",
+                options: [
+                    { text: "80% des résultats proviennent de 20% des efforts.", explain: "Ceci correspond au principe de Pareto." },
+                    { text: "Tout ce qui peut mal tourner tournera mal.", explain: "C'est la définition de la loi de Murphy." },
+                    { text: "Le travail s'étale de façon à occuper tout le temps disponible pour son achèvement.", explain: "" },
+                    { text: "Le temps a une dimension subjective selon l'intérêt de l'activité.", explain: "Cette perception subjective est définie par la loi de Fraisse." }
+                ],
+                correct: 2,
+                correctExplain: "Selon Parkinson, si vous vous donnez deux heures pour une tâche qui peut être faite en une heure, elle finira par prendre deux heures car le travail se dilate pour occuper le temps imparti."
+            },
+            {
+                q: "Dans la matrice d'Eisenhower, que doit-on faire des tâches situées dans la zone 'C' (Urgent mais Non Important) ?",
+                options: [
+                    { text: "Les traiter immédiatement soi-même.", explain: "Cela correspond aux tâches de la zone A (Urgent et Important)." },
+                    { text: "Les planifier pour plus tard.", explain: "On planifie les tâches Importantes mais Non Urgentes (zone B)." },
+                    { text: "Les déléguer si possible.", explain: "" },
+                    { text: "Les abandonner ou les éliminer.", explain: "On élimine les tâches qui ne sont ni urgentes ni importantes (zone D)." }
+                ],
+                correct: 2,
+                correctExplain: "Les tâches urgentes mais peu importantes sont souvent des sollicitations extérieures qui doivent être déléguées pour vous permettre de rester concentré sur vos propres priorités."
+            },
+            {
+                q: "Que suggère le principe de Pareto (20/80) concernant votre charge de travail ?",
+                options: [
+                    { text: "Il faut travailler 80% du temps sur les petites tâches faciles.", explain: "Au contraire, cela vide votre énergie pour les tâches à faible valeur ajoutée." },
+                    { text: "Il faut investir 80% de ses efforts sur les 20% d'activités produisant le plus de résultats.", explain: "" },
+                    { text: "Toutes les tâches ont la même importance statistique.", explain: "Le principe de Pareto repose précisément sur le déséquilibre d'importance entre les tâches." },
+                    { text: "On ne peut pas accomplir plus de 20% de sa liste de tâches par jour.", explain: "Pareto parle de l'impact des tâches, pas d'une limite physique de réalisation." }
+                ],
+                correct: 1,
+                correctExplain: "Le principe de Pareto indique qu'une minorité d'activités (20%) génère la majorité des résultats (80%). Il faut donc identifier ces tâches critiques et leur accorder la priorité absolue."
+            },
+            {
+                q: "Que signifie la lettre 'M' dans la méthode de planification TEMPS ?",
+                options: [
+                    { text: "Mémoriser les tâches de la journée.", explain: "La méthode TEMPS repose sur l'écriture et non sur la mémoire pour libérer la charge mentale." },
+                    { text: "Ménager des temps de battement pour les imprévus.", explain: "" },
+                    { text: "Mesurer la performance à chaque heure.", explain: "L'analyse se fait plutôt à l'étape 'S' (S'assurer)." },
+                    { text: "Multiplier les réunions de coordination.", explain: "Les réunions sont souvent des 'voleurs de temps' s'il y en a trop." }
+                ],
+                correct: 1,
+                correctExplain: "Le 'M' de Ménager conseille de ne planifier qu'environ 60% de son temps, laissant 40% de libre pour absorber les interruptions et la loi de Murphy (imprévus)."
+            },
+            {
+                q: "Selon la méthode des 'grosses pierres', comment remplir efficacement son emploi du temps ?",
+                options: [
+                    { text: "Mettre le sable (petites tâches) d'abord pour se débarrasser.", explain: "Si vous commencez par le sable, vous n'aurez plus de place pour les grosses pierres dans votre journée." },
+                    { text: "Mélanger aléatoirement pierres et sable.", explain: "L'absence de stratégie mène à la saturation rapide sans accomplissement majeur." },
+                    { text: "Placer les grosses pierres (priorités) en premier.", explain: "" },
+                    { text: "Ne s'occuper que du gravier car c'est le plus facile.", explain: "Cela mène à la procrastination des tâches importantes à haute valeur ajoutée." }
+                ],
+                correct: 2,
+                correctExplain: "Si l'on ne place pas les tâches prioritaires (grosses pierres) en premier dans son agenda, elles ne rentreront jamais à cause de l'accumulation des petites tâches secondaires."
+            },
+            {
+                q: "Quel est l'un des inconvénients majeurs de l'agenda papier ?",
+                options: [
+                    { text: "Il tombe souvent en panne de batterie.", explain: "C'est un avantage du papier : il n'a pas besoin d'énergie." },
+                    { text: "Il n'offre pas de rappels ou d'alarmes automatiques.", explain: "" },
+                    { text: "Il est trop difficile à personnaliser.", explain: "Le papier est au contraire très flexible pour les notes et dessins." },
+                    { text: "Il demande une connexion internet.", explain: "C'est l'agenda électronique qui nécessite parfois une connexion." }
+                ],
+                correct: 1,
+                correctExplain: "L'agenda papier est statique ; contrairement au numérique, il ne peut pas vous alerter activement avant un rendez-vous si vous ne le consultez pas."
+            },
+            {
+                q: "Lors du traitement des courriels, quand faut-il choisir l'action 'Planifier' ?",
+                options: [
+                    { text: "Si le courriel prend moins de 2 minutes à traiter.", explain: "Si c'est rapide, il faut répondre tout de suite." },
+                    { text: "Si le courriel doit être supprimé.", explain: "S'il est inutile, on le supprime sans planification." },
+                    { text: "Si l'action requise prend plus de temps que la limite fixée (ex: 2 ou 5 min).", explain: "" },
+                    { text: "Si le courriel est une simple publicité.", explain: "Les publicités doivent être supprimées ou désabonnées." }
+                ],
+                correct: 2,
+                correctExplain: "Pour garder une boîte de réception vide, les tâches longues sont extraites de la messagerie et inscrites dans un gestionnaire de tâches ou l'agenda."
+            },
+            {
+                q: "Quelle bonne pratique le cours suggère-t-il pour gérer les notifications de messagerie ?",
+                options: [
+                    { text: "Laisser les popup activés pour réactivité.", explain: "Les popup sont des interruptions qui violent la loi de Carlson." },
+                    { text: "Désactiver les notifications sous forme de popup.", explain: "" },
+                    { text: "Vérifier ses emails toutes les 5 minutes.", explain: "Une vérification trop fréquente empêche le travail de fond (Deep Work)." },
+                    { text: "Répondre uniquement le soir après 20h.", explain: "Le cours suggère de choisir des moments définis durant la journée de travail." }
+                ],
+                correct: 1,
+                correctExplain: "Désactiver les alertes visuelles et sonores permet de reprendre le contrôle sur son attention et de traiter les messages par lots (batching)."
+            },
+            {
+                q: "À quel moment de la journée la loi du rythme biologique conseille-t-elle de placer les tâches complexes ?",
+                options: [
+                    { text: "En début d'après-midi (13h-15h).", explain: "C'est souvent une période de baisse d'énergie liée à la digestion." },
+                    { text: "En fin de journée, juste avant de partir.", explain: "La fatigue accumulée rend la réflexion complexe plus difficile." },
+                    { text: "Le matin, lors du pic de vigilance (ex: 8h-11h).", explain: "" },
+                    { text: "Pendant la pause déjeuner.", explain: "La pause est nécessaire pour la récupération et ne doit pas servir aux tâches complexes." }
+                ],
+                correct: 2,
+                correctExplain: "Les capacités intellectuelles et la concentration sont généralement à leur maximum le matin, ce qui en fait le moment idéal pour les tâches de haute valeur ajoutée."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let answers = new Array(questions.length).fill(null);
+        let answered = new Array(questions.length).fill(false);
+
+        function displayQuestion() {
+            const container = document.getElementById('quiz-container');
+            const item = questions[currentQuestion];
+            
+            let html = `<div class="question">${currentQuestion + 1}. ${item.q}</div>`;
+            const letters = ['A', 'B', 'C', 'D'];
+            item.options.forEach((opt, i) => {
+                let classes = '';
+                if (answers[currentQuestion] === i) {
+                    classes = 'selected ';
+                    if (i === item.correct) {
+                        classes += 'correct';
+                    } else {
+                        classes += 'incorrect';
+                    }
+                }
+                const disabledClass = answered[currentQuestion] ? 'disabled' : '';
+                html += `<div class="option ${classes} ${disabledClass}" onclick="${answered[currentQuestion] ? '' : `handleAnswerClick(${i})`}" style="${answered[currentQuestion] ? 'cursor: not-allowed;' : ''}"><span class="option-letter">${letters[i]}</span> ${opt.text}</div>`;
+            });
+            
+            container.innerHTML = html;
+            
+            if (answered[currentQuestion]) {
+                showFeedback();
+            } else {
+                document.getElementById('feedback').innerHTML = '';
+                document.getElementById('feedback').classList.remove('show');
+            }
+            
+            updateProgressBar();
+            updateNavigationButtons();
+            updateProgressInfo();
+        }
+
+        function handleAnswerClick(index) {
+            if (answered[currentQuestion]) return;
+            
+            answers[currentQuestion] = index;
+            answered[currentQuestion] = true;
+            
+            showFeedback();
+            updateProgressBar();
+            updateProgressInfo();
+            updateNavigationButtons();
+            displayQuestion();
+        }
+
+        function showFeedback() {
+            const feedbackDiv = document.getElementById('feedback');
+            const item = questions[currentQuestion];
+            const isCorrect = answers[currentQuestion] === item.correct;
+            const selectedOption = item.options[answers[currentQuestion]];
+            
+            feedbackDiv.className = 'feedback-container show ' + (isCorrect ? 'feedback-correct' : 'feedback-incorrect');
+            
+            let html = '';
+            
+            if (isCorrect) {
+                html += `
+                    <div class="feedback-header">Bonne réponse!</div>
+                    <div class="feedback-explanation">${item.correctExplain}</div>
+                `;
+            } else {
+                html += `
+                    <div class="feedback-header">Pas tout à fait</div>
+                    <div class="feedback-explanation">${selectedOption.explain}</div>
+                    <div class="correct-answer-box">
+                        <div class="correct-answer-label">✓ Bonne réponse:</div>
+                        <div>${item.options[item.correct].text}</div>
+                        <div style="margin-top: 8px; font-size: 0.9em;">${item.correctExplain}</div>
+                    </div>
+                `;
+            }
+            
+            feedbackDiv.innerHTML = html;
+        }
+
+        function updateProgressBar() {
+            const progressBar = document.getElementById('progressBar');
+            progressBar.innerHTML = '';
+            
+            for (let i = 0; i < questions.length; i++) {
+                const segment = document.createElement('div');
+                segment.className = 'progress-segment';
+                
+                if (!answered[i]) {
+                    segment.classList.add('unanswered');
+                } else if (answers[i] === questions[i].correct) {
+                    segment.classList.add('correct');
+                } else {
+                    segment.classList.add('incorrect');
+                }
+                
+                progressBar.appendChild(segment);
+            }
+        }
+
+        function updateNavigationButtons() {
+            const isAnswered = answered[currentQuestion];
+            document.getElementById('prevBtn').disabled = currentQuestion === 0 || !isAnswered;
+            document.getElementById('nextBtn').disabled = !isAnswered;
+            
+            if (currentQuestion === questions.length - 1) {
+                document.getElementById('nextBtn').textContent = 'Voir Résultat';
+            } else {
+                document.getElementById('nextBtn').textContent = 'Suivant →';
+            }
+        }
+
+        function updateProgressInfo() {
+            document.getElementById('question-counter').textContent = `Question ${currentQuestion + 1} / ${questions.length}`;
+            
+            let correctCount = 0;
+            let incorrectCount = 0;
+            
+            for (let i = 0; i < answers.length; i++) {
+                if (answered[i]) {
+                    if (answers[i] === questions[i].correct) {
+                        correctCount++;
+                    } else {
+                        incorrectCount++;
+                    }
+                }
+            }
+            
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('incorrect-count').textContent = incorrectCount;
+        }
+
+        function nextQuestion() {
+            if (currentQuestion === questions.length - 1) {
+                showFinalResults();
+                return;
+            }
+            
+            currentQuestion++;
+            displayQuestion();
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        function showFinalResults() {
+            let score = 0;
+            answers.forEach((answer, index) => {
+                if (answer === questions[index].correct) score++;
+            });
+            
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '<div class="question">Quiz terminé!</div>';
+            
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.className = 'feedback-container';
+            feedbackDiv.innerHTML = '';
+            
+            let recapHtml = '<div class="recap-title">Résumé de vos réponses</div>';
+            
+            questions.forEach((question, index) => {
+                const userAnswer = question.options[answers[index]];
+                const correctAnswer = question.options[question.correct];
+                const isCorrect = answers[index] === question.correct;
+                
+                recapHtml += `
+                    <div class="recap-card ${isCorrect ? 'correct' : 'incorrect'}">
+                        <div class="recap-number">Question ${index + 1} / ${questions.length}</div>
+                        <div class="recap-question">${question.q}</div>
+                        <div class="recap-answer-item user">
+                            <span class="recap-label">Votre réponse:</span>
+                            ${userAnswer.text}
+                            <span class="recap-result ${isCorrect ? 'correct' : 'incorrect'}">
+                                ${isCorrect ? '✓ Correct' : '✗ Incorrect'}
+                            </span>
+                        </div>
+                        ${!isCorrect ? `
+                            <div class="recap-answer-item correct-answer">
+                                <span class="recap-label">Bonne réponse:</span>
+                                ${correctAnswer.text}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            
+            document.getElementById('result').innerHTML = `
+                <div style="font-size: 2em; margin: 30px 0 20px;">Votre score : ${score} / ${questions.length}</div>
+                <div style="font-size: 1.1em; color: #555; margin-bottom: 30px;">Réussite : ${Math.round(score / questions.length * 100)}%</div>
+                <div class="recap-container">${recapHtml}</div>
+            `;
+            
+            document.getElementById('prevBtn').disabled = false;
+            document.getElementById('nextBtn').textContent = 'Recommencer';
+            document.getElementById('nextBtn').disabled = false;
+            document.getElementById('nextBtn').onclick = function() { location.reload(); };
+            document.getElementById('prevBtn').onclick = function() {
+                currentQuestion = questions.length - 1;
+                displayQuestion();
+            };
+        }
+
+        displayQuestion();
+    </script>
+</body>
+</html>

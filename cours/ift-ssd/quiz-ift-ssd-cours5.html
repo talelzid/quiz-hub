@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz - Cours 5</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <div class="global-course-title">IFT-SSD</div>
+    <h1>Quiz : IA et Spécialisation de Données (Cours 5)</h1>
+    
+    <div class="progress-container">
+        <div class="progress-info">
+            <span id="question-counter">Question 1 / 10</span>
+            <div class="progress-stats">
+                <span class="stat-badge incorrect"><span class="stat-icon">✕</span><span id="incorrect-count">0</span></span>
+                <span class="stat-badge correct"><span class="stat-icon">✓</span><span id="correct-count">0</span></span>
+            </div>
+        </div>
+        <div class="progress-bar-wrapper" id="progressBar"></div>
+    </div>
+    
+    <div id="quiz-container" class="card"></div>
+    
+    <div id="feedback" class="feedback-container"></div>
+    
+    <div class="quiz-navigation">
+        <button id="prevBtn" onclick="previousQuestion()">← Précédent</button>
+        <button id="nextBtn" onclick="nextQuestion()">Suivant →</button>
+    </div>
+    
+    <div id="result"></div>
+
+    <script>
+        const questions = [
+            {
+                q: "Quelle est la principale différence entre un spécialiste de données 'classique' et un spécialiste 'augmenté' ?",
+                options: [
+                    { text: "Le spécialiste augmenté ne sait plus programmer manuellement.", explain: "Au contraire, il doit comprendre le code pour le valider." },
+                    { text: "Le spécialiste augmenté utilise l'IA pour automatiser l'exécution et se concentre sur la supervision.", explain: "" },
+                    { text: "Le spécialiste augmenté est remplacé par un robot.", explain: "L'IA est un outil, pas un remplaçant du jugement humain." },
+                    { text: "Le spécialiste augmenté travaille uniquement sur la création de modèles d'IA.", explain: "Il utilise l'IA pour ses tâches de données, pas seulement pour créer des modèles." }
+                ],
+                correct: 1,
+                correctExplain: "Le spécialiste augmenté délègue les tâches répétitives à l'IA pour se concentrer sur la stratégie, l'architecture et la validation."
+            },
+            {
+                q: "Qu'est-ce qu'un LLM (Large Language Model) dans le contexte du développement ?",
+                options: [
+                    { text: "Un type de base de données très rapide.", explain: "Il s'agit d'un modèle de langage, pas d'un système de stockage." },
+                    { text: "Un modèle d'IA capable de comprendre et générer du langage humain et informatique.", explain: "" },
+                    { text: "Un protocole de sécurité pour le Cloud.", explain: "Les protocoles de sécurité sont différents des modèles de langage." },
+                    { text: "Un logiciel de nettoyage de données automatique sans intervention humaine.", explain: "Bien qu'il puisse aider, ce n'est pas sa définition première." }
+                ],
+                correct: 1,
+                correctExplain: "Les LLM comme GPT ou Claude sont entraînés sur du texte et du code, ce qui leur permet de comprendre la logique de programmation."
+            },
+            {
+                q: "Parmi ces outils, lequel est un assistant de code directement intégré dans l'éditeur (IDE) ?",
+                options: [
+                    { text: "Gemini", explain: "Gemini est principalement une interface web (agent conversationnel)." },
+                    { text: "ChatGPT", explain: "C'est un agent conversationnel généraliste." },
+                    { text: "GitHub Copilot", explain: "" },
+                    { text: "Claude", explain: "Claude est un agent conversationnel, pas une extension d'éditeur." }
+                ],
+                correct: 2,
+                correctExplain: "GitHub Copilot est conçu pour suggérer du code en temps réel à l'intérieur de VS Code ou d'autres éditeurs."
+            },
+            {
+                q: "Pourquoi est-il dangereux de copier-coller des données client dans une IA publique comme ChatGPT ?",
+                options: [
+                    { text: "Parce que l'IA va supprimer les données par erreur.", explain: "Le risque n'est pas la perte, mais la fuite d'information." },
+                    { text: "Parce que les données pourraient être utilisées pour entraîner l'IA et devenir publiques.", explain: "" },
+                    { text: "Parce que l'IA ne sait pas lire les noms de famille.", explain: "L'IA sait très bien les lire, c'est justement le problème de confidentialité." },
+                    { text: "Parce que cela coûte trop cher en électricité.", explain: "Ce n'est pas l'enjeu principal de sécurité pour l'entreprise." }
+                ],
+                correct: 1,
+                correctExplain: "La confidentialité est primordiale. Les données envoyées aux modèles publics peuvent être stockées et réutilisées, ce qui viole souvent les politiques d'entreprise."
+            },
+            {
+                q: "Dans le Workflow du spécialiste augmenté, quelle est la règle d'or ?",
+                options: [
+                    { text: "L'IA a toujours raison car elle a accès à tout Internet.", explain: "L'IA peut 'halluciner' et inventer des solutions fausses." },
+                    { text: "Ne jamais utiliser l'IA pour du code de production.", explain: "On peut l'utiliser, mais avec une méthode rigoureuse." },
+                    { text: "Faire confiance, mais vérifier (Trust but Verify).", explain: "" },
+                    { text: "Demander à l'IA de vérifier son propre travail sans intervention humaine.", explain: "Une validation humaine reste indispensable pour le contexte métier." }
+                ],
+                correct: 2,
+                correctExplain: "L'humain reste le pilote. Il doit tester et valider chaque suggestion de l'IA avant de l'intégrer."
+            },
+            {
+                q: "Comment l'IA peut-elle aider le rôle de 'Testeur' (QA) dans un projet de données ?",
+                options: [
+                    { text: "En générant des jeux de données fictifs pour tester les limites du système.", explain: "" },
+                    { text: "En remplaçant le testeur pour signer les contrats.", explain: "Le testeur ne signe pas les contrats et l'IA ne prend pas de décisions juridiques." },
+                    { text: "En réparant automatiquement les serveurs en panne.", explain: "C'est plutôt le rôle de l'équipe infrastructure/DevOps, souvent manuellement." },
+                    { text: "L'IA ne peut pas aider les testeurs.", explain: "L'IA est excellente pour imaginer des scénarios de test." }
+                ],
+                correct: 0,
+                correctExplain: "L'IA peut créer rapidement des milliers de lignes de données de test (noms, adresses, prix) pour vérifier la robustesse des flux de données."
+            },
+            {
+                q: "Qu'est-ce qu'une 'hallucination' dans le contexte d'une IA générative ?",
+                options: [
+                    { text: "Quand l'ordinateur s'éteint brusquement.", explain: "C'est une panne matérielle ou logicielle classique." },
+                    { text: "Quand l'IA génère une réponse qui semble correcte mais qui est techniquement fausse.", explain: "" },
+                    { text: "Quand l'IA refuse de répondre à une question.", explain: "C'est un refus de sécurité ou une limite de filtre, pas une hallucination." },
+                    { text: "Quand l'IA répond trop rapidement.", explain: "La vitesse n'a aucun lien avec la véracité du contenu." }
+                ],
+                correct: 1,
+                correctExplain: "L'hallucination est un risque majeur : l'IA peut inventer une fonction de programmation qui n'existe pas avec beaucoup d'assurance."
+            },
+            {
+                q: "Quelle tâche est la plus adaptée à l'IA lors d'une migration de données ?",
+                options: [
+                    { text: "Convaincre le client de changer de logiciel.", explain: "C'est une tâche relationnelle humaine." },
+                    { text: "Porter les serveurs physiques d'un bureau à un autre.", explain: "L'IA n'a pas de corps physique." },
+                    { text: "Convertir un fichier XML complexe en format CSV ou JSON.", explain: "" },
+                    { text: "Décider du budget final du projet.", explain: "Le budget est une décision humaine de gestion." }
+                ],
+                correct: 2,
+                correctExplain: "La conversion de formats et le reformatage de structures de données sont des forces majeures des LLM."
+            },
+            {
+                q: "Pour documenter un code complexe, que peut-on fournir à l'IA ?",
+                options: [
+                    { text: "Seulement le titre du projet.", explain: "Ce n'est pas suffisant pour que l'IA comprenne la logique interne." },
+                    { text: "Le code source avec une demande de générer un tableau explicatif.", explain: "" },
+                    { text: "Rien, l'IA doit deviner ce que fait le code sur mon ordinateur.", explain: "L'IA n'a pas accès à vos fichiers locaux sans que vous les fournissiez." },
+                    { text: "Une photo de l'écran avec du code flou.", explain: "La qualité du résultat dépend de la clarté des données fournies." }
+                ],
+                correct: 1,
+                correctExplain: "En lui soumettant le code, l'IA peut analyser les variables et les fonctions pour rédiger une documentation technique claire."
+            },
+            {
+                q: "Quel est l'impact de l'IA sur la phase de 'Nettoyage' (Data Cleaning) ?",
+                options: [
+                    { text: "Elle rend le nettoyage inutile car les données deviennent parfaites par magie.", explain: "Les données sources restent sales, il faut toujours les traiter." },
+                    { text: "Elle permet de détecter des anomalies et de suggérer des corrections de formats.", explain: "" },
+                    { text: "Elle empêche les utilisateurs de faire des erreurs de saisie.", explain: "L'IA intervient après la saisie, elle n'empêche pas l'erreur humaine à la source." },
+                    { text: "Elle ralentit le processus car elle pose trop de questions.", explain: "Au contraire, elle accélère considérablement cette phase ingrate." }
+                ],
+                correct: 1,
+                correctExplain: "L'IA est excellente pour repérer des incohérences (ex: un numéro de téléphone à 5 chiffres) et proposer des scripts de correction."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let answers = new Array(questions.length).fill(null);
+        let answered = new Array(questions.length).fill(false);
+
+        function displayQuestion() {
+            const container = document.getElementById('quiz-container');
+            const item = questions[currentQuestion];
+            
+            let html = `<div class="question">${currentQuestion + 1}. ${item.q}</div>`;
+            const letters = ['A', 'B', 'C', 'D'];
+            item.options.forEach((opt, i) => {
+                let classes = '';
+                if (answers[currentQuestion] === i) {
+                    classes = 'selected ';
+                    if (i === item.correct) {
+                        classes += 'correct';
+                    } else {
+                        classes += 'incorrect';
+                    }
+                }
+                const disabledClass = answered[currentQuestion] ? 'disabled' : '';
+                html += `<div class="option ${classes} ${disabledClass}" onclick="${answered[currentQuestion] ? '' : `handleAnswerClick(${i})`}" style="${answered[currentQuestion] ? 'cursor: not-allowed;' : ''}"><span class="option-letter">${letters[i]}</span> ${opt.text}</div>`;
+            });
+            
+            container.innerHTML = html;
+            
+            if (answered[currentQuestion]) {
+                showFeedback();
+            } else {
+                document.getElementById('feedback').innerHTML = '';
+                document.getElementById('feedback').classList.remove('show');
+            }
+            
+            updateProgressBar();
+            updateNavigationButtons();
+            updateProgressInfo();
+        }
+
+        function handleAnswerClick(index) {
+            if (answered[currentQuestion]) return;
+            
+            answers[currentQuestion] = index;
+            answered[currentQuestion] = true;
+            
+            showFeedback();
+            updateProgressBar();
+            updateProgressInfo();
+            updateNavigationButtons();
+            displayQuestion();
+        }
+
+        function showFeedback() {
+            const feedbackDiv = document.getElementById('feedback');
+            const item = questions[currentQuestion];
+            const isCorrect = answers[currentQuestion] === item.correct;
+            const selectedOption = item.options[answers[currentQuestion]];
+            
+            feedbackDiv.className = 'feedback-container show ' + (isCorrect ? 'feedback-correct' : 'feedback-incorrect');
+            
+            let html = '';
+            
+            if (isCorrect) {
+                html += `
+                    <div class="feedback-header">Bonne réponse!</div>
+                    <div class="feedback-explanation">${item.correctExplain}</div>
+                `;
+            } else {
+                html += `
+                    <div class="feedback-header">Pas tout à fait</div>
+                    <div class="feedback-explanation">${selectedOption.explain}</div>
+                    <div class="correct-answer-box">
+                        <div class="correct-answer-label">✓ Bonne réponse:</div>
+                        <div>${item.options[item.correct].text}</div>
+                        <div style="margin-top: 8px; font-size: 0.9em;">${item.correctExplain}</div>
+                    </div>
+                `;
+            }
+            
+            feedbackDiv.innerHTML = html;
+        }
+
+        function updateProgressBar() {
+            const progressBar = document.getElementById('progressBar');
+            progressBar.innerHTML = '';
+            
+            for (let i = 0; i < questions.length; i++) {
+                const segment = document.createElement('div');
+                segment.className = 'progress-segment';
+                
+                if (!answered[i]) {
+                    segment.classList.add('unanswered');
+                } else if (answers[i] === questions[i].correct) {
+                    segment.classList.add('correct');
+                } else {
+                    segment.classList.add('incorrect');
+                }
+                
+                progressBar.appendChild(segment);
+            }
+        }
+
+        function updateNavigationButtons() {
+            const isAnswered = answered[currentQuestion];
+            document.getElementById('prevBtn').disabled = currentQuestion === 0 || !isAnswered;
+            document.getElementById('nextBtn').disabled = !isAnswered;
+            
+            if (currentQuestion === questions.length - 1) {
+                document.getElementById('nextBtn').textContent = 'Voir Résultat';
+            } else {
+                document.getElementById('nextBtn').textContent = 'Suivant →';
+            }
+        }
+
+        function updateProgressInfo() {
+            document.getElementById('question-counter').textContent = `Question ${currentQuestion + 1} / ${questions.length}`;
+            
+            let correctCount = 0;
+            let incorrectCount = 0;
+            
+            for (let i = 0; i < answers.length; i++) {
+                if (answered[i]) {
+                    if (answers[i] === questions[i].correct) {
+                        correctCount++;
+                    } else {
+                        incorrectCount++;
+                    }
+                }
+            }
+            
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('incorrect-count').textContent = incorrectCount;
+        }
+
+        function nextQuestion() {
+            if (currentQuestion === questions.length - 1) {
+                showFinalResults();
+                return;
+            }
+            
+            currentQuestion++;
+            displayQuestion();
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        function showFinalResults() {
+            let score = 0;
+            answers.forEach((answer, index) => {
+                if (answer === questions[index].correct) score++;
+            });
+            
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '<div class="question">Quiz terminé!</div>';
+            
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.className = 'feedback-container';
+            feedbackDiv.innerHTML = '';
+            
+            let recapHtml = '<div class="recap-title">Résumé de vos réponses</div>';
+            
+            questions.forEach((question, index) => {
+                const userAnswer = question.options[answers[index]];
+                const correctAnswer = question.options[question.correct];
+                const isCorrect = answers[index] === question.correct;
+                
+                recapHtml += `
+                    <div class="recap-card ${isCorrect ? 'correct' : 'incorrect'}">
+                        <div class="recap-number">Question ${index + 1} / ${questions.length}</div>
+                        <div class="recap-question">${question.q}</div>
+                        <div class="recap-answer-item user">
+                            <span class="recap-label">Votre réponse:</span>
+                            ${userAnswer.text}
+                            <span class="recap-result ${isCorrect ? 'correct' : 'incorrect'}">
+                                ${isCorrect ? '✓ Correct' : '✗ Incorrect'}
+                            </span>
+                        </div>
+                        ${!isCorrect ? `
+                            <div class="recap-answer-item correct-answer">
+                                <span class="recap-label">Bonne réponse:</span>
+                                ${correctAnswer.text}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            
+            document.getElementById('result').innerHTML = `
+                <div style="font-size: 2em; margin: 30px 0 20px;">Votre score : ${score} / ${questions.length}</div>
+                <div style="font-size: 1.1em; color: #555; margin-bottom: 30px;">Réussite : ${Math.round(score / questions.length * 100)}%</div>
+                <div class="recap-container">${recapHtml}</div>
+            `;
+            
+            document.getElementById('prevBtn').disabled = false;
+            document.getElementById('nextBtn').textContent = 'Recommencer';
+            document.getElementById('nextBtn').disabled = false;
+            document.getElementById('nextBtn').onclick = function() { location.reload(); };
+            document.getElementById('prevBtn').onclick = function() {
+                currentQuestion = questions.length - 1;
+                displayQuestion();
+            };
+        }
+
+        displayQuestion();
+    </script>
+</body>
+</html>

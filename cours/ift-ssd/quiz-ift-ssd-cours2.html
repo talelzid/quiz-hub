@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz - Cours 2</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <div class="global-course-title">IFT-SSD</div>
+    <h1>Quiz : Cycle de Vie des Projets de Données (Cours 2)</h1>
+    
+    <div class="progress-container">
+        <div class="progress-info">
+            <span id="question-counter">Question 1 / 10</span>
+            <div class="progress-stats">
+                <span class="stat-badge incorrect"><span class="stat-icon">✕</span><span id="incorrect-count">0</span></span>
+                <span class="stat-badge correct"><span class="stat-icon">✓</span><span id="correct-count">0</span></span>
+            </div>
+        </div>
+        <div class="progress-bar-wrapper" id="progressBar"></div>
+    </div>
+    
+    <div id="quiz-container" class="card"></div>
+    
+    <div id="feedback" class="feedback-container"></div>
+    
+    <div class="quiz-navigation">
+        <button id="prevBtn" onclick="previousQuestion()">← Précédent</button>
+        <button id="nextBtn" onclick="nextQuestion()">Suivant →</button>
+    </div>
+    
+    <div id="result"></div>
+
+    <script>
+        const questions = [
+            {
+                q: "Quelle est la principale différence entre un projet logiciel classique et un projet de données concernant la 'matière première' ?",
+                options: [
+                    { text: "Le logiciel utilise des données, alors que les projets de données utilisent du code.", explain: "Le code est présent dans les deux types de projets ; la différence réside dans la nature de ce que l'on transforme." },
+                    { text: "En données, on travaille avec une matière existante souvent imprévisible", explain: "" },
+                    { text: "Il n'y a aucune différence, les deux suivent le même processus.", explain: "La volatilité et la qualité variable de la donnée imposent des contraintes spécifiques de maintenance." },
+                    { text: "Le logiciel est toujours plus complexe techniquement.", explain: "La complexité est simplement différente : logique pour le logiciel, structurelle et volumétrique pour la donnée." }
+                ],
+                correct: 1,
+                correctExplain: "Contrairement au logiciel où l'on crée des fonctions, le spécialiste de données doit composer avec la réalité d'une donnée source parfois incomplète ou 'sale'."
+            },
+            {
+                q: "Dans le modèle en V, quelle étape de validation correspond directement à l'analyse des besoins ?",
+                options: [
+                    { text: "Les tests unitaires", explain: "Les tests unitaires valident le code isolé produit lors de la réalisation." },
+                    { text: "Les tests d'intégration", explain: "Ils vérifient que les composants techniques communiquent bien ensemble." },
+                    { text: "Les tests d'acceptation", explain: "" },
+                    { text: "Le déploiement", explain: "Le déploiement est l'action de mise en service, pas une étape de validation du besoin." }
+                ],
+                correct: 2,
+                correctExplain: "Le but des tests d'acceptation est de vérifier si la solution finale répond effectivement aux besoins d'affaires définis au tout début."
+            },
+            {
+                q: "Que signifie l'acronyme ETL dans la phase de réalisation ?",
+                options: [
+                    { text: "Évaluation, Test, Livraison", explain: "Ce sont des étapes de gestion de projet, pas le nom du flux de données." },
+                    { text: "Extract, Transform, Load", explain: "" },
+                    { text: "External Technical Link", explain: "C'est un terme inexistant dans le domaine de l'ingénierie de données." },
+                    { text: "Expertise, Temps, Logique", explain: "Ce sont des éléments de succès, mais pas la définition technique de l'ETL." }
+                ],
+                correct: 1,
+                correctExplain: "L'ETL est le processus standard : on extrait la donnée, on la transforme (nettoyage/calcul) et on la charge dans un entrepôt."
+            },
+            {
+                q: "Pourquoi dit-on que l'analyse est l'étape du 'Quoi' ?",
+                options: [
+                    { text: "Car on définit quels serveurs Cloud acheter.", explain: "Le choix des serveurs appartient à la phase de conception technique." },
+                    { text: "Car on cherche à comprendre le besoin sans parler de technologie", explain: "" },
+                    { text: "Car c'est là qu'on écrit le code SQL.", explain: "L'écriture du code se fait durant la phase de réalisation." },
+                    { text: "Car l'utilisateur ne sait jamais ce qu'il veut.", explain: "C'est un défi de communication, pas la définition de la phase d'analyse." }
+                ],
+                correct: 1,
+                correctExplain: "L'analyse se concentre uniquement sur les objectifs d'affaires du client avant de réfléchir aux outils pour y parvenir."
+            },
+            {
+                q: "Un dictionnaire de données contient généralement :",
+                options: [
+                    { text: "Le code source complet de l'application.", explain: "Le dictionnaire décrit la structure des données, pas la logique du code." },
+                    { text: "Les types, descriptions et règles des champs", explain: "" },
+                    { text: "La liste des mots de passe utilisateurs.", explain: "Ces informations ne figurent jamais dans un dictionnaire de projet pour des raisons de sécurité." },
+                    { text: "L'organigramme de l'entreprise.", explain: "C'est une information organisationnelle sans lien avec la structure technique des données." }
+                ],
+                correct: 1,
+                correctExplain: "Le dictionnaire sert de référence commune pour assurer que toute l'équipe comprend la signification de chaque colonne de données."
+            },
+            {
+                q: "Quel type de test permet de détecter qu'un prix de café est à 999 999 $ ?",
+                options: [
+                    { text: "Le test d'intégration", explain: "L'intégration vérifie la connexion entre les systèmes, pas la cohérence du contenu." },
+                    { text: "Le test de validité", explain: "" },
+                    { text: "Le test de performance", explain: "La performance mesure la vitesse de traitement, pas l'exactitude des valeurs." },
+                    { text: "Le test unitaire", explain: "Le code peut être techniquement juste (le calcul se fait) mais le résultat est absurde dans le monde réel." }
+                ],
+                correct: 1,
+                correctExplain: "Le test de validité vérifie si la donnée respecte le 'gros bon sens' métier et les limites logiques définies."
+            },
+            {
+                q: "Pourquoi la maintenance est-elle cruciale en données ?",
+                options: [
+                    { text: "Car les serveurs s'usent physiquement.", explain: "L'usure matérielle est gérée par les équipes infra, pas par le spécialiste de données." },
+                    { text: "Car les sources de données peuvent changer sans prévenir", explain: "" },
+                    { text: "Car les données s'effacent après un an.", explain: "Au contraire, le volume de données historiques a tendance à croître avec le temps." },
+                    { text: "Car le client change de nom d'entreprise.", explain: "C'est un changement administratif mineur par rapport aux changements de formats techniques." }
+                ],
+                correct: 1,
+                correctExplain: "Une modification externe (ex: une API change de format) peut briser tout votre flux de données, nécessitant une maintenance corrective."
+            },
+            {
+                q: "Que risque-t-on si on saute la phase de conception ?",
+                options: [
+                    { text: "Rien, on gagne simplement du temps.", explain: "Le temps gagné au début se transforme souvent en mois de corrections coûteuses plus tard." },
+                    { text: "On risque une solution fragile et mal adaptée", explain: "" },
+                    { text: "Les ordinateurs vont surchauffer.", explain: "La surchauffe est un problème matériel lié à la charge, pas à la planification." },
+                    { text: "Le client refusera de nous parler.", explain: "Le risque est avant tout technique et structurel avant d'être relationnel." }
+                ],
+                correct: 1,
+                correctExplain: "Sans 'plans d'architecte', la structure de données risque d'être incapable de supporter des évolutions ou des volumes plus importants."
+            },
+            {
+                q: "Quel pourcentage de temps est-il idéal de passer en analyse/conception ?",
+                options: [
+                    { text: "5 %", explain: "C'est beaucoup trop peu pour garantir que l'on construit la bonne solution." },
+                    { text: "Environ 30 %", explain: "" },
+                    { text: "90 %", explain: "À ce stade, on passe trop de temps en théorie sans jamais réaliser le projet." },
+                    { text: "0 %, on fonce directement dans le code.", explain: "C'est la garantie de devoir tout recommencer dès que le client verra le résultat." }
+                ],
+                correct: 1,
+                correctExplain: "Investir un tiers du projet dans la réflexion permet d'éviter des erreurs de structure massives lors du développement."
+            },
+            {
+                q: "Le spécialiste de données est avant tout un pont entre :",
+                options: [
+                    { text: "Le Wi-Fi et l'ordinateur.", explain: "C'est le rôle des techniciens réseau." },
+                    { text: "Le besoin d'affaires et la technique brute", explain: "" },
+                    { text: "Le clavier et l'écran.", explain: "C'est une vision purement matérielle qui ignore la valeur ajoutée du métier." },
+                    { text: "Le café et le code SQL.", explain: "C'est une blague de développeur, mais pas une définition de fonction de travail." }
+                ],
+                correct: 1,
+                correctExplain: "Sa mission est de transformer des chiffres techniques illisibles en informations stratégiques pour l'entreprise."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let answers = new Array(questions.length).fill(null);
+        let answered = new Array(questions.length).fill(false);
+
+        function displayQuestion() {
+            const container = document.getElementById('quiz-container');
+            const item = questions[currentQuestion];
+            
+            let html = `<div class="question">${currentQuestion + 1}. ${item.q}</div>`;
+            const letters = ['A', 'B', 'C', 'D'];
+            item.options.forEach((opt, i) => {
+                let classes = '';
+                if (answers[currentQuestion] === i) {
+                    classes = 'selected ';
+                    if (i === item.correct) {
+                        classes += 'correct';
+                    } else {
+                        classes += 'incorrect';
+                    }
+                }
+                const disabledClass = answered[currentQuestion] ? 'disabled' : '';
+                html += `<div class="option ${classes} ${disabledClass}" onclick="${answered[currentQuestion] ? '' : `handleAnswerClick(${i})`}" style="${answered[currentQuestion] ? 'cursor: not-allowed;' : ''}"><span class="option-letter">${letters[i]}</span> ${opt.text}</div>`;
+            });
+            
+            container.innerHTML = html;
+            
+            if (answered[currentQuestion]) {
+                showFeedback();
+            } else {
+                document.getElementById('feedback').innerHTML = '';
+                document.getElementById('feedback').classList.remove('show');
+            }
+            
+            updateProgressBar();
+            updateNavigationButtons();
+            updateProgressInfo();
+        }
+
+        function handleAnswerClick(index) {
+            if (answered[currentQuestion]) return;
+            
+            answers[currentQuestion] = index;
+            answered[currentQuestion] = true;
+            
+            showFeedback();
+            updateProgressBar();
+            updateProgressInfo();
+            updateNavigationButtons();
+            displayQuestion();
+        }
+
+        function showFeedback() {
+            const feedbackDiv = document.getElementById('feedback');
+            const item = questions[currentQuestion];
+            const isCorrect = answers[currentQuestion] === item.correct;
+            const selectedOption = item.options[answers[currentQuestion]];
+            
+            feedbackDiv.className = 'feedback-container show ' + (isCorrect ? 'feedback-correct' : 'feedback-incorrect');
+            
+            let html = '';
+            
+            if (isCorrect) {
+                html += `
+                    <div class="feedback-header">Bonne réponse!</div>
+                    <div class="feedback-explanation">${item.correctExplain}</div>
+                `;
+            } else {
+                html += `
+                    <div class="feedback-header">Pas tout à fait</div>
+                    <div class="feedback-explanation">${selectedOption.explain}</div>
+                    <div class="correct-answer-box">
+                        <div class="correct-answer-label">✓ Bonne réponse:</div>
+                        <div>${item.options[item.correct].text}</div>
+                        <div style="margin-top: 8px; font-size: 0.9em;">${item.correctExplain}</div>
+                    </div>
+                `;
+            }
+            
+            feedbackDiv.innerHTML = html;
+        }
+
+        function updateProgressBar() {
+            const progressBar = document.getElementById('progressBar');
+            progressBar.innerHTML = '';
+            
+            for (let i = 0; i < questions.length; i++) {
+                const segment = document.createElement('div');
+                segment.className = 'progress-segment';
+                
+                if (!answered[i]) {
+                    segment.classList.add('unanswered');
+                } else if (answers[i] === questions[i].correct) {
+                    segment.classList.add('correct');
+                } else {
+                    segment.classList.add('incorrect');
+                }
+                
+                progressBar.appendChild(segment);
+            }
+        }
+
+        function updateNavigationButtons() {
+            const isAnswered = answered[currentQuestion];
+            document.getElementById('prevBtn').disabled = currentQuestion === 0 || !isAnswered;
+            document.getElementById('nextBtn').disabled = !isAnswered;
+            
+            if (currentQuestion === questions.length - 1) {
+                document.getElementById('nextBtn').textContent = 'Voir Résultat';
+            } else {
+                document.getElementById('nextBtn').textContent = 'Suivant →';
+            }
+        }
+
+        function updateProgressInfo() {
+            document.getElementById('question-counter').textContent = `Question ${currentQuestion + 1} / ${questions.length}`;
+            
+            let correctCount = 0;
+            let incorrectCount = 0;
+            
+            for (let i = 0; i < answers.length; i++) {
+                if (answered[i]) {
+                    if (answers[i] === questions[i].correct) {
+                        correctCount++;
+                    } else {
+                        incorrectCount++;
+                    }
+                }
+            }
+            
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('incorrect-count').textContent = incorrectCount;
+        }
+
+        function nextQuestion() {
+            if (currentQuestion === questions.length - 1) {
+                showFinalResults();
+                return;
+            }
+            
+            currentQuestion++;
+            displayQuestion();
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        function showFinalResults() {
+            let score = 0;
+            answers.forEach((answer, index) => {
+                if (answer === questions[index].correct) score++;
+            });
+            
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '<div class="question">Quiz terminé!</div>';
+            
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.className = 'feedback-container';
+            feedbackDiv.innerHTML = '';
+            
+            let recapHtml = '<div class="recap-title">Résumé de vos réponses</div>';
+            
+            questions.forEach((question, index) => {
+                const userAnswer = question.options[answers[index]];
+                const correctAnswer = question.options[question.correct];
+                const isCorrect = answers[index] === question.correct;
+                
+                recapHtml += `
+                    <div class="recap-card ${isCorrect ? 'correct' : 'incorrect'}">
+                        <div class="recap-number">Question ${index + 1} / ${questions.length}</div>
+                        <div class="recap-question">${question.q}</div>
+                        <div class="recap-answer-item user">
+                            <span class="recap-label">Votre réponse:</span>
+                            ${userAnswer.text}
+                            <span class="recap-result ${isCorrect ? 'correct' : 'incorrect'}">
+                                ${isCorrect ? '✓ Correct' : '✗ Incorrect'}
+                            </span>
+                        </div>
+                        ${!isCorrect ? `
+                            <div class="recap-answer-item correct-answer">
+                                <span class="recap-label">Bonne réponse:</span>
+                                ${correctAnswer.text}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            
+            document.getElementById('result').innerHTML = `
+                <div style="font-size: 2em; margin: 30px 0 20px;">Votre score : ${score} / ${questions.length}</div>
+                <div style="font-size: 1.1em; color: #555; margin-bottom: 30px;">Réussite : ${Math.round(score / questions.length * 100)}%</div>
+                <div class="recap-container">${recapHtml}</div>
+            `;
+            
+            document.getElementById('prevBtn').disabled = false;
+            document.getElementById('nextBtn').textContent = 'Recommencer';
+            document.getElementById('nextBtn').disabled = false;
+            document.getElementById('nextBtn').onclick = function() { location.reload(); };
+            document.getElementById('prevBtn').onclick = function() {
+                currentQuestion = questions.length - 1;
+                displayQuestion();
+            };
+        }
+
+        displayQuestion();
+    </script>
+</body>
+</html>
