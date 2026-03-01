@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz - Cours 3</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <div class="global-course-title">Gestion de l'assurance qualité</div>
+    <h1>Quiz : Exigences qualité et définition de métriques - IEEE 1061 (Cours 3)</h1>
+    
+    <div class="progress-container">
+        <div class="progress-info">
+            <span id="question-counter">Question 1 / 10</span>
+            <div class="progress-stats">
+                <span class="stat-badge incorrect"><span class="stat-icon">✕</span><span id="incorrect-count">0</span></span>
+                <span class="stat-badge correct"><span class="stat-icon">✓</span><span id="correct-count">0</span></span>
+            </div>
+        </div>
+        <div class="progress-bar-wrapper" id="progressBar"></div>
+    </div>
+    
+    <div id="quiz-container" class="card"></div>
+    
+    <div id="feedback" class="feedback-container"></div>
+    
+    <div class="quiz-navigation">
+        <button id="prevBtn" onclick="previousQuestion()">← Précédent</button>
+        <button id="nextBtn" onclick="nextQuestion()">Suivant →</button>
+    </div>
+    
+    <div id="result"></div>
+
+    <script>
+        const questions = [
+        {
+                "q": "Quelle est la principale différence entre les exigences fonctionnelles et non fonctionnelles?",
+                "options": [
+                        {
+                                "text": "Les exigences fonctionnelles décrivent ce qu'un produit doit accomplir du point de vue usager, tandis que les non fonctionnelles définissent comment le logiciel va le faire",
+                                "explain": ""
+                        },
+                        {
+                                "text": "Les exigences fonctionnelles proviennent des standards et normes, tandis que les non fonctionnelles sont exprimées par l'usager",
+                                "explain": "C'est l'inverse: les exigences non fonctionnelles proviennent des standards et normes et ne sont pas forcément exprimées par l'usager"
+                        },
+                        {
+                                "text": "Les exigences fonctionnelles concernent uniquement la performance, tandis que les non fonctionnelles concernent les fonctionnalités",
+                                "explain": "Les exigences fonctionnelles décrivent ce qu'un produit doit accomplir, pas uniquement la performance"
+                        },
+                        {
+                                "text": "Les exigences fonctionnelles et non fonctionnelles sont identiques, seule leur documentation diffère",
+                                "explain": "Ce sont deux catégories distinctes: les fonctionnelles décrivent ce que le produit doit faire, les non fonctionnelles comment il doit le faire"
+                        }
+                ],
+                "correct": 0,
+                "correctExplain": "Selon le PDF, les exigences fonctionnelles décrivent ce qu'un produit doit accomplir du point de vue usager, tandis que les exigences non fonctionnelles décrivent comment le logiciel va le faire (contraintes de conception) et ne sont pas forcément exprimées par l'usager, provenant plutôt de standards et normes."
+        },
+        {
+                "q": "Dans le contexte des modèles qualité, quelle est la différence entre un facteur et un critère?",
+                "options": [
+                        {
+                                "text": "Un facteur est orienté concepteur et permet d'évaluer un critère orienté utilisateur",
+                                "explain": "C'est l'inverse: le facteur est orienté utilisateur et le critère est orienté concepteur"
+                        },
+                        {
+                                "text": "Un facteur est une caractéristique orientée utilisateur reliée à un coût, tandis qu'un critère est un attribut orienté concepteur permettant d'évaluer un facteur",
+                                "explain": ""
+                        },
+                        {
+                                "text": "Un facteur et un critère sont synonymes dans les modèles de qualité",
+                                "explain": "Non, ce sont deux concepts distincts avec des orientations différentes (utilisateur vs concepteur)"
+                        },
+                        {
+                                "text": "Un facteur est toujours mesurable directement, tandis qu'un critère nécessite des métriques complexes",
+                                "explain": "Le document indique que le critère permet d'évaluer un facteur, pas que le facteur est directement mesurable"
+                        }
+                ],
+                "correct": 1,
+                "correctExplain": "Le PDF définit clairement qu'un facteur est une caractéristique orientée utilisateur reliée à un coût (ex: Maintenabilité), alors qu'un critère est un attribut orienté concepteur permettant d'évaluer un facteur (ex: Testabilité)."
+        },
+        {
+                "q": "Combien de facteurs de qualité sont définis dans la norme ISO 9126?",
+                "options": [
+                        {
+                                "text": "4 facteurs",
+                                "explain": "La norme ISO 9126 définit 6 facteurs de qualité, pas 4"
+                        },
+                        {
+                                "text": "8 facteurs",
+                                "explain": "C'est la norme ISO 25000 qui définit 8 facteurs, pas ISO 9126"
+                        },
+                        {
+                                "text": "6 facteurs",
+                                "explain": ""
+                        },
+                        {
+                                "text": "10 facteurs",
+                                "explain": "La norme ISO 9126 définit 6 facteurs de qualité, pas 10"
+                        }
+                ],
+                "correct": 2,
+                "correctExplain": "Selon le PDF, la norme ISO 9126 définit exactement 6 facteurs de qualité: Fonctionnalité, Fiabilité, Utilisabilité, Efficacité, Maintenabilité et Portabilité."
+        },
+        {
+                "q": "Parmi les propositions suivantes, lesquelles sont des facteurs de qualité de la norme ISO 9126?",
+                "options": [
+                        {
+                                "text": "Fonctionnalité, Fiabilité, Compatibilité, Sécurité",
+                                "explain": "Compatibilité et Sécurité sont des facteurs d'ISO 25000, pas d'ISO 9126"
+                        },
+                        {
+                                "text": "Fonctionnalité, Fiabilité, Utilisabilité, Maintenabilité",
+                                "explain": ""
+                        },
+                        {
+                                "text": "Adéquation fonctionnelle, Performances, Compatibilité, Sécurité",
+                                "explain": "Ces facteurs appartiennent à la norme ISO 25000, pas à ISO 9126"
+                        },
+                        {
+                                "text": "Testabilité, Modularité, Réutilisabilité, Traçabilité",
+                                "explain": "Ces éléments sont plutôt des critères, pas les facteurs principaux d'ISO 9126"
+                        }
+                ],
+                "correct": 1,
+                "correctExplain": "Le PDF liste les 6 facteurs ISO 9126: Fonctionnalité (conforme spécification), Fiabilité (aptitude à fonctionner sans pannes), Utilisabilité (facilité d'emploi), Efficacité (ressources requises), Maintenabilité (facilité de modification) et Portabilité (facilité changement plate-forme)."
+        },
+        {
+                "q": "Combien de facteurs de qualité sont définis dans la norme ISO 25000 (SquaRE) et quelle est une différence majeure avec ISO 9126?",
+                "options": [
+                        {
+                                "text": "6 facteurs, et ISO 25000 regroupe sécurité et fiabilité ensemble",
+                                "explain": "ISO 25000 définit 8 facteurs et distingue au contraire la sécurité comme caractéristique à part entière"
+                        },
+                        {
+                                "text": "8 facteurs, et ISO 25000 distingue la sécurité comme caractéristique à part entière",
+                                "explain": ""
+                        },
+                        {
+                                "text": "10 facteurs, et ISO 25000 élimine complètement le facteur portabilité",
+                                "explain": "ISO 25000 définit 8 facteurs et conserve la portabilité, en la distinguant de la compatibilité"
+                        },
+                        {
+                                "text": "8 facteurs, et ISO 25000 fusionne maintenabilité et portabilité",
+                                "explain": "ISO 25000 conserve maintenabilité et portabilité comme facteurs distincts"
+                        }
+                ],
+                "correct": 1,
+                "correctExplain": "Le PDF indique que ISO 25000 définit 8 facteurs qualité (Adéquation fonctionnelle, Performances, Compatibilité, Utilisabilité, Fiabilité, Sécurité, Maintenabilité, Portabilité). Une force d'ISO 25000 est qu'elle distingue la sécurité comme caractéristique à part entière et fait la distinction entre portabilité et compatibilité."
+        },
+        {
+                "q": "Quelle est une force reconnue de la norme ISO 25000 par rapport aux normes précédentes?",
+                "options": [
+                        {
+                                "text": "Elle fournit des métriques concrètes directement liées aux caractéristiques",
+                                "explain": "Au contraire, une faiblesse d'ISO 25000 est l'absence de lien explicite entre caractéristiques et métriques"
+                        },
+                        {
+                                "text": "Elle est simple et facile à mettre en œuvre",
+                                "explain": "Une faiblesse d'ISO 25000 est justement sa difficulté de mise en œuvre"
+                        },
+                        {
+                                "text": "Elle distingue la sécurité comme caractéristique à part entière et fait la distinction entre portabilité et compatibilité",
+                                "explain": ""
+                        },
+                        {
+                                "text": "Elle réduit le nombre de facteurs pour simplifier l'évaluation",
+                                "explain": "ISO 25000 augmente le nombre de facteurs à 8 (vs 6 pour ISO 9126) et distingue davantage de caractéristiques"
+                        }
+                ],
+                "correct": 2,
+                "correctExplain": "Le PDF mentionne deux forces d'ISO 25000: elle distingue la sécurité comme caractéristique à part entière (plutôt que de la regrouper avec d'autres facteurs) et elle fait la distinction entre portabilité et compatibilité."
+        },
+        {
+                "q": "Quelle est une faiblesse de la norme ISO 25000?",
+                "options": [
+                        {
+                                "text": "Elle ne couvre pas suffisamment de facteurs de qualité",
+                                "explain": "ISO 25000 couvre 8 facteurs, ce qui est plus que ISO 9126 (6 facteurs)"
+                        },
+                        {
+                                "text": "Elle fusionne la sécurité avec d'autres caractéristiques",
+                                "explain": "Au contraire, distinguer la sécurité comme caractéristique à part entière est une force d'ISO 25000"
+                        },
+                        {
+                                "text": "Elle présente une difficulté de mise en œuvre et aucun lien explicite entre caractéristiques et métriques",
+                                "explain": ""
+                        },
+                        {
+                                "text": "Elle est incompatible avec les autres normes de qualité",
+                                "explain": "Le PDF ne mentionne pas d'incompatibilité comme faiblesse"
+                        }
+                ],
+                "correct": 2,
+                "correctExplain": "Selon le PDF, ISO 25000 présente deux faiblesses principales: la difficulté de mise en œuvre et l'absence de lien explicite entre caractéristiques et métriques, ce qui rend son application pratique complexe."
+        },
+        {
+                "q": "La disponibilité d'un système est mesurée par le MTBF (Mean Time Between Failure). Si un système a été disponible 720 heures, indisponible 80 heures, et a subi 4 pannes, quelle est la valeur du MTBF selon la formule IEEE 1061?",
+                "options": [
+                        {
+                                "text": "160 heures",
+                                "explain": ""
+                        },
+                        {
+                                "text": "180 heures",
+                                "explain": "Cette valeur utiliserait (720/4) au lieu de la bonne formule (HD-HND)/Nombre de pannes"
+                        },
+                        {
+                                "text": "200 heures",
+                                "explain": "Cette valeur utiliserait (HD/(HND+pannes)) ce qui n'est pas la formule correcte"
+                        },
+                        {
+                                "text": "640 heures",
+                                "explain": "Cette valeur utiliserait (HD-HND) sans diviser par le nombre de pannes"
+                        }
+                ],
+                "correct": 0,
+                "correctExplain": "Selon le PDF, la formule MTBF est: A = (HD-HND) / Nombre de pannes, où HD = heures de disponibilité et HND = heures de non disponibilité. Donc: (720-80)/4 = 640/4 = 160 heures."
+        },
+        {
+                "q": "Quelle est la démarche complète présentée par IEEE 1061 pour la définition de mesures de qualité logicielle (dans l'ordre)?",
+                "options": [
+                        {
+                                "text": "Identification attributs qualité → Assignation facteur qualité à chaque attribut → Choix mesures directes pour chaque facteur",
+                                "explain": ""
+                        },
+                        {
+                                "text": "Choix mesures directes → Identification attributs qualité → Assignation facteur qualité",
+                                "explain": "L'ordre est incorrect. On doit d'abord identifier les attributs avant de choisir les mesures"
+                        },
+                        {
+                                "text": "Assignation facteur qualité → Identification attributs qualité → Validation des mesures",
+                                "explain": "L'identification des attributs doit précéder l'assignation des facteurs"
+                        },
+                        {
+                                "text": "Établissement exigences qualité → Implémenter métriques → Analyser résultats",
+                                "explain": "Ceci décrit la méthode de construction des métriques (5 étapes), pas la démarche de définition des mesures"
+                        }
+                ],
+                "correct": 0,
+                "correctExplain": "Le PDF présente la démarche IEEE 1061 en trois étapes: 1) Identification des attributs qualité, 2) Assignation d'un facteur qualité à chaque attribut, 3) Choix de mesures directes pour chaque facteur. Cette démarche fournit un framework pour définir les mesures sans fournir les mesures concrètes."
+        },
+        {
+                "q": "Quelle est la méthode complète de construction des métriques selon IEEE 1061 (5 étapes)?",
+                "options": [
+                        {
+                                "text": "Définir exigences → Mesurer performance → Corriger défauts → Valider corrections → Documenter résultats",
+                                "explain": "Ces étapes ne correspondent pas à la méthode IEEE 1061 qui est axée sur la construction et validation de métriques"
+                        },
+                        {
+                                "text": "Établissement exigences qualité → Identifier métriques qualité logicielle → Implémenter métriques qualité logicielle → Analyser résultats métriques → Valider métriques qualité logicielle",
+                                "explain": ""
+                        },
+                        {
+                                "text": "Identifier attributs → Assigner facteurs → Choisir mesures → Calculer métriques → Reporter résultats",
+                                "explain": "Ceci mélange la démarche de définition des mesures avec d'autres étapes qui ne font pas partie de la méthode officielle à 5 étapes"
+                        },
+                        {
+                                "text": "Analyser besoins → Implémenter métriques → Établir exigences → Valider métriques → Identifier nouvelles métriques",
+                                "explain": "L'ordre des étapes est incorrect; l'établissement des exigences doit venir en premier"
+                        }
+                ],
+                "correct": 1,
+                "correctExplain": "Le PDF décrit la méthode de construction des métriques IEEE 1061 en 5 étapes précises: 1) Établissement des exigences qualité, 2) Identifier les métriques qualité logicielle, 3) Implémenter les métriques qualité logicielle, 4) Analyser les résultats des métriques, 5) Valider les métriques qualité logicielle."
+        }
+];
+
+        let currentQuestion = 0;
+        let answers = new Array(questions.length).fill(null);
+        let answered = new Array(questions.length).fill(false);
+
+        function displayQuestion() {
+            const container = document.getElementById('quiz-container');
+            const item = questions[currentQuestion];
+            
+            let html = `<div class="question">${currentQuestion + 1}. ${item.q}</div>`;
+            const letters = ['A', 'B', 'C', 'D'];
+            item.options.forEach((opt, i) => {
+                let classes = '';
+                if (answers[currentQuestion] === i) {
+                    classes = 'selected ';
+                    if (i === item.correct) {
+                        classes += 'correct';
+                    } else {
+                        classes += 'incorrect';
+                    }
+                }
+                const disabledClass = answered[currentQuestion] ? 'disabled' : '';
+                html += `<div class="option ${classes} ${disabledClass}" onclick="${answered[currentQuestion] ? '' : `handleAnswerClick(${i})`}" style="${answered[currentQuestion] ? 'cursor: not-allowed;' : ''}"><span class="option-letter">${letters[i]}</span> ${opt.text}</div>`;
+            });
+            
+            container.innerHTML = html;
+            
+            if (answered[currentQuestion]) {
+                showFeedback();
+            } else {
+                document.getElementById('feedback').innerHTML = '';
+                document.getElementById('feedback').classList.remove('show');
+            }
+            
+            updateProgressBar();
+            updateNavigationButtons();
+            updateProgressInfo();
+        }
+
+        function handleAnswerClick(index) {
+            if (answered[currentQuestion]) return;
+            
+            answers[currentQuestion] = index;
+            answered[currentQuestion] = true;
+            
+            showFeedback();
+            updateProgressBar();
+            updateProgressInfo();
+            updateNavigationButtons();
+            displayQuestion();
+        }
+
+        function showFeedback() {
+            const feedbackDiv = document.getElementById('feedback');
+            const item = questions[currentQuestion];
+            const isCorrect = answers[currentQuestion] === item.correct;
+            const selectedOption = item.options[answers[currentQuestion]];
+            
+            feedbackDiv.className = 'feedback-container show ' + (isCorrect ? 'feedback-correct' : 'feedback-incorrect');
+            
+            let html = '';
+            
+            if (isCorrect) {
+                html += `
+                    <div class="feedback-header">Bonne réponse!</div>
+                    <div class="feedback-explanation">${item.correctExplain}</div>
+                `;
+            } else {
+                html += `
+                    <div class="feedback-header">Pas tout à fait</div>
+                    <div class="feedback-explanation">${selectedOption.explain}</div>
+                    <div class="correct-answer-box">
+                        <div class="correct-answer-label">✓ Bonne réponse:</div>
+                        <div>${item.options[item.correct].text}</div>
+                        <div style="margin-top: 8px; font-size: 0.9em;">${item.correctExplain}</div>
+                    </div>
+                `;
+            }
+            
+            feedbackDiv.innerHTML = html;
+        }
+
+        function updateProgressBar() {
+            const progressBar = document.getElementById('progressBar');
+            progressBar.innerHTML = '';
+            
+            for (let i = 0; i < questions.length; i++) {
+                const segment = document.createElement('div');
+                segment.className = 'progress-segment';
+                
+                if (!answered[i]) {
+                    segment.classList.add('unanswered');
+                } else if (answers[i] === questions[i].correct) {
+                    segment.classList.add('correct');
+                } else {
+                    segment.classList.add('incorrect');
+                }
+                
+                progressBar.appendChild(segment);
+            }
+        }
+
+        function updateNavigationButtons() {
+            const isAnswered = answered[currentQuestion];
+            document.getElementById('prevBtn').disabled = currentQuestion === 0 || !isAnswered;
+            document.getElementById('nextBtn').disabled = !isAnswered;
+            
+            if (currentQuestion === questions.length - 1) {
+                document.getElementById('nextBtn').textContent = 'Voir Résultat';
+            } else {
+                document.getElementById('nextBtn').textContent = 'Suivant →';
+            }
+        }
+
+        function updateProgressInfo() {
+            document.getElementById('question-counter').textContent = `Question ${currentQuestion + 1} / ${questions.length}`;
+            
+            let correctCount = 0;
+            let incorrectCount = 0;
+            
+            for (let i = 0; i < answers.length; i++) {
+                if (answered[i]) {
+                    if (answers[i] === questions[i].correct) {
+                        correctCount++;
+                    } else {
+                        incorrectCount++;
+                    }
+                }
+            }
+            
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('incorrect-count').textContent = incorrectCount;
+        }
+
+        function nextQuestion() {
+            if (currentQuestion === questions.length - 1) {
+                showFinalResults();
+                return;
+            }
+            
+            currentQuestion++;
+            displayQuestion();
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        function showFinalResults() {
+            let score = 0;
+            answers.forEach((answer, index) => {
+                if (answer === questions[index].correct) score++;
+            });
+            
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '<div class="question">Quiz terminé!</div>';
+            
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.className = 'feedback-container';
+            feedbackDiv.innerHTML = '';
+            
+            let recapHtml = '<div class="recap-title">Résumé de vos réponses</div>';
+            
+            questions.forEach((question, index) => {
+                const userAnswer = question.options[answers[index]];
+                const correctAnswer = question.options[question.correct];
+                const isCorrect = answers[index] === question.correct;
+                
+                recapHtml += `
+                    <div class="recap-card ${isCorrect ? 'correct' : 'incorrect'}">
+                        <div class="recap-number">Question ${index + 1} / ${questions.length}</div>
+                        <div class="recap-question">${question.q}</div>
+                        <div class="recap-answer-item user">
+                            <span class="recap-label">Votre réponse:</span>
+                            ${userAnswer.text}
+                            <span class="recap-result ${isCorrect ? 'correct' : 'incorrect'}">
+                                ${isCorrect ? '✓ Correct' : '✗ Incorrect'}
+                            </span>
+                        </div>
+                        ${!isCorrect ? `
+                            <div class="recap-answer-item correct-answer">
+                                <span class="recap-label">Bonne réponse:</span>
+                                ${correctAnswer.text}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            
+            document.getElementById('result').innerHTML = `
+                <div style="font-size: 2em; margin: 30px 0 20px;">Votre score : ${score} / ${questions.length}</div>
+                <div style="font-size: 1.1em; color: #555; margin-bottom: 30px;">Réussite : ${Math.round(score / questions.length * 100)}%</div>
+                <div class="recap-container">${recapHtml}</div>
+            `;
+            
+            document.getElementById('prevBtn').disabled = false;
+            document.getElementById('nextBtn').textContent = 'Recommencer';
+            document.getElementById('nextBtn').disabled = false;
+            document.getElementById('nextBtn').onclick = function() { location.reload(); };
+            document.getElementById('prevBtn').onclick = function() {
+                currentQuestion = questions.length - 1;
+                displayQuestion();
+            };
+        }
+
+        displayQuestion();
+    </script>
+</body>
+</html>

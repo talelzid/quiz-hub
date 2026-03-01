@@ -177,5 +177,37 @@
     "path": "cours/gaq/quiz-gaq-cours5.html",
     "createdAt": "2025-01-02T14:30:00Z",
     "questionsCount": 10
+  },
+  "q5r8t2v9": {
+    "course": "GAQ",
+    "lesson": 3,
+    "title": "Exigences qualité et définition de métriques - IEEE 1061",
+    "path": "cours/gaq/quiz-gaq-cours3.html",
+    "createdAt": "2025-03-15T10:30:00Z",
+    "questionsCount": 10
+  },
+  "k6n4p2x8": {
+    "course": "GAQ",
+    "lesson": 4,
+    "title": "Modélisation de processus avec BPMN",
+    "path": "cours/gaq/quiz-gaq-cours4.html",
+    "createdAt": "2025-03-15T11:00:00Z",
+    "questionsCount": 10
+  },
+  "w3x7y2z5": {
+    "course": "GAQ",
+    "lesson": 2,
+    "title": "Culture qualité - Coût de la qualité - Dimensions d'un projet",
+    "path": "cours/gaq/quiz-gaq-cours2.html",
+    "createdAt": "2025-03-15T11:30:00Z",
+    "questionsCount": 10
+  },
+  "m5p9r3t8": {
+    "course": "GAQ",
+    "lesson": 1,
+    "title": "Modèle d'affaire et impact sur l'assurance qualité",
+    "path": "cours/gaq/quiz-gaq-cours1.html",
+    "createdAt": "2026-03-01T14:30:00Z",
+    "questionsCount": 10
   }
 }

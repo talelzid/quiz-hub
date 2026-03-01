@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz - Cours 2</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <div class="global-course-title">Gestion de l'assurance qualité</div>
+    <h1>Quiz : Culture qualité - Coût de la qualité - Dimensions d'un projet (Cours 2)</h1>
+    
+    <div class="progress-container">
+        <div class="progress-info">
+            <span id="question-counter">Question 1 / 10</span>
+            <div class="progress-stats">
+                <span class="stat-badge incorrect"><span class="stat-icon">✕</span><span id="incorrect-count">0</span></span>
+                <span class="stat-badge correct"><span class="stat-icon">✓</span><span id="correct-count">0</span></span>
+            </div>
+        </div>
+        <div class="progress-bar-wrapper" id="progressBar"></div>
+    </div>
+    
+    <div id="quiz-container" class="card"></div>
+    
+    <div id="feedback" class="feedback-container"></div>
+    
+    <div class="quiz-navigation">
+        <button id="prevBtn" onclick="previousQuestion()">← Précédent</button>
+        <button id="nextBtn" onclick="nextQuestion()">Suivant →</button>
+    </div>
+    
+    <div id="result"></div>
+
+    <script>
+        const questions = [
+        {
+                "q": "Combien d'éléments composent la culture qualité selon le cours ?",
+                "options": [
+                        {
+                                "text": "2 éléments",
+                                "explain": "La culture qualité est composée de 3 éléments distincts selon le contenu."
+                        },
+                        {
+                                "text": "3 éléments",
+                                "explain": ""
+                        },
+                        {
+                                "text": "4 éléments",
+                                "explain": "La culture qualité comprend 3 éléments, pas 4."
+                        },
+                        {
+                                "text": "5 éléments",
+                                "explain": "Ce chiffre correspond aux dimensions d'un projet, pas aux éléments de la culture qualité."
+                        }
+                ],
+                "correct": 1,
+                "correctExplain": "La culture qualité est composée de 3 éléments: l'engagement personnel de chaque développeur, l'engagement de l'organisme à fournir un environnement qualité, et l'engagement de tous les membres à améliorer continuellement les processus et produits."
+        },
+        {
+                "q": "Quelles sont les 5 dimensions d'un projet ?",
+                "options": [
+                        {
+                                "text": "Personnel, Technique, Économique, Fonctionnalité, Temporelle",
+                                "explain": "La dimension Technique n'est pas parmi les 5 dimensions principales, c'est une dimension complémentaire mentionnée à part."
+                        },
+                        {
+                                "text": "Personnel, Qualité, Coût, Échéance, Sociale",
+                                "explain": "La dimension Sociale est une dimension complémentaire, pas une des 5 dimensions principales."
+                        },
+                        {
+                                "text": "Personnel, Qualité, Économique, Fonctionnalité, Temporelle",
+                                "explain": ""
+                        },
+                        {
+                                "text": "Qualité, Coût, Échéance, Technique, Fonctionnalité",
+                                "explain": "Il manque la dimension Personnel et la dimension Technique n'est pas une des 5 dimensions principales."
+                        }
+                ],
+                "correct": 2,
+                "correctExplain": "Les 5 dimensions d'un projet sont: Personnel (ressources humaines), Qualité (niveau attendu), Économique/Coût (budget), Fonctionnalité (fonctionnalités à implémenter), et Temporelle/Échéance (délais de réalisation)."
+        },
+        {
+                "q": "Combien de catégories de coûts sont identifiées dans un projet selon le cours ?",
+                "options": [
+                        {
+                                "text": "3 catégories",
+                                "explain": "Il y a 4 catégories de coûts identifiées dans le cours."
+                        },
+                        {
+                                "text": "5 catégories",
+                                "explain": "Ce chiffre correspond aux dimensions d'un projet, pas aux catégories de coûts."
+                        },
+                        {
+                                "text": "4 catégories",
+                                "explain": ""
+                        },
+                        {
+                                "text": "2 catégories",
+                                "explain": "Il y a plus que 2 catégories de coûts selon le contenu du cours."
+                        }
+                ],
+                "correct": 2,
+                "correctExplain": "Il existe 4 catégories de coûts dans un projet: Coûts de réalisation (60%), Coûts d'évaluation/détection (15%), Coûts de correction des anomalies (15%), et Coûts de prévention (10%)."
+        },
+        {
+                "q": "Pourquoi la certification qualité (ISO, CMMI, TMMI) nécessite-t-elle plusieurs années de mise en place ?",
+                "options": [
+                        {
+                                "text": "À cause de la complexité technique des outils à maîtriser",
+                                "explain": "La durée n'est pas justifiée par la difficulté des techniques selon le cours."
+                        },
+                        {
+                                "text": "À cause du temps nécessaire pour implémenter la culture de la qualité",
+                                "explain": ""
+                        },
+                        {
+                                "text": "À cause du coût élevé de formation du personnel",
+                                "explain": "Le coût n'est pas mentionné comme raison principale de la durée."
+                        },
+                        {
+                                "text": "À cause des procédures administratives de certification",
+                                "explain": "Ce ne sont pas les procédures administratives qui expliquent la durée."
+                        }
+                ],
+                "correct": 1,
+                "correctExplain": "La certification qualité nécessite plusieurs années car la durée n'est pas justifiée par la difficulté des techniques, mais par le temps nécessaire pour implémenter la culture de la qualité au sein de l'organisme."
+        },
+        {
+                "q": "Quel est le principal obstacle dans la mise en place de l'assurance qualité ?",
+                "options": [
+                        {
+                                "text": "Le coût élevé des outils de qualité",
+                                "explain": "Le coût des outils n'est pas identifié comme le principal obstacle."
+                        },
+                        {
+                                "text": "Le changement de mentalité et d'attitude dans la réalisation des tâches",
+                                "explain": ""
+                        },
+                        {
+                                "text": "La maîtrise des techniques et des outils",
+                                "explain": "Le cours précise explicitement que ce n'est PAS la maîtrise des techniques et outils qui est le plus difficile."
+                        },
+                        {
+                                "text": "Le manque de personnel qualifié",
+                                "explain": "Le manque de personnel n'est pas mentionné comme principal obstacle."
+                        }
+                ],
+                "correct": 1,
+                "correctExplain": "Le plus difficile dans la mise en place de l'assurance qualité n'est pas la maîtrise des techniques et des outils. Le plus difficile est le changement de mentalité et d'attitude dans la réalisation des tâches, donc l'implémentation de la culture qualité auprès des employés."
+        },
+        {
+                "q": "Dans un diagramme de flexibilité (Kiviat/Radar), que signifie une valeur grande pour une dimension ?",
+                "options": [
+                        {
+                                "text": "La dimension est sous contrainte forte",
+                                "explain": "C'est l'inverse: une valeur grande indique de la flexibilité, pas une contrainte."
+                        },
+                        {
+                                "text": "La dimension nécessite plus de budget",
+                                "explain": "La taille de la valeur indique la flexibilité, pas le budget nécessaire."
+                        },
+                        {
+                                "text": "La dimension est flexible",
+                                "explain": ""
+                        },
+                        {
+                                "text": "La dimension est déjà complétée",
+                                "explain": "La valeur ne représente pas l'état d'avancement mais le degré de flexibilité."
+                        }
+                ],
+                "correct": 2,
+                "correctExplain": "Dans un diagramme de flexibilité: plus la valeur est grande, plus la dimension est flexible. À l'inverse, plus la valeur est petite, plus la dimension est sous contrainte. Ce diagramme permet d'identifier les dimensions contraignantes et celles ayant un degré de liberté."
+        },
+        {
+                "q": "Comment les dimensions d'un projet interagissent-elles entre elles ?",
+                "options": [
+                        {
+                                "text": "Elles sont toujours complètement indépendantes",
+                                "explain": "Le cours précise que les 5 dimensions ne sont PAS toujours indépendantes."
+                        },
+                        {
+                                "text": "Elles ne sont pas toujours indépendantes et certaines peuvent s'influencer mutuellement",
+                                "explain": ""
+                        },
+                        {
+                                "text": "Seules les dimensions Coût et Temporelle sont liées",
+                                "explain": "Bien que ces deux dimensions soient très liées, d'autres interactions existent aussi."
+                        },
+                        {
+                                "text": "Elles sont toutes dépendantes les unes des autres",
+                                "explain": "Il n'est pas dit qu'elles sont TOUTES dépendantes, mais que certaines peuvent s'influencer."
+                        }
+                ],
+                "correct": 1,
+                "correctExplain": "Les 5 dimensions ne sont pas toujours indépendantes. Certaines peuvent s'influencer mutuellement. Par exemple: augmenter le personnel peut raccourcir l'échéance mais augmente le coût; élargir le périmètre (plus de fonctionnalités) augmente les coûts et échéances."
+        },
+        {
+                "q": "Dans l'exemple du chef de projet avec le code non commenté, quel fut le résultat avec le code sans commentaires pour une modification urgente en 24h ?",
+                "options": [
+                        {
+                                "text": "50% du travail réalisé",
+                                "explain": "C'est moins que 50% qui a été réalisé sans les commentaires."
+                        },
+                        {
+                                "text": "Le travail a été complété en 24h",
+                                "explain": "Sans commentaires, le travail n'a pas pu être achevé dans les 24h."
+                        },
+                        {
+                                "text": "Moins de 20% du travail réalisé",
+                                "explain": ""
+                        },
+                        {
+                                "text": "Aucun travail n'a pu être réalisé",
+                                "explain": "Un peu de travail a quand même été réalisé, mais très peu."
+                        }
+                ],
+                "correct": 2,
+                "correctExplain": "L'exemple montre qu'avec le code non commenté (commentaires supprimés d'un ancien projet), le chef de projet n'a pu réaliser que moins de 20% du travail en 24h. Puis, avec la version commentée fournie, le travail complet a été achevé 4h après, démontrant l'importance de la qualité du code."
+        },
+        {
+                "q": "Quelle relation existe entre le coût de la qualité et le coût de la non-qualité ?",
+                "options": [
+                        {
+                                "text": "Le coût de la qualité est largement supérieur au coût de la non-qualité",
+                                "explain": "C'est l'inverse selon le cours: la non-qualité coûte plus cher."
+                        },
+                        {
+                                "text": "Ils sont équivalents à long terme",
+                                "explain": "Non, il y a une différence claire entre les deux coûts."
+                        },
+                        {
+                                "text": "Le coût de la qualité est inférieur au coût de la non-qualité",
+                                "explain": ""
+                        },
+                        {
+                                "text": "Le coût de la non-qualité est négligeable",
+                                "explain": "Au contraire, le coût de la non-qualité est largement supérieur au coût de la qualité."
+                        }
+                ],
+                "correct": 2,
+                "correctExplain": "Le coût de la qualité a longtemps constitué un frein car les gestionnaires percevaient un coût élevé. Mais très peu d'organismes se sont penchés sur la vraie question: l'évaluation du coût de la non-qualité. La réponse est claire: Coût de la qualité < Coût de la non-qualité (largement supérieur)."
+        },
+        {
+                "q": "Un projet doit être livré avec un petit budget, une petite équipe, toutes les fonctionnalités V1, sans défaut et rapidement. Selon le diagramme de flexibilité, pourquoi est-ce problématique ?",
+                "options": [
+                        {
+                                "text": "Parce que le client ne paie pas assez",
+                                "explain": "Ce n'est pas une question de montant mais de contraintes simultanées sur toutes les dimensions."
+                        },
+                        {
+                                "text": "Parce qu'il n'y a aucun degré de liberté sur les dimensions du projet",
+                                "explain": ""
+                        },
+                        {
+                                "text": "Parce que l'équipe manque de compétences",
+                                "explain": "Le problème n'est pas les compétences mais l'absence de flexibilité sur toutes les dimensions."
+                        },
+                        {
+                                "text": "Parce que les dimensions sont indépendantes",
+                                "explain": "Au contraire, c'est justement parce que les dimensions s'influencent mutuellement que c'est problématique."
+                        }
+                ],
+                "correct": 1,
+                "correctExplain": "Le diagramme de flexibilité sert justement de moyen efficace pour dire aux clients qu'il est impossible d'avoir un produit avec une petite équipe, sans défaut, à coût réduit, avec toutes les fonctionnalités V1, et livré rapidement. Il faut TOUJOURS laisser un degré de liberté sur une ou plusieurs dimensions. Sans cela, le projet est condamné à l'échec."
+        }
+];
+
+        let currentQuestion = 0;
+        let answers = new Array(questions.length).fill(null);
+        let answered = new Array(questions.length).fill(false);
+
+        function displayQuestion() {
+            const container = document.getElementById('quiz-container');
+            const item = questions[currentQuestion];
+            
+            let html = `<div class="question">${currentQuestion + 1}. ${item.q}</div>`;
+            const letters = ['A', 'B', 'C', 'D'];
+            item.options.forEach((opt, i) => {
+                let classes = '';
+                if (answers[currentQuestion] === i) {
+                    classes = 'selected ';
+                    if (i === item.correct) {
+                        classes += 'correct';
+                    } else {
+                        classes += 'incorrect';
+                    }
+                }
+                const disabledClass = answered[currentQuestion] ? 'disabled' : '';
+                html += `<div class="option ${classes} ${disabledClass}" onclick="${answered[currentQuestion] ? '' : `handleAnswerClick(${i})`}" style="${answered[currentQuestion] ? 'cursor: not-allowed;' : ''}"><span class="option-letter">${letters[i]}</span> ${opt.text}</div>`;
+            });
+            
+            container.innerHTML = html;
+            
+            if (answered[currentQuestion]) {
+                showFeedback();
+            } else {
+                document.getElementById('feedback').innerHTML = '';
+                document.getElementById('feedback').classList.remove('show');
+            }
+            
+            updateProgressBar();
+            updateNavigationButtons();
+            updateProgressInfo();
+        }
+
+        function handleAnswerClick(index) {
+            if (answered[currentQuestion]) return;
+            
+            answers[currentQuestion] = index;
+            answered[currentQuestion] = true;
+            
+            showFeedback();
+            updateProgressBar();
+            updateProgressInfo();
+            updateNavigationButtons();
+            displayQuestion();
+        }
+
+        function showFeedback() {
+            const feedbackDiv = document.getElementById('feedback');
+            const item = questions[currentQuestion];
+            const isCorrect = answers[currentQuestion] === item.correct;
+            const selectedOption = item.options[answers[currentQuestion]];
+            
+            feedbackDiv.className = 'feedback-container show ' + (isCorrect ? 'feedback-correct' : 'feedback-incorrect');
+            
+            let html = '';
+            
+            if (isCorrect) {
+                html += `
+                    <div class="feedback-header">Bonne réponse!</div>
+                    <div class="feedback-explanation">${item.correctExplain}</div>
+                `;
+            } else {
+                html += `
+                    <div class="feedback-header">Pas tout à fait</div>
+                    <div class="feedback-explanation">${selectedOption.explain}</div>
+                    <div class="correct-answer-box">
+                        <div class="correct-answer-label">✓ Bonne réponse:</div>
+                        <div>${item.options[item.correct].text}</div>
+                        <div style="margin-top: 8px; font-size: 0.9em;">${item.correctExplain}</div>
+                    </div>
+                `;
+            }
+            
+            feedbackDiv.innerHTML = html;
+        }
+
+        function updateProgressBar() {
+            const progressBar = document.getElementById('progressBar');
+            progressBar.innerHTML = '';
+            
+            for (let i = 0; i < questions.length; i++) {
+                const segment = document.createElement('div');
+                segment.className = 'progress-segment';
+                
+                if (!answered[i]) {
+                    segment.classList.add('unanswered');
+                } else if (answers[i] === questions[i].correct) {
+                    segment.classList.add('correct');
+                } else {
+                    segment.classList.add('incorrect');
+                }
+                
+                progressBar.appendChild(segment);
+            }
+        }
+
+        function updateNavigationButtons() {
+            const isAnswered = answered[currentQuestion];
+            document.getElementById('prevBtn').disabled = currentQuestion === 0 || !isAnswered;
+            document.getElementById('nextBtn').disabled = !isAnswered;
+            
+            if (currentQuestion === questions.length - 1) {
+                document.getElementById('nextBtn').textContent = 'Voir Résultat';
+            } else {
+                document.getElementById('nextBtn').textContent = 'Suivant →';
+            }
+        }
+
+        function updateProgressInfo() {
+            document.getElementById('question-counter').textContent = `Question ${currentQuestion + 1} / ${questions.length}`;
+            
+            let correctCount = 0;
+            let incorrectCount = 0;
+            
+            for (let i = 0; i < answers.length; i++) {
+                if (answered[i]) {
+                    if (answers[i] === questions[i].correct) {
+                        correctCount++;
+                    } else {
+                        incorrectCount++;
+                    }
+                }
+            }
+            
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('incorrect-count').textContent = incorrectCount;
+        }
+
+        function nextQuestion() {
+            if (currentQuestion === questions.length - 1) {
+                showFinalResults();
+                return;
+            }
+            
+            currentQuestion++;
+            displayQuestion();
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        function showFinalResults() {
+            let score = 0;
+            answers.forEach((answer, index) => {
+                if (answer === questions[index].correct) score++;
+            });
+            
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '<div class="question">Quiz terminé!</div>';
+            
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.className = 'feedback-container';
+            feedbackDiv.innerHTML = '';
+            
+            let recapHtml = '<div class="recap-title">Résumé de vos réponses</div>';
+            
+            questions.forEach((question, index) => {
+                const userAnswer = question.options[answers[index]];
+                const correctAnswer = question.options[question.correct];
+                const isCorrect = answers[index] === question.correct;
+                
+                recapHtml += `
+                    <div class="recap-card ${isCorrect ? 'correct' : 'incorrect'}">
+                        <div class="recap-number">Question ${index + 1} / ${questions.length}</div>
+                        <div class="recap-question">${question.q}</div>
+                        <div class="recap-answer-item user">
+                            <span class="recap-label">Votre réponse:</span>
+                            ${userAnswer.text}
+                            <span class="recap-result ${isCorrect ? 'correct' : 'incorrect'}">
+                                ${isCorrect ? '✓ Correct' : '✗ Incorrect'}
+                            </span>
+                        </div>
+                        ${!isCorrect ? `
+                            <div class="recap-answer-item correct-answer">
+                                <span class="recap-label">Bonne réponse:</span>
+                                ${correctAnswer.text}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            
+            document.getElementById('result').innerHTML = `
+                <div style="font-size: 2em; margin: 30px 0 20px;">Votre score : ${score} / ${questions.length}</div>
+                <div style="font-size: 1.1em; color: #555; margin-bottom: 30px;">Réussite : ${Math.round(score / questions.length * 100)}%</div>
+                <div class="recap-container">${recapHtml}</div>
+            `;
+            
+            document.getElementById('prevBtn').disabled = false;
+            document.getElementById('nextBtn').textContent = 'Recommencer';
+            document.getElementById('nextBtn').disabled = false;
+            document.getElementById('nextBtn').onclick = function() { location.reload(); };
+            document.getElementById('prevBtn').onclick = function() {
+                currentQuestion = questions.length - 1;
+                displayQuestion();
+            };
+        }
+
+        displayQuestion();
+    </script>
+</body>
+</html>

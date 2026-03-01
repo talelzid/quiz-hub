@@ -1,0 +1,95 @@
+Quiz d'examen récapitulatif - GAQ
+Nombre de questions: 10
+Consigne: Une seule bonne réponse par question.
+
+Question 1 (Chapitre 1 - Modèles d'affaire et impact QA) [Facile]
+Une équipe QA démarre un projet de logiciel médical à forte criticité. Quelle orientation est la plus cohérente au lancement?
+A. Réduire les revues pour livrer plus vite
+B. Prioriser la conformité du processus (normes, audits, critères de sortie)
+C. Se concentrer uniquement sur l'ergonomie de l'interface
+D. Attendre la phase finale pour définir les exigences qualité
+Réponse: B
+
+Question 2 (Chapitre 2 - Culture qualité et dimensions d'un projet) [Facile]
+Dans une démarche de culture qualité, quel énoncé décrit le mieux l'effet d'une vision partagée entre métiers, dev et QA?
+A. Elle élimine automatiquement tous les défauts
+B. Elle aligne les décisions de projet sur des critères qualité communs
+C. Elle remplace le besoin de métriques
+D. Elle rend inutile la planification des tests
+Réponse: B
+
+Question 3 (Chapitre 3 - Exigences qualité et métriques) [Facile]
+Quelle paire associe correctement une exigence non fonctionnelle et une mesure pertinente?
+A. Fonction de paiement -> nombre de cas d'utilisation
+B. Performance de réponse -> temps moyen de réponse mesuré
+C. Gestion des rôles -> nombre de réunions projet
+D. Affichage d'un rapport -> nombre total de développeurs
+Réponse: B
+
+Question 4 (Chapitre 4 - BPMN) [Moyen]
+Vous modélisez un processus où deux activités peuvent s'exécuter en parallèle puis se rejoindre avant validation finale. Quel choix BPMN est le plus adapté?
+A. Un gateway exclusif (XOR) à l'ouverture et à la fermeture
+B. Un event de fin unique sans gateway
+C. Un gateway parallèle (AND) pour ouvrir puis synchroniser les branches
+D. Deux start events indépendants sans jonction
+Réponse: C
+
+Question 5 (Chapitre 5 - Audit de processus) [Moyen]
+Quel résultat d'audit montre le mieux qu'on évalue un processus et pas seulement un livrable final?
+A. Le produit compile sans erreur
+B. Les utilisateurs aiment l'interface
+C. Les pratiques prévues sont suivies, tracées et vérifiables sur le cycle de vie
+D. Le délai initial a été respecté
+Réponse: C
+
+Question 6 (Chapitre 6 - Référentiel ISTQB, principes et niveaux de test) [Moyen]
+Après correction d'un défaut critique, quelle combinaison d'actions est la plus juste selon les pratiques de test?
+A. Re-test de la correction puis test de régression ciblé
+B. Re-test seulement, la régression est inutile
+C. Régression globale sans vérifier la correction
+D. Reporter les tests à la prochaine version majeure
+Réponse: A
+
+Question 7 (Chapitre 7 - Plan d'Assurance Qualité (PAQ)) [Moyen]
+Dans un PAQ solide, pourquoi préciser les jalons, activités AQ, livrables et responsabilités dans l'échéancier?
+A. Pour réduire le nombre de documents du projet
+B. Pour démontrer la traçabilité et le pilotage concret des actions qualité
+C. Pour éviter toute communication avec le client
+D. Pour remplacer les critères de sortie
+Réponse: B
+
+Question 8 (Chapitre 8 - Métriques logicielles) [Difficile]
+Une équipe affiche un NCLOC élevé et un volume important de défauts tardifs. Quelle lecture est la plus prudente?
+A. Le code est forcément de meilleure qualité car il est volumineux
+B. NCLOC seul suffit pour conclure sur la qualité globale
+C. Il faut croiser plusieurs métriques (densité de défauts, tendance, couverture) avant de conclure
+D. Les métriques sont inutiles si l'équipe est expérimentée
+Réponse: C
+
+Question 9 (Chapitre 9 - Normes et modèles, focus TMMI) [Difficile]
+Quelle affirmation décrit correctement la relation entre CMMI et TMMI?
+A. TMMI remplace totalement CMMI dans tous les domaines
+B. CMMI et TMMI sont sans lien
+C. CMMI couvre la maturité globale; TMMI approfondit spécifiquement la maturité des tests
+D. TMMI ne s'applique qu'aux petites équipes
+Réponse: C
+
+Question 10 (Chapitre 10 - Gestion de configuration) [Difficile]
+Un incident de production révèle qu'une mauvaise version d'un script a été déployée. Quel enchaînement est le plus pertinent en gestion de configuration?
+A. Corriger directement en production sans trace pour gagner du temps
+B. Identifier le CI concerné, contrôler le changement, mettre à jour l'état, puis auditer
+C. Supprimer les versions précédentes pour éviter la confusion
+D. Laisser chaque équipe gérer ses versions localement
+Réponse: B
+
+Corrigé synthèse
+1-B
+2-B
+3-B
+4-C
+5-C
+6-A
+7-B
+8-C
+9-C
+10-B

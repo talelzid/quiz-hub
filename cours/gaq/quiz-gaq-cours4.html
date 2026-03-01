@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz - Cours 4</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <div class="global-course-title">Gestion de l'assurance qualité</div>
+    <h1>Quiz : Modélisation de processus avec BPMN (Cours 4)</h1>
+    
+    <div class="progress-container">
+        <div class="progress-info">
+            <span id="question-counter">Question 1 / 10</span>
+            <div class="progress-stats">
+                <span class="stat-badge incorrect"><span class="stat-icon">✕</span><span id="incorrect-count">0</span></span>
+                <span class="stat-badge correct"><span class="stat-icon">✓</span><span id="correct-count">0</span></span>
+            </div>
+        </div>
+        <div class="progress-bar-wrapper" id="progressBar"></div>
+    </div>
+    
+    <div id="quiz-container" class="card"></div>
+    
+    <div id="feedback" class="feedback-container"></div>
+    
+    <div class="quiz-navigation">
+        <button id="prevBtn" onclick="previousQuestion()">← Précédent</button>
+        <button id="nextBtn" onclick="nextQuestion()">Suivant →</button>
+    </div>
+    
+    <div id="result"></div>
+
+    <script>
+        const questions = [
+        {
+                "q": "Que signifie l'acronyme BPMN ?",
+                "options": [
+                        {
+                                "text": "Business Process Management Notation",
+                                "explain": "Incorrect. Le 'M' signifie 'Model' et non 'Management'."
+                        },
+                        {
+                                "text": "Business Process Model and Notation",
+                                "explain": ""
+                        },
+                        {
+                                "text": "Business Procedure Model and Nomenclature",
+                                "explain": "Incorrect. BPMN concerne les processus (Process), pas les procédures, et utilise 'Notation' et non 'Nomenclature'."
+                        },
+                        {
+                                "text": "Business Process Modeling Network",
+                                "explain": "Incorrect. BPMN signifie 'Business Process Model and Notation', pas 'Modeling Network'."
+                        }
+                ],
+                "correct": 1,
+                "correctExplain": "BPMN signifie Business Process Model and Notation, tel que défini dans la norme ISO/CEI 19510."
+        },
+        {
+                "q": "Depuis quelle année BPMN est-il une norme ISO/CEI ?",
+                "options": [
+                        {
+                                "text": "2010",
+                                "explain": "Incorrect. BPMN est devenu une norme ISO/CEI en 2013, pas en 2010."
+                        },
+                        {
+                                "text": "2015",
+                                "explain": "Incorrect. La normalisation ISO/CEI de BPMN a eu lieu en 2013, avant 2015."
+                        },
+                        {
+                                "text": "2008",
+                                "explain": "Incorrect. BPMN est devenu une norme ISO/CEI 19510 en 2013, pas en 2008."
+                        },
+                        {
+                                "text": "2013",
+                                "explain": ""
+                        }
+                ],
+                "correct": 3,
+                "correctExplain": "BPMN est devenu la norme ISO/CEI 19510 depuis 2013."
+        },
+        {
+                "q": "Combien de catégories principales composent BPMN ?",
+                "options": [
+                        {
+                                "text": "5 catégories principales",
+                                "explain": ""
+                        },
+                        {
+                                "text": "3 catégories principales",
+                                "explain": "Incorrect. BPMN comporte 5 catégories principales : Objets de flux, Connexions, Données, Couloirs et Artefacts."
+                        },
+                        {
+                                "text": "7 catégories principales",
+                                "explain": "Incorrect. Il y a exactement 5 catégories principales dans BPMN, pas 7."
+                        },
+                        {
+                                "text": "4 catégories principales",
+                                "explain": "Incorrect. BPMN est structuré en 5 catégories principales, pas 4."
+                        }
+                ],
+                "correct": 0,
+                "correctExplain": "BPMN est composé de 5 catégories principales : Objets de flux (Flux objects), Connexions (Connections), Données (Data), Couloirs (Lanes) et Artefacts (Artifacts)."
+        },
+        {
+                "q": "Quels sont les trois types d'objets de flux (Flux objects) en BPMN ?",
+                "options": [
+                        {
+                                "text": "Processus, Sous-processus, Tâches",
+                                "explain": "Incorrect. Ces éléments font partie des activités, mais les trois types d'objets de flux sont : Événements, Activités et Passerelles."
+                        },
+                        {
+                                "text": "Événements, Activités, Passerelles",
+                                "explain": ""
+                        },
+                        {
+                                "text": "Début, Milieu, Fin",
+                                "explain": "Incorrect. Ce sont des positions d'événements, pas les types d'objets de flux. Les trois types sont : Événements, Activités et Passerelles."
+                        },
+                        {
+                                "text": "Bassins, Couloirs, Groupes",
+                                "explain": "Incorrect. Les Bassins (Pools) et Couloirs (Lanes) sont des participants, et les Groupes sont des artefacts. Les objets de flux sont : Événements, Activités et Passerelles."
+                        }
+                ],
+                "correct": 1,
+                "correctExplain": "Les trois types d'objets de flux (Flux objects) en BPMN sont : les Événements (Events - Start/Intermediate/End), les Activités (Activities) et les Passerelles (Gateways)."
+        },
+        {
+                "q": "Quelle est la différence entre un flux de séquence et un flux de message en BPMN ?",
+                "options": [
+                        {
+                                "text": "Le flux de séquence connecte des activités dans un même processus, le flux de message connecte différents participants",
+                                "explain": ""
+                        },
+                        {
+                                "text": "Le flux de séquence est utilisé pour les données, le flux de message pour les activités",
+                                "explain": "Incorrect. Les deux sont des types de connexions. Le flux de séquence relie des activités dans un même processus, tandis que le flux de message relie différents participants."
+                        },
+                        {
+                                "text": "Le flux de séquence est optionnel, le flux de message est obligatoire",
+                                "explain": "Incorrect. La différence principale est que le flux de séquence connecte des éléments dans un même processus, alors que le flux de message connecte différents participants."
+                        },
+                        {
+                                "text": "Il n'y a pas de différence, ce sont des synonymes",
+                                "explain": "Incorrect. Ce sont deux types de connexions distincts : le flux de séquence (Sequence flow) pour les activités d'un même processus, et le flux de message (Message flow) pour la communication entre participants."
+                        }
+                ],
+                "correct": 0,
+                "correctExplain": "Le flux de séquence (Sequence flow) connecte des activités à l'intérieur d'un même processus, tandis que le flux de message (Message flow) représente la communication entre différents participants (Pools)."
+        },
+        {
+                "q": "Parmi les éléments suivants, lesquels sont des types de passerelles (Gateways) en BPMN ?",
+                "options": [
+                        {
+                                "text": "Parallèle, Séquentielle, Conditionnelle",
+                                "explain": "Incorrect. 'Séquentielle' n'est pas un type de passerelle. Les types incluent : Exclusive, Event-based, Parallel, Inclusive et Complex."
+                        },
+                        {
+                                "text": "Exclusive, Parallèle, Inclusive, Complexe",
+                                "explain": ""
+                        },
+                        {
+                                "text": "Simple, Double, Multiple, Composite",
+                                "explain": "Incorrect. Ces termes ne correspondent pas aux types de passerelles BPMN. Les types corrects sont : Exclusive, Event-based, Parallel, Inclusive et Complex."
+                        },
+                        {
+                                "text": "Début, Intermédiaire, Fin",
+                                "explain": "Incorrect. Ce sont des positions pour les événements, pas des types de passerelles. Les passerelles incluent : Exclusive, Event-based, Parallel, Inclusive et Complex."
+                        }
+                ],
+                "correct": 1,
+                "correctExplain": "Les types de passerelles (Gateways) en BPMN incluent : Exclusive, Event-based (Basée sur événement), Parallel (Parallèle), Inclusive et Complex (Complexe)."
+        },
+        {
+                "q": "Quelle est la différence entre un Bassin (Pool) et un Couloir (Lane) en BPMN ?",
+                "options": [
+                        {
+                                "text": "Un Bassin représente un participant ou une organisation, un Couloir représente un rôle ou un département à l'intérieur d'un Bassin",
+                                "explain": ""
+                        },
+                        {
+                                "text": "Un Bassin est pour les processus manuels, un Couloir pour les processus automatisés",
+                                "explain": "Incorrect. Les Bassins (Pools) représentent des participants/organisations, et les Couloirs (Lanes) représentent des rôles/départements à l'intérieur d'un Bassin."
+                        },
+                        {
+                                "text": "Un Bassin contient des données, un Couloir contient des activités",
+                                "explain": "Incorrect. Les deux sont des éléments de participation : le Bassin représente un participant global, le Couloir une subdivision (rôle/département) à l'intérieur."
+                        },
+                        {
+                                "text": "Il n'y a pas de différence, ce sont des synonymes",
+                                "explain": "Incorrect. Ce sont des éléments distincts : les Bassins (Pools) représentent des participants entiers, les Couloirs (Lanes) subdivisent un Bassin par rôle ou département."
+                        }
+                ],
+                "correct": 0,
+                "correctExplain": "Un Bassin (Pool) représente un participant ou une organisation entière dans le processus, tandis qu'un Couloir (Lane) représente un rôle, un acteur ou un département spécifique à l'intérieur d'un Bassin."
+        },
+        {
+                "q": "Dans un processus BPMN complexe, vous devez modéliser une situation où une commande peut être annulée suite à une erreur de paiement, déclenchant une compensation. Quels types d'événements devriez-vous utiliser ?",
+                "options": [
+                        {
+                                "text": "Événement de début Message et événement de fin Signal",
+                                "explain": "Incorrect. Pour une annulation avec erreur de paiement et compensation, il faut utiliser un événement intermédiaire Erreur et un événement de fin Compensation."
+                        },
+                        {
+                                "text": "Événement intermédiaire Erreur et événement de fin Compensation",
+                                "explain": ""
+                        },
+                        {
+                                "text": "Événement de début Conditionnel et événement de fin Annulation",
+                                "explain": "Incorrect. La situation décrite nécessite la gestion d'une erreur (Erreur) et le déclenchement d'une compensation (Compensation), pas simplement une condition et une annulation."
+                        },
+                        {
+                                "text": "Événement intermédiaire Timer et événement de fin Escalation",
+                                "explain": "Incorrect. Un Timer est pour des délais temporels et Escalation pour remonter à un niveau supérieur. Pour une erreur de paiement avec compensation, il faut Erreur et Compensation."
+                        }
+                ],
+                "correct": 1,
+                "correctExplain": "Pour modéliser une erreur de paiement avec compensation, on utilise un événement intermédiaire Erreur (Error) pour capturer l'erreur de paiement, et un événement de fin Compensation pour déclencher les activités de compensation nécessaires à l'annulation de la commande."
+        },
+        {
+                "q": "Vous devez modéliser un processus où trois tâches peuvent s'exécuter en parallèle : validation technique (automatique par service), approbation managériale (humaine) et archivage (script). Quels types d'actions BPMN utiliseriez-vous ?",
+                "options": [
+                        {
+                                "text": "Service, Humaine, Script",
+                                "explain": ""
+                        },
+                        {
+                                "text": "Automatique, Manuelle, Technique",
+                                "explain": "Incorrect. 'Automatique' et 'Technique' ne sont pas des types d'actions BPMN standards. Les types corrects pour ce scénario sont : Service (validation automatique), Humaine (approbation) et Script (archivage)."
+                        },
+                        {
+                                "text": "Composite, Multi-instance, Boucle",
+                                "explain": "Incorrect. Ces termes décrivent des caractéristiques de tâches (composite, répétition, boucle), pas le type d'exécution. Pour ce scénario, il faut : Service, Humaine et Script."
+                        },
+                        {
+                                "text": "Envoi message, Réception message, Règle métier",
+                                "explain": "Incorrect. Ces types d'actions ne correspondent pas au scénario. La validation technique nécessite Service, l'approbation managériale nécessite Humaine, et l'archivage nécessite Script."
+                        }
+                ],
+                "correct": 0,
+                "correctExplain": "Pour ce scénario, on utilise trois types d'actions BPMN : Service (pour la validation technique automatique), Humaine (Human - pour l'approbation managériale nécessitant une intervention humaine) et Script (pour l'archivage automatisé par script)."
+        },
+        {
+                "q": "Dans un diagramme BPMN, vous devez représenter un processus avec plusieurs points de décision dépendant d'événements externes, des associations entre annotations textuelles et activités, et un magasin de données persistent. Quelles catégories BPMN utiliseriez-vous principalement ?",
+                "options": [
+                        {
+                                "text": "Objets de flux (Passerelles Event-based), Connexions (Associations), Données (Data stores)",
+                                "explain": ""
+                        },
+                        {
+                                "text": "Couloirs (Lanes), Artefacts (Groupes), Connexions (Flux de séquence)",
+                                "explain": "Incorrect. Les points de décision sur événements nécessitent des Passerelles Event-based (Objets de flux), les annotations utilisent des Associations (Connexions), et la persistance nécessite un Data store (Données)."
+                        },
+                        {
+                                "text": "Objets de flux (Activités), Données (Objets de données), Artefacts (Annotations)",
+                                "explain": "Incorrect. Pour les décisions basées sur événements externes, il faut des Passerelles Event-based. Les associations entre annotations et activités sont des Connexions, et le magasin persistent est un Data store (Données)."
+                        },
+                        {
+                                "text": "Connexions (Flux de message), Couloirs (Bassins), Objets de flux (Événements)",
+                                "explain": "Incorrect. Les décisions sur événements externes nécessitent des Passerelles Event-based, les associations textuelles sont un type de Connexion (Associations), et le stockage persistent nécessite un Data store de la catégorie Données."
+                        }
+                ],
+                "correct": 0,
+                "correctExplain": "Ce scénario complexe utilise trois catégories BPMN : Objets de flux (Passerelles Event-based pour les décisions basées sur événements externes), Connexions (Associations pour lier annotations textuelles aux activités), et Données (Data stores pour le magasin de données persistent)."
+        }
+];
+
+        let currentQuestion = 0;
+        let answers = new Array(questions.length).fill(null);
+        let answered = new Array(questions.length).fill(false);
+
+        function displayQuestion() {
+            const container = document.getElementById('quiz-container');
+            const item = questions[currentQuestion];
+            
+            let html = `<div class="question">${currentQuestion + 1}. ${item.q}</div>`;
+            const letters = ['A', 'B', 'C', 'D'];
+            item.options.forEach((opt, i) => {
+                let classes = '';
+                if (answers[currentQuestion] === i) {
+                    classes = 'selected ';
+                    if (i === item.correct) {
+                        classes += 'correct';
+                    } else {
+                        classes += 'incorrect';
+                    }
+                }
+                const disabledClass = answered[currentQuestion] ? 'disabled' : '';
+                html += `<div class="option ${classes} ${disabledClass}" onclick="${answered[currentQuestion] ? '' : `handleAnswerClick(${i})`}" style="${answered[currentQuestion] ? 'cursor: not-allowed;' : ''}"><span class="option-letter">${letters[i]}</span> ${opt.text}</div>`;
+            });
+            
+            container.innerHTML = html;
+            
+            if (answered[currentQuestion]) {
+                showFeedback();
+            } else {
+                document.getElementById('feedback').innerHTML = '';
+                document.getElementById('feedback').classList.remove('show');
+            }
+            
+            updateProgressBar();
+            updateNavigationButtons();
+            updateProgressInfo();
+        }
+
+        function handleAnswerClick(index) {
+            if (answered[currentQuestion]) return;
+            
+            answers[currentQuestion] = index;
+            answered[currentQuestion] = true;
+            
+            showFeedback();
+            updateProgressBar();
+            updateProgressInfo();
+            updateNavigationButtons();
+            displayQuestion();
+        }
+
+        function showFeedback() {
+            const feedbackDiv = document.getElementById('feedback');
+            const item = questions[currentQuestion];
+            const isCorrect = answers[currentQuestion] === item.correct;
+            const selectedOption = item.options[answers[currentQuestion]];
+            
+            feedbackDiv.className = 'feedback-container show ' + (isCorrect ? 'feedback-correct' : 'feedback-incorrect');
+            
+            let html = '';
+            
+            if (isCorrect) {
+                html += `
+                    <div class="feedback-header">Bonne réponse!</div>
+                    <div class="feedback-explanation">${item.correctExplain}</div>
+                `;
+            } else {
+                html += `
+                    <div class="feedback-header">Pas tout à fait</div>
+                    <div class="feedback-explanation">${selectedOption.explain}</div>
+                    <div class="correct-answer-box">
+                        <div class="correct-answer-label">✓ Bonne réponse:</div>
+                        <div>${item.options[item.correct].text}</div>
+                        <div style="margin-top: 8px; font-size: 0.9em;">${item.correctExplain}</div>
+                    </div>
+                `;
+            }
+            
+            feedbackDiv.innerHTML = html;
+        }
+
+        function updateProgressBar() {
+            const progressBar = document.getElementById('progressBar');
+            progressBar.innerHTML = '';
+            
+            for (let i = 0; i < questions.length; i++) {
+                const segment = document.createElement('div');
+                segment.className = 'progress-segment';
+                
+                if (!answered[i]) {
+                    segment.classList.add('unanswered');
+                } else if (answers[i] === questions[i].correct) {
+                    segment.classList.add('correct');
+                } else {
+                    segment.classList.add('incorrect');
+                }
+                
+                progressBar.appendChild(segment);
+            }
+        }
+
+        function updateNavigationButtons() {
+            const isAnswered = answered[currentQuestion];
+            document.getElementById('prevBtn').disabled = currentQuestion === 0 || !isAnswered;
+            document.getElementById('nextBtn').disabled = !isAnswered;
+            
+            if (currentQuestion === questions.length - 1) {
+                document.getElementById('nextBtn').textContent = 'Voir Résultat';
+            } else {
+                document.getElementById('nextBtn').textContent = 'Suivant →';
+            }
+        }
+
+        function updateProgressInfo() {
+            document.getElementById('question-counter').textContent = `Question ${currentQuestion + 1} / ${questions.length}`;
+            
+            let correctCount = 0;
+            let incorrectCount = 0;
+            
+            for (let i = 0; i < answers.length; i++) {
+                if (answered[i]) {
+                    if (answers[i] === questions[i].correct) {
+                        correctCount++;
+                    } else {
+                        incorrectCount++;
+                    }
+                }
+            }
+            
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('incorrect-count').textContent = incorrectCount;
+        }
+
+        function nextQuestion() {
+            if (currentQuestion === questions.length - 1) {
+                showFinalResults();
+                return;
+            }
+            
+            currentQuestion++;
+            displayQuestion();
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        function showFinalResults() {
+            let score = 0;
+            answers.forEach((answer, index) => {
+                if (answer === questions[index].correct) score++;
+            });
+            
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '<div class="question">Quiz terminé!</div>';
+            
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.className = 'feedback-container';
+            feedbackDiv.innerHTML = '';
+            
+            let recapHtml = '<div class="recap-title">Résumé de vos réponses</div>';
+            
+            questions.forEach((question, index) => {
+                const userAnswer = question.options[answers[index]];
+                const correctAnswer = question.options[question.correct];
+                const isCorrect = answers[index] === question.correct;
+                
+                recapHtml += `
+                    <div class="recap-card ${isCorrect ? 'correct' : 'incorrect'}">
+                        <div class="recap-number">Question ${index + 1} / ${questions.length}</div>
+                        <div class="recap-question">${question.q}</div>
+                        <div class="recap-answer-item user">
+                            <span class="recap-label">Votre réponse:</span>
+                            ${userAnswer.text}
+                            <span class="recap-result ${isCorrect ? 'correct' : 'incorrect'}">
+                                ${isCorrect ? '✓ Correct' : '✗ Incorrect'}
+                            </span>
+                        </div>
+                        ${!isCorrect ? `
+                            <div class="recap-answer-item correct-answer">
+                                <span class="recap-label">Bonne réponse:</span>
+                                ${correctAnswer.text}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            
+            document.getElementById('result').innerHTML = `
+                <div style="font-size: 2em; margin: 30px 0 20px;">Votre score : ${score} / ${questions.length}</div>
+                <div style="font-size: 1.1em; color: #555; margin-bottom: 30px;">Réussite : ${Math.round(score / questions.length * 100)}%</div>
+                <div class="recap-container">${recapHtml}</div>
+            `;
+            
+            document.getElementById('prevBtn').disabled = false;
+            document.getElementById('nextBtn').textContent = 'Recommencer';
+            document.getElementById('nextBtn').disabled = false;
+            document.getElementById('nextBtn').onclick = function() { location.reload(); };
+            document.getElementById('prevBtn').onclick = function() {
+                currentQuestion = questions.length - 1;
+                displayQuestion();
+            };
+        }
+
+        displayQuestion();
+    </script>
+</body>
+</html>
