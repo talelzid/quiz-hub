@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz - Cours 8</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <div class="global-course-title">Gestion de l'assurance qualité</div>
+    <h1>Quiz : Analyse statique du code et revue avancées (Cours 8)</h1>
+    
+    <div class="progress-container">
+        <div class="progress-info">
+            <span id="question-counter">Question 1 / 10</span>
+            <div class="progress-stats">
+                <span class="stat-badge incorrect"><span class="stat-icon">✕</span><span id="incorrect-count">0</span></span>
+                <span class="stat-badge correct"><span class="stat-icon">✓</span><span id="correct-count">0</span></span>
+            </div>
+        </div>
+        <div class="progress-bar-wrapper" id="progressBar"></div>
+    </div>
+    
+    <div id="quiz-container" class="card"></div>
+    
+    <div id="feedback" class="feedback-container"></div>
+    
+    <div class="quiz-navigation">
+        <button id="prevBtn" onclick="previousQuestion()">← Précédent</button>
+        <button id="nextBtn" onclick="nextQuestion()">Suivant →</button>
+    </div>
+    
+    <div id="result"></div>
+
+    <script>
+        const questions = [
+            {
+                        "q": "Qu'est-ce qu'une métrique du logiciel?",
+                        "options": [
+                                    {
+                                                "text": "Un outil de programmation utilisé pour écrire du code",
+                                                "explain": "Les outils de programmation ne sont pas des métriques, ce sont des instruments de développement."
+                                    },
+                                    {
+                                                "text": "Un processus pour tester le logiciel en environnement de production",
+                                                "explain": "Le testing est une activité de qualité, pas une métrique de mesure."
+                                    },
+                                    {
+                                                "text": "Un moyen de quantifier une propriété du monde logiciel",
+                                                "explain": ""
+                                    },
+                                    {
+                                                "text": "Une documentation technique qui décrit le fonctionnement du code",
+                                                "explain": "La documentation est une communication, pas une quantification de propriété."
+                                    }
+                        ],
+                        "correct": 2,
+                        "correctExplain": "Une métrique du logiciel est précisément un moyen de quantifier une propriété du monde logiciel. Par exemple, le nombre d'erreurs dans un programme permet de quantifier la qualité du programme. Les métriques sont essentielles pour un chef de projet et son équipe car elles permettent de mesurer et d'évaluer différents aspects du logiciel."
+            },
+            {
+                        "q": "Lequel des éléments suivants N'est PAS un rôle des métriques en gestion de projet?",
+                        "options": [
+                                    {
+                                                "text": "Évaluer le travail effectué et la productivité",
+                                                "explain": "C'est justement un rôle clé : évaluer l'effort, la pertinence et la quantité de travail."
+                                    },
+                                    {
+                                                "text": "Faire des prévisions sur le projet",
+                                                "explain": ""
+                                    },
+                                    {
+                                                "text": "Remplacer complètement les compétences du chef de projet",
+                                                "explain": "Les métriques sont des outils d'aide et de support, pas des remplaçants du jugement humain. C'est ce qui en fait un outil et non un substitut."
+                                    },
+                                    {
+                                                "text": "Détecter des problèmes imminents ou potentiels",
+                                                "explain": "La détection de problèmes est un rôle fondamental des métriques."
+                                    }
+                        ],
+                        "correct": 2,
+                        "correctExplain": "Les métriques supportent la gestion de projet mais elles ne remplacent jamais les compétences et le jugement d'un chef de projet. Les métriques sont des outils d'aide à la décision, pas des éléments qui suppriment la nécessité d'expertise humaine. Les trois autres options sont effectivement des rôles des métriques."
+            },
+            {
+                        "q": "Qu'appelle-t-on les 'attributs internes' d'un logiciel?",
+                        "options": [
+                                    {
+                                                "text": "Les interfaces graphiques et les menus du logiciel",
+                                                "explain": "Les interfaces sont des attributs externes, visibles par l'utilisateur."
+                                    },
+                                    {
+                                                "text": "Les constituants construits durant le processus de développement qui impactent le comportement du logiciel",
+                                                "explain": ""
+                                    },
+                                    {
+                                                "text": "Les serveurs et les bases de données utilisés par le logiciel",
+                                                "explain": "Les infrastructures sont des éléments externes, pas les constituants internes du code."
+                                    },
+                                    {
+                                                "text": "Les rapports de test et la documentation générée par les phases de test",
+                                                "explain": "La documentation teste est un produit externe, pas un constituant interne du logiciel lui-même."
+                                    }
+                        ],
+                        "correct": 1,
+                        "correctExplain": "Les attributs internes d'un logiciel sont tous les constituants construits durant le processus de développement. Ces attributs internes ont un impact direct et important sur le comportement du logiciel. C'est en agissant sur la structure interne que l'on peut améliorer les attributs externes et donc la qualité globale du produit final."
+            },
+            {
+                        "q": "Quelle est la principale difficultée liée à l'utilisation du Nombre de Lignes de Code (LOC) comme métrique?",
+                        "options": [
+                                    {
+                                                "text": "C'est la métrique la plus difficile à calculer",
+                                                "explain": "LOC est une des métriques les plus faciles à obtenir, c'est justement pour cela qu'elle est largement utilisée."
+                                    },
+                                    {
+                                                "text": "L'absence d'une définition standardisée crée de l'ambiguïté dans le calcul",
+                                                "explain": ""
+                                    },
+                                    {
+                                                "text": "Elle ne peut être utilisée que dans les langages orientés objet",
+                                                "explain": "LOC peut être calculée dans n'importe quel langage de programmation."
+                                    },
+                                    {
+                                                "text": "Les outils d'analyse statique refusent de la calculer",
+                                                "explain": "Au contraire, la plupart des environnements de développement et outils d'analyse fournissent cette mesure."
+                                    }
+                        ],
+                        "correct": 1,
+                        "correctExplain": "La principale difficulté de LOC est son caractère ambigu. Il y a différentes façons de la calculer : inclusion ou non des commentaires, comment compter les lignes avec plusieurs instructions, les différences entre les langages et IDEs, l'expérience du développeur, la réutilisation et la génération de code, et même les possibles manipulations. Cette ambiguïté est pourquoi il est essentiel qu'une équipe définisse une convention commune."
+            },
+            {
+                        "q": "Définissez la métrique NCLOC et ses implications pour la qualité du code.",
+                        "options": [
+                                    {
+                                                "text": "Le nombre total de lignes incluant les commentaires et les instructions",
+                                                "explain": "Cela décrirait LOC, pas NCLOC. NCLOC exclut spécifiquement les commentaires."
+                                    },
+                                    {
+                                                "text": "Le nombre de lignes de code sans les commentaires, aussi appelée ELOC",
+                                                "explain": ""
+                                    },
+                                    {
+                                                "text": "Le nombre de lignes vides et de lignes de commentaires uniquement",
+                                                "explain": "C'est l'inverse : NCLOC mesure le code effectif, pas les commentaires."
+                                    },
+                                    {
+                                                "text": "Le nombre de fonctionnalités implémentées dans le code source",
+                                                "explain": "NCLOC n'est pas une mesure de fonctionnalités, c'est une mesure du volume de code effectif."
+                                    }
+                        ],
+                        "correct": 1,
+                        "correctExplain": "NCLOC signifie Non Commented source Lines Of Code et est aussi désignée par ELOC (Effective Lines Of Code). Cette métrique mesure le nombre de lignes de code sans compter les commentaires. Elle est importante pour évaluer la quantité réelle de code effectivement écrit, en supprimant le 'bruit' des commentaires, ce qui donne une image plus precise de l'effort de développement."
+            },
+            {
+                        "q": "Comment les trois métriques LOC, NCLOC et CLOC sont-elles reliées mathématiquement?",
+                        "options": [
+                                    {
+                                                "text": "LOC = NCLOC + CLOC + (nombre de lignes vides)",
+                                                "explain": "Les lignes vides ne sont pas incluses dans LOC."
+                                    },
+                                    {
+                                                "text": "LOC = NCLOC + CLOC",
+                                                "explain": ""
+                                    },
+                                    {
+                                                "text": "NCLOC = LOC + CLOC",
+                                                "explain": "Cela n'a pas de sens mathématiquement. CLOC et NCLOC sont des parties constituantes de LOC."
+                                    },
+                                    {
+                                                "text": "CLOC = LOC - NCLOC",
+                                                "explain": "Formulé inversement, c'est correct, mais la relation directe entre les trois est LOC = NCLOC + CLOC."
+                                    }
+                        ],
+                        "correct": 1,
+                        "correctExplain": "La relation mathématique fondamentale est : LOC (Lignes Of Code totales) = NCLOC (lignes de code sans commentaires) + CLOC (lignes de commentaires). Cette équation montre que le nombre total de lignes dans un fichier est composé de deux parties : le code effectif et les commentaires. Cela permet de compléter les deux métriques précédentes de manière cohérente."
+            },
+            {
+                        "q": "Quel est le calcul correct for la densité de commentaire et qu'indique-t-elle sur la qualité du code?",
+                        "options": [
+                                    {
+                                                "text": "Densité = LOC / NCLOC; indique la proportion de code par rapport aux commentaires",
+                                                "explain": "Cette formule indique l'inverse de ce qu'on cherche - elle augmente quand il y a moins de commentaires."
+                                    },
+                                    {
+                                                "text": "Densité = CLOC / LOC; évalue la lisibilité, l'analysabilité et la modifiabilité du code selon ISO 9126",
+                                                "explain": ""
+                                    },
+                                    {
+                                                "text": "Densité = NCLOC / CLOC; mesure la complexité algorithmique du code",
+                                                "explain": "Cette formule ne mesure pas la complexité ; la complexité se mesure par d'autres métriques comme McCabe."
+                                    },
+                                    {
+                                                "text": "Densité = CLOC - NCLOC; indique le niveau de détail des commentaires",
+                                                "explain": "Une soustraction n'a pas de sens. La densité est un ratio, pas une différence."
+                                    }
+                        ],
+                        "correct": 1,
+                        "correctExplain": "La densité de commentaire est calculée comme CLOC / LOC (lignes de commentaires divisées par le nombre total de lignes). Cette mesure est très importante pour la qualité logicielle car elle permet d'évaluer des critères critiques comme la lisibilité du code (un code bien commenté est plus facile à lire), l'analysabilité (plus facile à comprendre et analyser) et la modifiabilité (plus facile à maintenir et modifier). Ces critères sont définis dans les normes ISO 9126 et ISO 25000."
+            },
+            {
+                        "q": "Analysez les différents types de duplication de code et leur impact sur la qualité du logiciel.",
+                        "options": [
+                                    {
+                                                "text": "Seule la duplication imposée par la spécification or le langage affecte la qualité",
+                                                "explain": "Toutes les formes de duplication affectent la qualité ; certaines peuvent être inévitables mais d'autres sont critiques à gérer."
+                                    },
+                                    {
+                                                "text": "La duplication par impatience (pression des délais) est acceptable car elle sera refactorisée plus tard",
+                                                "explain": "C'est une fausse économie : la duplication technique crée de la dette technique que l'on doit gérer."
+                                    },
+                                    {
+                                                "text": "Il y a plusieurs sources : imposed by spec/language, inadvertance, impatience, inter-developer; chaque type affecte différemment la maintenabilité et la qualité",
+                                                "explain": ""
+                                    },
+                                    {
+                                                "text": "La duplication inter-développeur indique toujours un problème de communication dans l'équipe",
+                                                "explain": "Bien que la communication soit importante, la duplication peut être involontaire même avec bonne communication."
+                                    }
+                        ],
+                        "correct": 2,
+                        "correctExplain": "Il existe plusieurs sources de duplication : imposée par la spécification ou le langage (inévitable), par inadvertance (manque de conscience), par impatience due à la pression des délais (dette technique), et inter-développeur (manque de réutilisation ou de partage). Chaque type de duplication a un impact différent sur la maintenabilité, la testabilité et la qualité globale du logiciel. La gestion de la duplication est cruciale pour maintenir une base de code de qualité."
+            },
+            {
+                        "q": "Qu'est-ce que le nombre cyclomatique de McCabe et comment cette métrique aide-t-elle à évaluer la qualité du code?",
+                        "options": [
+                                    {
+                                                "text": "C'est le nombre total de fonctions dans un module; plus le nombre est élevé, plus le code est complexe",
+                                                "explain": "Le nombre de fonctions n'est pas ce que la complexité cyclomatique mesure ; c'est le flux de contrôle qui compte."
+                                    },
+                                    {
+                                                "text": "C'est une mesure du nombre de temps que le code a été révisé; indique l'historique de maintenance",
+                                                "explain": "McCabe n'a rien à voir avec l'historique des révisions ; c'est une mesure de structure statique."
+                                    },
+                                    {
+                                                "text": "C'est le nombre de chemins linéaires indépendants; décrit la complexité d'écoulement et le nombre de branches conditionnelles",
+                                                "explain": ""
+                                    },
+                                    {
+                                                "text": "C'est la durée moyenne d'exécution du code; mesure la performance plutôt que la complexité",
+                                                "explain": "McCabe mesure la structure logique, pas la performance d'exécution."
+                                    }
+                        ],
+                        "correct": 2,
+                        "correctExplain": "Le nombre cyclomatique v(G) de McCabe décrit précisément la complexité d'écoulement (control flow complexity) d'un programme. Il indique le nombre de chemins linéaires indépendants dans un module de programme et représente finalement la complexité des flux de données. Il correspond au nombre de branches conditionnelles (if, while, for, case, etc.) dans l'organigramme d'un programme. Cette métrique aide à identifier les modules qui sont trop complexes et difficiles à tester et maintenir."
+            },
+            {
+                        "q": "En pratique, dans un contexte d'assurance qualité complexe, comment les quatre types de duplication de code interagissent-ils avec l'implémentation des métriques de complexité cyclomatique?",
+                        "options": [
+                                    {
+                                                "text": "La duplication n'affecte pas la complexité cyclomatique puisque chaque occurrence est calculée indépendamment",
+                                                "explain": "Bien que chaque occurrence soit calculée séparément, la duplication cumulative affecte directement les efforts de test et de maintenance, ce qui impacte les stratégies de mesure."
+                                    },
+                                    {
+                                                "text": "Seule la duplication imposée par le langage affecte mesurablement la complexité cyclomatique globale",
+                                                "explain": "Tous les types de duplication contribuent à la complexité globale, pas seulement ceux imposés par le langage."
+                                    },
+                                    {
+                                                "text": "La duplication augmente la complexité cyclomatique moyenne, compliquant la stratégie de test et rendant la maintenance plus coûteuse dans l'analyse des métriques globales",
+                                                "explain": ""
+                                    },
+                                    {
+                                                "text": "Les métriques de complexité McCabe sont indépendantes de toute considération de duplication car elles mesurent des structures différentes",
+                                                "explain": "McCabe mesure la structure de contrôle, mais la duplication affecte l'interprétation et l'utilité des métriques globales."
+                                    }
+                        ],
+                        "correct": 2,
+                        "correctExplain": "La relation entre duplication et complexité cyclomatique est subtile mais critique : bien que McCabe mesure indépendamment chaque instance, la duplication augmente la complexité cyclomatique MOYENNE du système et rend l'analyse des métriques plus difficile. La duplication interagit négativement avec les efforts de test (chaque copie doit être testée séparément), ce qui augmente le coût total d'assurance qualité. Pour les responsables qualité, la duplication signifie que les métriques moyennes de complexité deviennent moins fiables et que les seuils de complexité doivent être ajustés. C'est une interaction clé dans l'analyse avancée des métriques et revues de code."
+            }
+];
+
+        let currentQuestion = 0;
+        let answers = new Array(questions.length).fill(null);
+        let answered = new Array(questions.length).fill(false);
+
+        function displayQuestion() {
+            const container = document.getElementById('quiz-container');
+            const item = questions[currentQuestion];
+            
+            let html = `<div class="question">${currentQuestion + 1}. ${item.q}</div>`;
+            const letters = ['A', 'B', 'C', 'D'];
+            item.options.forEach((opt, i) => {
+                let classes = '';
+                if (answers[currentQuestion] === i) {
+                    classes = 'selected ';
+                    if (i === item.correct) {
+                        classes += 'correct';
+                    } else {
+                        classes += 'incorrect';
+                    }
+                }
+                const disabledClass = answered[currentQuestion] ? 'disabled' : '';
+                html += `<div class="option ${classes} ${disabledClass}" onclick="${answered[currentQuestion] ? '' : `handleAnswerClick(${i})`}" style="${answered[currentQuestion] ? 'cursor: not-allowed;' : ''}"><span class="option-letter">${letters[i]}</span> ${opt.text}</div>`;
+            });
+            
+            container.innerHTML = html;
+            
+            if (answered[currentQuestion]) {
+                showFeedback();
+            } else {
+                document.getElementById('feedback').innerHTML = '';
+                document.getElementById('feedback').classList.remove('show');
+            }
+            
+            updateProgressBar();
+            updateNavigationButtons();
+            updateProgressInfo();
+        }
+
+        function handleAnswerClick(index) {
+            if (answered[currentQuestion]) return;
+            
+            answers[currentQuestion] = index;
+            answered[currentQuestion] = true;
+            
+            showFeedback();
+            updateProgressBar();
+            updateProgressInfo();
+            updateNavigationButtons();
+            displayQuestion();
+        }
+
+        function showFeedback() {
+            const feedbackDiv = document.getElementById('feedback');
+            const item = questions[currentQuestion];
+            const isCorrect = answers[currentQuestion] === item.correct;
+            const selectedOption = item.options[answers[currentQuestion]];
+            
+            feedbackDiv.className = 'feedback-container show ' + (isCorrect ? 'feedback-correct' : 'feedback-incorrect');
+            
+            let html = '';
+            
+            if (isCorrect) {
+                html += `
+                    <div class="feedback-header">Bonne réponse!</div>
+                    <div class="feedback-explanation">${item.correctExplain}</div>
+                `;
+            } else {
+                html += `
+                    <div class="feedback-header">Pas tout à fait</div>
+                    <div class="feedback-explanation">${selectedOption.explain}</div>
+                    <div class="correct-answer-box">
+                        <div class="correct-answer-label">✓ Bonne réponse:</div>
+                        <div>${item.options[item.correct].text}</div>
+                        <div style="margin-top: 8px; font-size: 0.9em;">${item.correctExplain}</div>
+                    </div>
+                `;
+            }
+            
+            feedbackDiv.innerHTML = html;
+        }
+
+        function updateProgressBar() {
+            const progressBar = document.getElementById('progressBar');
+            progressBar.innerHTML = '';
+            
+            for (let i = 0; i < questions.length; i++) {
+                const segment = document.createElement('div');
+                segment.className = 'progress-segment';
+                
+                if (!answered[i]) {
+                    segment.classList.add('unanswered');
+                } else if (answers[i] === questions[i].correct) {
+                    segment.classList.add('correct');
+                } else {
+                    segment.classList.add('incorrect');
+                }
+                
+                progressBar.appendChild(segment);
+            }
+        }
+
+        function updateNavigationButtons() {
+            const isAnswered = answered[currentQuestion];
+            document.getElementById('prevBtn').disabled = currentQuestion === 0 || !isAnswered;
+            document.getElementById('nextBtn').disabled = !isAnswered;
+            
+            if (currentQuestion === questions.length - 1) {
+                document.getElementById('nextBtn').textContent = 'Voir Résultat';
+            } else {
+                document.getElementById('nextBtn').textContent = 'Suivant →';
+            }
+        }
+
+        function updateProgressInfo() {
+            document.getElementById('question-counter').textContent = `Question ${currentQuestion + 1} / ${questions.length}`;
+            
+            let correctCount = 0;
+            let incorrectCount = 0;
+            
+            for (let i = 0; i < answers.length; i++) {
+                if (answered[i]) {
+                    if (answers[i] === questions[i].correct) {
+                        correctCount++;
+                    } else {
+                        incorrectCount++;
+                    }
+                }
+            }
+            
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('incorrect-count').textContent = incorrectCount;
+        }
+
+        function nextQuestion() {
+            if (currentQuestion === questions.length - 1) {
+                showFinalResults();
+                return;
+            }
+            
+            currentQuestion++;
+            displayQuestion();
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        function showFinalResults() {
+            let score = 0;
+            answers.forEach((answer, index) => {
+                if (answer === questions[index].correct) score++;
+            });
+            
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '<div class="question">Quiz terminé!</div>';
+            
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.className = 'feedback-container';
+            feedbackDiv.innerHTML = '';
+            
+            let recapHtml = '<div class="recap-title">Résumé de vos réponses</div>';
+            
+            questions.forEach((question, index) => {
+                const userAnswer = question.options[answers[index]];
+                const correctAnswer = question.options[question.correct];
+                const isCorrect = answers[index] === question.correct;
+                
+                recapHtml += `
+                    <div class="recap-card ${isCorrect ? 'correct' : 'incorrect'}">
+                        <div class="recap-number">Question ${index + 1} / ${questions.length}</div>
+                        <div class="recap-question">${question.q}</div>
+                        <div class="recap-answer-item user">
+                            <span class="recap-label">Votre réponse:</span>
+                            ${userAnswer.text}
+                            <span class="recap-result ${isCorrect ? 'correct' : 'incorrect'}">
+                                ${isCorrect ? '✓ Correct' : '✗ Incorrect'}
+                            </span>
+                        </div>
+                        ${!isCorrect ? `
+                            <div class="recap-answer-item correct-answer">
+                                <span class="recap-label">Bonne réponse:</span>
+                                ${correctAnswer.text}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            
+            document.getElementById('result').innerHTML = `
+                <div style="font-size: 2em; margin: 30px 0 20px;">Votre score : ${score} / ${questions.length}</div>
+                <div style="font-size: 1.1em; color: #555; margin-bottom: 30px;">Réussite : ${Math.round(score / questions.length * 100)}%</div>
+                <div class="recap-container">${recapHtml}</div>
+            `;
+            
+            document.getElementById('prevBtn').disabled = false;
+            document.getElementById('nextBtn').textContent = 'Recommencer';
+            document.getElementById('nextBtn').disabled = false;
+            document.getElementById('nextBtn').onclick = function() { location.reload(); };
+            document.getElementById('prevBtn').onclick = function() {
+                currentQuestion = questions.length - 1;
+                displayQuestion();
+            };
+        }
+
+        displayQuestion();
+    </script>
+</body>
+</html>

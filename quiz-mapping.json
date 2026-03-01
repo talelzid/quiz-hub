@@ -41,11 +41,67 @@
     "title": "Gestion du temps et productivité",
     "path": "cours/ift-ssd/quiz-ift-ssd-cours7.html"
   },
+  "b9k2m5p7": {
+    "course": "ET",
+    "lesson": 1,
+    "title": "Introduction à l'élaboration des tests",
+    "path": "cours/et/quiz-et-cours1.html",
+    "createdAt": "2026-02-27T00:00:00Z",
+    "questionsCount": 10
+  },
+  "c7k3n8m4": {
+    "course": "ET",
+    "lesson": 2,
+    "title": "Stratégie de tests",
+    "path": "cours/et/quiz-et-cours2.html",
+    "createdAt": "2026-02-27T00:00:00Z",
+    "questionsCount": 10
+  },
   "h8z1a3b9": {
     "course": "ET",
     "lesson": 6,
     "title": "Élaboration des tests",
     "path": "cours/et/quiz-et-cours6.html"
+  },
+  "d5k7n2p9": {
+    "course": "ET",
+    "lesson": 7,
+    "title": "Tests combinatoires - Pairwise",
+    "path": "cours/et/quiz-et-cours7.html",
+    "createdAt": "2026-02-28T00:00:00Z",
+    "questionsCount": 10
+  },
+  "f2k6n4p8": {
+    "course": "ET",
+    "lesson": 3,
+    "title": "Plan de tests",
+    "path": "cours/et/quiz-et-cours3.html",
+    "createdAt": "2026-02-28T00:00:00Z",
+    "questionsCount": 10
+  },
+  "g5p2m8k1": {
+    "course": "ET",
+    "lesson": 4,
+    "title": "Tests par boite noire",
+    "path": "cours/et/quiz-et-cours4.html",
+    "createdAt": "2026-02-28T00:00:00Z",
+    "questionsCount": 10
+  },
+  "e8m3p1n6": {
+    "course": "ET",
+    "lesson": 8,
+    "title": "Tests par boite blanche",
+    "path": "cours/et/quiz-et-cours8.html",
+    "createdAt": "2026-02-28T00:00:00Z",
+    "questionsCount": 10
+  },
+  "h7n2k5m9": {
+    "course": "ET",
+    "lesson": 10,
+    "title": "Tests de transition d'états",
+    "path": "cours/et/quiz-et-cours10.html",
+    "createdAt": "2026-02-28T00:00:00Z",
+    "questionsCount": 10
   },
   "i1j2k3l4": {
     "course": "GAQ",
@@ -81,5 +137,45 @@
     "chapter": 5,
     "title": "Gestion des activités de test",
     "path": "cours/gaq/quiz-gaq-cours6-ch5.html"
+  },
+  "9t11m79n": {
+    "course": "GAQ",
+    "lesson": 8,
+    "title": "Analyse statique du code et revue avancées",
+    "path": "cours/gaq/quiz-gaq-cours8.html",
+    "createdAt": "2026-03-01T00:00:00Z",
+    "questionsCount": 10
+  },
+  "s44jzwjo": {
+    "course": "GAQ",
+    "lesson": 9,
+    "title": "Retour sur les normes et les modèle - Focus sur le TMMI",
+    "path": "cours/gaq/quiz-gaq-cours9.html",
+    "createdAt": "2026-03-01T00:00:00Z",
+    "questionsCount": 10
+  },
+  "yf1vjcqn": {
+    "course": "GAQ",
+    "lesson": 10,
+    "title": "La gestion de configuration",
+    "path": "cours/gaq/quiz-gaq-cours10.html",
+    "createdAt": "2026-03-01T00:00:00Z",
+    "questionsCount": 10
+  },
+  "2i09q4tb": {
+    "course": "GAQ",
+    "lesson": 7,
+    "title": "Le plan d'assurance qualité",
+    "path": "cours/gaq/quiz-gaq-cours7.html",
+    "createdAt": "2026-03-01T10:46:48Z",
+    "questionsCount": 10
+  },
+  "h7k2m9a1": {
+    "course": "GAQ",
+    "lesson": 5,
+    "title": "L'audit de processus",
+    "path": "cours/gaq/quiz-gaq-cours5.html",
+    "createdAt": "2025-01-02T14:30:00Z",
+    "questionsCount": 10
   }
 }

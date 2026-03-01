@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz - Tests de transition d'états</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <div class="global-course-title">Élaboration des tests</div>
+    <h1>Quiz : Tests de transition d'états (Cours 10)</h1>
+    
+    <div class="progress-container">
+        <div class="progress-info">
+            <span id="question-counter">Question 1 / 10</span>
+            <div class="progress-stats">
+                <span class="stat-badge incorrect"><span class="stat-icon">✕</span><span id="incorrect-count">0</span></span>
+                <span class="stat-badge correct"><span class="stat-icon">✓</span><span id="correct-count">0</span></span>
+            </div>
+        </div>
+        <div class="progress-bar-wrapper" id="progressBar"></div>
+    </div>
+    
+    <div id="quiz-container" class="card"></div>
+    
+    <div id="feedback" class="feedback-container"></div>
+    
+    <div class="quiz-navigation">
+        <button id="prevBtn" onclick="previousQuestion()">← Précédent</button>
+        <button id="nextBtn" onclick="nextQuestion()">Suivant →</button>
+    </div>
+    
+    <div id="result"></div>
+
+    <script>
+        const questions = [
+            {
+                q: "Qu'est-ce qu'un test de transition d'états (state transition testing) ?",
+                options: [
+                    { text: "Un test qui examine les changements d'état et les transitions d'un système", explain: "" },
+                    { text: "Un test qui mesure la vitesse de transition entre les états du système", explain: "La vitesse n'est pas l'objectif principal" },
+                    { text: "Un test qui élamine tous les états sans vérifier les transitions", explain: "Les transitions sont essentielles" },
+                    { text: "Un test utilisé uniquement pour les bases de données", explain: "C'est applicable à tout système avec états" }
+                ],
+                correct: 0,
+                correctExplain: "Le test de transition d'états vérifie que le système passe correctement d'un état à un autre en réponse aux événements."
+            },
+            {
+                q: "Quel est l'objectif principal des tests basés sur les transitions d'états ?",
+                options: [
+                    { text: "Vérifier que toutes les transitions valides sont possibles et les transitions invalides sont bloquées", explain: "" },
+                    { text: "Tester uniquement les états initiaux du système", explain: "Les transitions sont plus importantes" },
+                    { text: "Vérifier que le système reste dans le même état", explain: "C'est l'opposé de l'objectif" },
+                    { text: "Mesurer la durée de vie du système", explain: "Cela n'a rien à voir avec les transitions d'états" }
+                ],
+                correct: 0,
+                correctExplain: "L'objectif est de valider que transitions autorisées sont exécutées et transitions interdites sont refusées."
+            },
+            {
+                q: "Qu'est-ce qu'un diagramme d'états (state diagram) dans le contexte des tests ?",
+                options: [
+                    { text: "Une représentation visuelle des états du système et des transitions possibles entre eux", explain: "" },
+                    { text: "Un graphique montrant les performances du système au fil du temps", explain: "C'est un diagramme de performance, pas d'états" },
+                    { text: "Un schéma décrivant la hiérarchie des dossiers dans le système", explain: "Pas lié aux états du système" },
+                    { text: "Un plan de test listant les cas de test à exécuter", explain: "C'est un document de test, pas un diagramme d'états" }
+                ],
+                correct: 0,
+                correctExplain: "Diagramme d'états: boîtes = états, flèches = transitions étiquetées par les événements qui les provoquent."
+            },
+            {
+                q: "Quelle est la différence entre un état valide et une transition valide ?",
+                options: [
+                    { text: "Un état valide est un état dans lequel le système peut exister; une transition valide est un changement autorisé entre deux états", explain: "" },
+                    { text: "Il n'y a aucune différence; les termes sont synonymes", explain: "Ce sont des concepts distincts" },
+                    { text: "Une transition valide ne peut jamais mener à un état invalide", explain: "Une bonne conception l'évite, mais ce n'est pas la définition" },
+                    { text: "Les états valides sont permanents; les transitions sont temporaires", explain: "Les deux peuvent être temporaires ou permanents" }
+                ],
+                correct: 0,
+                correctExplain: "État valide: situation reconnue où le système peut fonctionner. Transition valide: chemin autorisé d'un état à un autre."
+            },
+            {
+                q: "Qu'est-ce qu'une transition interdite (invalid transition) et pourquoi est-ce important à tester ?",
+                options: [
+                    { text: "Une transition qui ne devrait pas être possible; la tester détecte les défauts logiques et les problèmes de sécurité", explain: "" },
+                    { text: "Une transition qui est très lente à exécuter", explain: "La vitesse n'est pas la raison de l'invalider" },
+                    { text: "Une transition qui occurs rarement dans l'utilisation normale", explain: "Rareté n'équivaut pas invalidité" },
+                    { text: "Une transition qui coûte trop cher en ressources", explain: "Les coûts ne définissent pas validité" }
+                ],
+                correct: 0,
+                correctExplain: "Transition interdite: tentative non-autorisée de passer d'état A à état C. La tester pièce si système la refuse (comportement sécurisé)."
+            },
+            {
+                q: "Quelle technique couvre généralement tous les états valides et toutes les transitions valides ?",
+                options: [
+                    { text: "Couverture complète (full transition coverage ou all-transitions coverage)", explain: "" },
+                    { text: "Couverture de ligne dans le code source", explain: "C'est une technique de boite blanche différente" },
+                    { text: "Test aléatoire du système", explain: "Pas de garantie de couverture" },
+                    { text: "Tests manuels ad hoc", explain: "Pas systématique ni traçable" }
+                ],
+                correct: 0,
+                correctExplain: "All-transitions coverage: chaque transition valide (arc) est parcourue au moins une fois par les cas de test."
+            },
+            {
+                q: "Quel est un défi courant dans la génération de cas de test pour les transitions d'états ?",
+                options: [
+                    { text: "Trouver des chemins (séquences d'états) qui exercent toutes les transitions de manière efficace", explain: "" },
+                    { text: "Tous les états sont testés dès le premier cas de test", explain: "C'est généralement impossible" },
+                    { text: "Les transitions interdites n'existent jamais", explain: "Elles existent et doivent être testées" },
+                    { text: "Le système n'a jamais plus de deux états", explain: "Les systèmes peuvent avoir des dizaines d'états" }
+                ],
+                correct: 0,
+                correctExplain: "Défi: depuis état A, comment atteindre efficacement arc A→C vs A→B→C? Cela impacte le nombre/longueur des cas de test."
+            },
+            {
+                q: "Qu'est-ce qu'un état puits (deadlock state) et pourquoi faut-il y faire attention ?",
+                options: [
+                    { text: "Un état dont on ne peut pas sortir (pas de transition sortante); important car le système pourrait rester bloqué", explain: "" },
+                    { text: "Un état qui consomme beaucoup de mémoire", explain: "C'est un problème de performance, pas un état puits" },
+                    { text: "Un état temporaire qui ne dure que quelques millisecondes", explain: "La durée ne définit pas un état puits" },
+                    { text: "Un état dans lequel seules les entrées invalides sont acceptées", explain: "C'est faux; état puits = aucune sortie" }
+                ],
+                correct: 0,
+                correctExplain: "État puits/deadlock: une fois entré, aucune transition sortante autorisée. Tester qu'on n'entre jamais involontairement est crucial."
+            },
+            {
+                q: "Comment les tables de transition contribuent-elles à la conception des tests de transition d'états ?",
+                options: [
+                    { text: "Elles structurent les états et les événements de manière matricielle (état × événement → nouvel état), facilitant identification des cas de test", explain: "" },
+                    { text: "Elles éliminent le besoin de diagrammes d'états", explain: "Elles complètent les diagrammes, ne les remplacent pas" },
+                    { text: "Elles testent uniquement les performances du système", explain: "Elles concernent la logique comportementale" },
+                    { text: "Elles remplacent le code source du système", explain: "C'est un outil de spécification/test, pas un code" }
+                ],
+                correct: 0,
+                correctExplain: "Table transition: matrice État(lignes) × Événement(colonnes) = État_suivant, rendant objectivité et couverture obvieuses."
+            },
+            {
+                q: "Quel est un avantage clé des tests basés sur les transitions d'états pour la détection de défauts ?",
+                options: [
+                    { text: "Ils décèlent les défauts logiques subtils dans la machine à états (transitions manquantes, mal configurées, interdictions oubliées)", explain: "" },
+                    { text: "Ils trouvent 100% des défauts dans le système", explain: "Aucune technique ne trouve tous les défauts" },
+                    { text: "Ils sont plus rapides que tous les autres tests", explain: "La vitesse dépend du type de défaut cherché" },
+                    { text: "Ils éliminent le besoin de tests unitaires", explain: "Ils complètent les tests unitaires, ne les remplacent pas" }
+                ],
+                correct: 0,
+                correctExplain: "Avantage: les bugs logiques des machines à états (ex: transition oubliée, condition mal codée) sont révélés méthodiquement."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let answers = new Array(questions.length).fill(null);
+        let answered = new Array(questions.length).fill(false);
+
+        function displayQuestion() {
+            const container = document.getElementById('quiz-container');
+            const item = questions[currentQuestion];
+            
+            let html = `<div class="question">${currentQuestion + 1}. ${item.q}</div>`;
+            const letters = ['A', 'B', 'C', 'D'];
+            item.options.forEach((opt, i) => {
+                let classes = '';
+                if (answers[currentQuestion] === i) {
+                    classes = 'selected ';
+                    if (i === item.correct) {
+                        classes += 'correct';
+                    } else {
+                        classes += 'incorrect';
+                    }
+                }
+                const disabledClass = answered[currentQuestion] ? 'disabled' : '';
+                html += `<div class="option ${classes} ${disabledClass}" onclick="${answered[currentQuestion] ? '' : `handleAnswerClick(${i})`}" style="${answered[currentQuestion] ? 'cursor: not-allowed;' : ''}"><span class="option-letter">${letters[i]}</span> ${opt.text}</div>`;
+            });
+            
+            container.innerHTML = html;
+            
+            if (answered[currentQuestion]) {
+                showFeedback();
+            } else {
+                document.getElementById('feedback').innerHTML = '';
+                document.getElementById('feedback').classList.remove('show');
+            }
+            
+            updateProgressBar();
+            updateNavigationButtons();
+            updateProgressInfo();
+        }
+
+        function handleAnswerClick(index) {
+            if (answered[currentQuestion]) return;
+            
+            answers[currentQuestion] = index;
+            answered[currentQuestion] = true;
+            
+            displayQuestion();
+        }
+
+        function showFeedback() {
+            const item = questions[currentQuestion];
+            const selectedIndex = answers[currentQuestion];
+            const isCorrect = selectedIndex === item.correct;
+            
+            let html = `<div class="feedback ${isCorrect ? 'correct' : 'incorrect'}">`;
+            
+            if (isCorrect) {
+                html += `<strong>✓ Correct !</strong><br>${item.correctExplain}`;
+            } else {
+                html += `<strong>✕ Incorrect</strong><br>`;
+                html += `<p><strong>Explications :</strong></p>`;
+                html += `<p><strong>Votre réponse :</strong> ${item.options[selectedIndex].explain || 'Aucune explication disponible'}</p>`;
+                html += `<p><strong>Bonne réponse :</strong> ${item.options[item.correct].text}<br>${item.correctExplain}</p>`;
+            }
+            
+            html += '</div>';
+            
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.innerHTML = html;
+            feedbackDiv.classList.add('show');
+        }
+
+        function updateProgressBar() {
+            const progressBar = document.getElementById('progressBar');
+            const percentage = ((currentQuestion + 1) / questions.length) * 100;
+            progressBar.innerHTML = `<div class="progress-bar" style="width: ${percentage}%"></div>`;
+        }
+
+        function updateProgressInfo() {
+            document.getElementById('question-counter').textContent = `Question ${currentQuestion + 1} / ${questions.length}`;
+            updateScoreBadges();
+        }
+
+        function updateScoreBadges() {
+            let correctCount = 0;
+            for (let i = 0; i < questions.length; i++) {
+                if (answered[i] && answers[i] === questions[i].correct) {
+                    correctCount++;
+                }
+            }
+            const incorrectCount = answers.filter((a, i) => answered[i] && a !== null && a !== questions[i].correct).length;
+            
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('incorrect-count').textContent = incorrectCount;
+        }
+
+        function updateNavigationButtons() {
+            document.getElementById('prevBtn').disabled = currentQuestion === 0;
+            document.getElementById('nextBtn').disabled = currentQuestion === questions.length - 1;
+            
+            if (currentQuestion === questions.length - 1 && answered[currentQuestion]) {
+                document.getElementById('nextBtn').textContent = 'Afficher Résultats';
+                document.getElementById('nextBtn').disabled = false;
+                document.getElementById('nextBtn').onclick = showFinalResults;
+            } else {
+                document.getElementById('nextBtn').onclick = nextQuestion;
+                document.getElementById('nextBtn').textContent = 'Suivant →';
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                displayQuestion();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        function showFinalResults() {
+            let correctCount = 0;
+            for (let i = 0; i < questions.length; i++) {
+                if (answered[i] && answers[i] === questions[i].correct) {
+                    correctCount++;
+                }
+            }
+            
+            const percentage = (correctCount / questions.length) * 100;
+            let feedback = '';
+            
+            if (percentage === 100) {
+                feedback = 'Excellent ! Vous avez maîtrisé ce sujet !';
+            } else if (percentage >= 80) {
+                feedback = 'Très bien ! Vous avez une bonne compréhension.';
+            } else if (percentage >= 60) {
+                feedback = 'Bien ! Vous pouvez approfondir certains concepts.';
+            } else if (percentage >= 40) {
+                feedback = 'Moyen. Revoyez les concepts clés.';
+            } else {
+                feedback = 'À améliorer. Étudiez le matériel de cours.';
+            }
+            
+            const resultHTML = `
+                <div class="results-container">
+                    <h2>Résultats Finaux</h2>
+                    <div class="score">
+                        <div class="score-number">${correctCount}/${questions.length}</div>
+                        <div class="score-percentage">${percentage.toFixed(1)}%</div>
+                    </div>
+                    <p class="score-feedback">${feedback}</p>
+                    <button onclick="location.reload()">Recommencer</button>
+                    <button onclick="history.back()">Retour au catalogue</button>
+                </div>
+            `;
+            
+            document.getElementById('result').innerHTML = resultHTML;
+            document.getElementById('quiz-container').style.display = 'none';
+            document.getElementById('feedback').style.display = 'none';
+            document.querySelector('.quiz-navigation').style.display = 'none';
+        }
+
+        // Initialiser
+        displayQuestion();
+    </script>
+</body>
+</html>

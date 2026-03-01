@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz - Tests combinatoires - Pairwise</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <div class="global-course-title">Élaboration des tests</div>
+    <h1>Quiz : Tests combinatoires - Pairwise (Cours 7)</h1>
+    
+    <div class="progress-container">
+        <div class="progress-info">
+            <span id="question-counter">Question 1 / 10</span>
+            <div class="progress-stats">
+                <span class="stat-badge incorrect"><span class="stat-icon">✕</span><span id="incorrect-count">0</span></span>
+                <span class="stat-badge correct"><span class="stat-icon">✓</span><span id="correct-count">0</span></span>
+            </div>
+        </div>
+        <div class="progress-bar-wrapper" id="progressBar"></div>
+    </div>
+    
+    <div id="quiz-container" class="card"></div>
+    
+    <div id="feedback" class="feedback-container"></div>
+    
+    <div class="quiz-navigation">
+        <button id="prevBtn" onclick="previousQuestion()">← Précédent</button>
+        <button id="nextBtn" onclick="nextQuestion()">Suivant →</button>
+    </div>
+    
+    <div id="result"></div>
+
+    <script>
+        const questions = [
+            {
+                q: "Quel est l'objectif principal des tests combinatoires ?",
+                options: [
+                    { text: "Tester chaque paramètre individuellement", explain: "Ce n'est que le test unitaire, pas les combinatoires" },
+                    { text: "Réduire le nombre de cas de test en testant les combinaisons pertinentes de paramètres", explain: "" },
+                    { text: "Automatiser tous les tests sans exception", explain: "L'automatisation n'est pas l'objectif principal" },
+                    { text: "Tester un seul cas par paramètre", explain: "Cela ignore les interactions entre paramètres" }
+                ],
+                correct: 1,
+                correctExplain: "Les tests combinatoires visent à identifier et tester les interactions critiques entre paramètres d'entrée, réduisant ainsi la combinaison exhaustive."
+            },
+            {
+                q: "Qu'est-ce que la technique Pairwise (test par paires) ?",
+                options: [
+                    { text: "Tester deux applications en parallèle", explain: "Pairwise n'est pas sur les applications, mais sur les paramètres" },
+                    { text: "Générer des cas de test garantissant que chaque paire de valeurs de paramètres est couverte au moins une fois", explain: "" },
+                    { text: "Tester chaque paramètre deux fois", explain: "C'est plus que ça; c'est sur les combinaisons de paires" },
+                    { text: "Diviser les tests en deux équipes distinctes", explain: "Pairwise n'est pas une organisation humaine" }
+                ],
+                correct: 1,
+                correctExplain: "Pairwise teste les interactions de tous les paramètres deux à deux (pairwise combinaisons), réduisant considérablement le nombre de cas de test."
+            },
+            {
+                q: "Quel est l'avantage principal de l'utilisation de Pairwise par rapport aux tests exhaustifs ?",
+                options: [
+                    { text: "Aucun avantage; c'est la même chose", explain: "Pairwise réduit significativement les cas de test" },
+                    { text: "Réduction drastique du nombre de cas de test tout en détectant la plupart des défauts", explain: "" },
+                    { text: "Augmentation de 100% du nombre de cas de test", explain: "C'est l'inverse; Pairwise réduit" },
+                    { text: "Meilleure couverture des cas limite", explain: "C'est un avantage, mais pas le principal" }
+                ],
+                correct: 1,
+                correctExplain: "Pairwise réduit le nombre de cas de test de manière exponentielle (ex: 3^10 → ~50-100 cas) en testant les paires essentielles."
+            },
+            {
+                q: "Comment calcule-t-on le nombre de combinaisons dans les tests exhaustifs avec 3 paramètres ayant 5 valeurs chacun ?",
+                options: [
+                    { text: "3 + 5 = 8 cas de test", explain: "Ce calcul n'est pas correct pour les combinaisons" },
+                    { text: "3 × 5 = 15 cas de test", explain: "C'est une multiplication simple, pas combinatoire" },
+                    { text: "5 × 5 × 5 = 125 cas de test", explain: "" },
+                    { text: "3 × 3 × 3 = 27 cas de test", explain: "Cela utiliserait 3 valeurs, pas 5" }
+                ],
+                correct: 2,
+                correctExplain: "Pour des tests exhaustifs avec N paramètres ayant V valeurs chacun, on a V^N combinaisons. Ici: 5^3 = 125 cas de test."
+            },
+            {
+                q: "Quel problème la combinatoire exhaustive pose-t-elle dans les projets réels ?",
+                options: [
+                    { text: "Elle demande trop peu de ressources et de temps", explain: "C'est l'inverse; elle en demande beaucoup trop" },
+                    { text: "Elle ne détecte aucun défaut", explain: "Elle en détecte, mais c'est inefficace" },
+                    { text: "Elle génère un nombre prohibitif de cas de test, rendant le test infaisable dans les délais", explain: "" },
+                    { text: "Elle est trop simple et n'utilise pas assez les ressources", explain: "C'est l'inverse" }
+                ],
+                correct: 2,
+                correctExplain: "L'explosion combinatoire (ex: 2^30 cas) rend les tests exhaustifs infaisables. Pairwise et autres stratégies réduisent cette complexité."
+            },
+            {
+                q: "En Pairwise, quel est le nombre approximatif de cas de test pour 6 paramètres avec 3 valeurs chacun ?",
+                options: [
+                    { text: "3^6 = 729 cas (exhaustif)", explain: "C'est le nombre exhaustif, pas Pairwise" },
+                    { text: "6 × 3 = 18 cas", explain: "Ce calcul n'est pas correct" },
+                    { text: "20-30 cas de test (Pairwise)", explain: "" },
+                    { text: "6 + 3 = 9 cas", explain: "Trop peu même pour Pairwise" }
+                ],
+                correct: 2,
+                correctExplain: "Pairwise pour 6 paramètres × 3 valeurs réduit 729 cas à environ 25-30 cas, soit une réduction de 96%."
+            },
+            {
+                q: "Quand est-ce que les tests combinatoires Pairwise sont particulièrement efficaces ?",
+                options: [
+                    { text: "Uniquement pour les applications très simples", explain: "Pairwise est utile sur des systèmes complexes" },
+                    { text: "Quand il y a beaucoup de paramètres avec multiples valeurs et peu de temps/ressources", explain: "" },
+                    { text: "Seulement quand il n'y a qu'un paramètre à tester", explain: "Pairwise s'applique à plusieurs paramètres" },
+                    { text: "Pairwise est toujours inefficace comparé aux tests exhaustifs", explain: "C'est faux; c'est l'inverse" }
+                ],
+                correct: 1,
+                correctExplain: "Pairwise excelle dans les projets avec nombreux paramètres, valeurs variées et contraintes temps/budget."
+            },
+            {
+                q: "Quel est le concept clé qu'exploite Pairwise pour réduire les cas de test ?",
+                options: [
+                    { text: "La plupart des défauts passent par des interactions entre paires de paramètres, pas toutes les combinaisons", explain: "" },
+                    { text: "Les défauts se manifestent seulement dans les cas de test exhaustifs", explain: "Faux; beaucoup se manifestent aux interactions" },
+                    { text: "Tous les défauts sont mutuellement indépendants", explain: "C'est faux; ils interagissent souvent" },
+                    { text: "Il n'y a aucun concept; c'est du hasard", explain: "Pairwise est basé sur des principes solides" }
+                ],
+                correct: 0,
+                correctExplain: "Pairwise s'appuie sur l'observation empirique que la plupart des défauts (>95%) sont trouvés en testant les interactions de paires."
+            },
+            {
+                q: "Quel est un exemple concret d'application de Pairwise en test logiciel ?",
+                options: [
+                    { text: "Tester une page web avec navigateur (B), OS (3), résolution (5) paramètres avec leurs valeurs", explain: "" },
+                    { text: "Tester un seul point final API sans paramètres", explain: "Ce n'est pas un cas pour Pairwise" },
+                    { text: "Tester du code qui n'a aucune dépendance", explain: "Pas approprié pour Pairwise" },
+                    { text: "Tester uniquement les nombres positifs en entrée", explain: "Trop restreint pour Pairwise" }
+                ],
+                correct: 0,
+                correctExplain: "Programme avec 3 navigateurs, 3 OS, 5 résolutions = 45 cas exhaustifs → ~12-15 cas Pairwise, couvrant toutes les paires."
+            },
+            {
+                q: "Quelles sont les limites ou risques d'utiliser exclusivement Pairwise pour tous les tests ?",
+                options: [
+                    { text: "Aucune limite; Pairwise découvre tous les défauts sans exception", explain: "Pairwise a des limites réelles" },
+                    { text: "Pairwise peut manquer des défauts dus aux interactions de 3+ paramètres ou configurations rares", explain: "" },
+                    { text: "Pairwise augmente toujours le coût des tests", explain: "Généralement, il le réduit" },
+                    { text: "Pairwise ne fonctionne que sur les systèmes simples sans complexité", explain: "C'est l'inverse; il brille sur la complexité" }
+                ],
+                correct: 1,
+                correctExplain: "Bien que Pairwise capture ~95% des défauts, il peut manquer les défauts multi-paramètres (3+) ou les cas rares/critiques nécessitant couverture exhaustive."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let answers = new Array(questions.length).fill(null);
+        let answered = new Array(questions.length).fill(false);
+
+        function displayQuestion() {
+            const container = document.getElementById('quiz-container');
+            const item = questions[currentQuestion];
+            
+            let html = `<div class="question">${currentQuestion + 1}. ${item.q}</div>`;
+            const letters = ['A', 'B', 'C', 'D'];
+            item.options.forEach((opt, i) => {
+                let classes = '';
+                if (answers[currentQuestion] === i) {
+                    classes = 'selected ';
+                    if (i === item.correct) {
+                        classes += 'correct';
+                    } else {
+                        classes += 'incorrect';
+                    }
+                }
+                const disabledClass = answered[currentQuestion] ? 'disabled' : '';
+                html += `<div class="option ${classes} ${disabledClass}" onclick="${answered[currentQuestion] ? '' : `handleAnswerClick(${i})`}" style="${answered[currentQuestion] ? 'cursor: not-allowed;' : ''}"><span class="option-letter">${letters[i]}</span> ${opt.text}</div>`;
+            });
+            
+            container.innerHTML = html;
+            
+            if (answered[currentQuestion]) {
+                showFeedback();
+            } else {
+                document.getElementById('feedback').innerHTML = '';
+                document.getElementById('feedback').classList.remove('show');
+            }
+            
+            updateProgressBar();
+            updateNavigationButtons();
+            updateProgressInfo();
+        }
+
+        function handleAnswerClick(index) {
+            if (answered[currentQuestion]) return;
+            
+            answers[currentQuestion] = index;
+            answered[currentQuestion] = true;
+            
+            displayQuestion();
+        }
+
+        function showFeedback() {
+            const item = questions[currentQuestion];
+            const selectedIndex = answers[currentQuestion];
+            const isCorrect = selectedIndex === item.correct;
+            
+            let html = `<div class="feedback ${isCorrect ? 'correct' : 'incorrect'}">`;
+            
+            if (isCorrect) {
+                html += `<strong>✓ Correct !</strong><br>${item.correctExplain}`;
+            } else {
+                html += `<strong>✕ Incorrect</strong><br>`;
+                html += `<p><strong>Explications :</strong></p>`;
+                html += `<p><strong>Votre réponse :</strong> ${item.options[selectedIndex].explain || 'Aucune explication disponible'}</p>`;
+                html += `<p><strong>Bonne réponse :</strong> ${item.options[item.correct].text}<br>${item.correctExplain}</p>`;
+            }
+            
+            html += '</div>';
+            
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.innerHTML = html;
+            feedbackDiv.classList.add('show');
+        }
+
+        function updateProgressBar() {
+            const progressBar = document.getElementById('progressBar');
+            const percentage = ((currentQuestion + 1) / questions.length) * 100;
+            progressBar.innerHTML = `<div class="progress-bar" style="width: ${percentage}%"></div>`;
+        }
+
+        function updateProgressInfo() {
+            document.getElementById('question-counter').textContent = `Question ${currentQuestion + 1} / ${questions.length}`;
+            updateScoreBadges();
+        }
+
+        function updateScoreBadges() {
+            let correctCount = 0;
+            for (let i = 0; i < questions.length; i++) {
+                if (answered[i] && answers[i] === questions[i].correct) {
+                    correctCount++;
+                }
+            }
+            const incorrectCount = answers.filter((a, i) => answered[i] && a !== null && a !== questions[i].correct).length;
+            
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('incorrect-count').textContent = incorrectCount;
+        }
+
+        function updateNavigationButtons() {
+            document.getElementById('prevBtn').disabled = currentQuestion === 0;
+            document.getElementById('nextBtn').disabled = currentQuestion === questions.length - 1;
+            
+            if (currentQuestion === questions.length - 1 && answered[currentQuestion]) {
+                document.getElementById('nextBtn').textContent = 'Afficher Résultats';
+                document.getElementById('nextBtn').disabled = false;
+                document.getElementById('nextBtn').onclick = showFinalResults;
+            } else {
+                document.getElementById('nextBtn').onclick = nextQuestion;
+                document.getElementById('nextBtn').textContent = 'Suivant →';
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                displayQuestion();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        function showFinalResults() {
+            let correctCount = 0;
+            for (let i = 0; i < questions.length; i++) {
+                if (answered[i] && answers[i] === questions[i].correct) {
+                    correctCount++;
+                }
+            }
+            
+            const percentage = (correctCount / questions.length) * 100;
+            let feedback = '';
+            
+            if (percentage === 100) {
+                feedback = 'Excellent ! Vous avez maîtrisé ce sujet !';
+            } else if (percentage >= 80) {
+                feedback = 'Très bien ! Vous avez une bonne compréhension.';
+            } else if (percentage >= 60) {
+                feedback = 'Bien ! Vous pouvez approfondir certains concepts.';
+            } else if (percentage >= 40) {
+                feedback = 'Moyen. Revoyez les concepts clés.';
+            } else {
+                feedback = 'À améliorer. Étudiez le matériel de cours.';
+            }
+            
+            const resultHTML = `
+                <div class="results-container">
+                    <h2>Résultats Finaux</h2>
+                    <div class="score">
+                        <div class="score-number">${correctCount}/${questions.length}</div>
+                        <div class="score-percentage">${percentage.toFixed(1)}%</div>
+                    </div>
+                    <p class="score-feedback">${feedback}</p>
+                    <button onclick="location.reload()">Recommencer</button>
+                    <button onclick="history.back()">Retour au catalogue</button>
+                </div>
+            `;
+            
+            document.getElementById('result').innerHTML = resultHTML;
+            document.getElementById('quiz-container').style.display = 'none';
+            document.getElementById('feedback').style.display = 'none';
+            document.querySelector('.quiz-navigation').style.display = 'none';
+        }
+
+        // Initialiser
+        displayQuestion();
+    </script>
+</body>
+</html>

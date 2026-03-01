@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz - Tests par boite blanche</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <div class="global-course-title">Élaboration des tests</div>
+    <h1>Quiz : Tests par boite blanche (Cours 8)</h1>
+    
+    <div class="progress-container">
+        <div class="progress-info">
+            <span id="question-counter">Question 1 / 10</span>
+            <div class="progress-stats">
+                <span class="stat-badge incorrect"><span class="stat-icon">✕</span><span id="incorrect-count">0</span></span>
+                <span class="stat-badge correct"><span class="stat-icon">✓</span><span id="correct-count">0</span></span>
+            </div>
+        </div>
+        <div class="progress-bar-wrapper" id="progressBar"></div>
+    </div>
+    
+    <div id="quiz-container" class="card"></div>
+    
+    <div id="feedback" class="feedback-container"></div>
+    
+    <div class="quiz-navigation">
+        <button id="prevBtn" onclick="previousQuestion()">← Précédent</button>
+        <button id="nextBtn" onclick="nextQuestion()">Suivant →</button>
+    </div>
+    
+    <div id="result"></div>
+
+    <script>
+        const questions = [
+            {
+                q: "Qu'est-ce que le test par boîte blanche (test structurel) ?",
+                options: [
+                    { text: "Tester l'application sans connaître sa structure interne", explain: "C'est la boîte noire; boîte blanche accède au code" },
+                    { text: "Tester en ayant accès à la structure interne du code (logique, chemins d'exécution)", explain: "" },
+                    { text: "Tester seulement les interfaces utilisateur", explain: "C'est un test fonctionnel, pas boîte blanche" },
+                    { text: "Tester sans aucun type de planification", explain: "Boîte blanche nécessite une planification rigoureuse" }
+                ],
+                correct: 1,
+                correctExplain: "Le test boîte blanche examine la structure interne du code: logique, boucles, conditions, chemins d'exécution, pour assurer une couverture complète."
+            },
+            {
+                q: "Quel est l'objectif principal des tests de couverture de code ?",
+                options: [
+                    { text: "Tester l'interface graphique uniquement", explain: "Ce n'est pas l'objectif du test de couverture" },
+                    { text: "S'assurer que le maximum de lignes, branches et chemins du code sont exécutés par les tests", explain: "" },
+                    { text: "Éliminer tous les défauts du code", explain: "Impossible; la couverture réduit les risques, ne les élimine pas" },
+                    { text: "Vérifier la performance du code", explain: "Ce n'est pas l'objectif principal de la couverture" }
+                ],
+                correct: 1,
+                correctExplain: "La couverture de code mesure le pourcentage de code exécuté par les tests (instructions, branches, chemins) pour identifier les zones non testées."
+            },
+            {
+                q: "Quel est le niveau de couverture de code le plus basique et le plus facile à atteindre ?",
+                options: [
+                    { text: "Couverture de chemins", explain: "C'est le plus complexe à atteindre" },
+                    { text: "Couverture des instructions / lignes (line coverage)", explain: "" },
+                    { text: "Couverture des branches", explain: "C'est plus difficile que la couverture de lignes" },
+                    { text: "Couverture des conditions", explain: "C'est un niveau avancé" }
+                ],
+                correct: 1,
+                correctExplain: "La couverture de lignes est le niveau le plus basique: il compte simplement les lignes de code exécutées. 80-90% est considéré comme bon."
+            },
+            {
+                q: "Qu'est-ce qu'une branche en terme de couverture de code ?",
+                options: [
+                    { text: "Une variable dans le code", explain: "Une branche n'est pas une variable" },
+                    { text: "Un chemin d'exécution découlant d'une instruction conditionnelle (if/else, switch)", explain: "" },
+                    { text: "Une fonction ou procédure", explain: "C'est une unité de code, pas une branche" },
+                    { text: "Un paramètre de fonction", explain: "Ce n'est pas une branche" }
+                ],
+                correct: 1,
+                correctExplain: "Une branche est un chemin d'exécution créé par une condition: if vrai/faux, switch cas, boucle entrée/pas d'entrée."
+            },
+            {
+                q: "Quel problème majeur pose la combinaison exhaustive de tous les chemins d'exécution ?",
+                options: [
+                    { text: "Aucun problème; c'est toujours faisable", explain: "C'est complètement infaisable pour les systèmes réels" },
+                    { text: "L'explosion combinatoire rend le nombre de chemins à tester prohibitif", explain: "" },
+                    { text: "Cela coûte zéro euro en effort", explain: "C'est extrêmement coûteux" },
+                    { text: "Les chemins n'existent que sur théorie, jamais en pratique", explain: "Les chemins existent et causent des problèmes réels" }
+                ],
+                correct: 1,
+                correctExplain: "Chaque condition double les chemins: 10 conditions = 2^10 = 1024 chemins. L'exhaustivité est rarement possible; on priorise les chemins critiques."
+            },
+            {
+                q: "Quel type de défaut est plus facilement détecté par le test boîte blanche que le boîte noire ?",
+                options: [
+                    { text: "Les défauts liés aux performances extrêmes", explain: "C'est un avantage limité du boîte blanche" },
+                    { text: "Les défauts dans les boucles, les conditions mal implémentées, code mort, chemins inatteignables", explain: "" },
+                    { text: "Les interfaces utilisateur cassées", explain: "Le boîte noire est meilleur pour cela" },
+                    { text: "Les défauts de compatibilité matérielle", explain: "Ni boîte blanche ni noire n'est spécialisée pour ça" }
+                ],
+                correct: 1,
+                correctExplain: "Boîte blanche détecte les défauts de logique: conditions jamais testées, boucles infinies, variables non initialisées, code inaccessible."
+            },
+            {
+                q: "Qu'est-ce que le 'code mort' en test boîte blanche ?",
+                options: [
+                    { text: "Un code qui cause des crashes immédiats", explain: "Ce n'est pas ce qu'on appelle code mort" },
+                    { text: "Du code qui ne peut jamais être exécuté (branches inaccessibles, code après return)", explain: "" },
+                    { text: "Un code mal commenté", explain: "Les commentaires n'ont aucun rapport avec le code mort" },
+                    { text: "Un code qui s'exécute très lentement", explain: "Ce n'est pas la définition du code mort" }
+                ],
+                correct: 1,
+                correctExplain: "Le code mort est du code inaccessible: après un return, dans une branche jamais vérifiée, orphelin. C'est un problème à éliminer."
+            },
+            {
+                q: "Quel est le lien entre la complexité cyclomatic et le test boîte blanche ?",
+                options: [
+                    { text: "Aucun lien; la complexité cyclomatic n'existe que en théorie", explain: "Il existe un lien direct" },
+                    { text: "La complexité cyclomatic mesure le nombre minimum de cas de test nécessaires pour couvrir tous les chemins", explain: "" },
+                    { text: "La complexité cyclomatic est liée uniquement à la performance", explain: "C'est lié aux chemins, pas à la performance" },
+                    { text: "La complexité cyclomatic garantit une couverture à 100%", explain: "Non; elle aide à la planification, pas à la garantie" }
+                ],
+                correct: 1,
+                correctExplain: "La complexité cyclomatic (CC) = 1 + nombre de décisions. Pour CC=5, on a besoin d'au minimum 5 cas de test pour couvrir tous les chemins."
+            },
+            {
+                q: "Quels sont les avantages du test boîte blanche comparé au test boîte noire ?",
+                options: [
+                    { text: "Aucun avantage; ils sont identiques", explain: "Il y a des différences importantes" },
+                    { text: "Il détecte plus de défauts, teste les chemins critiques, optimise la couverture, commence plus tôt (dès le code)", explain: "" },
+                    { text: "Il est plus rapide et moins coûteux", explain: "Il est souvent plus coûteux et complexe" },
+                    { text: "Il remplace complètement le test boîte noire", explain: "Boîte blanche et noire sont complémentaires" }
+                ],
+                correct: 1,
+                correctExplain: "Boîte blanche: détecte défauts de logique, optimise couverture, teste branches oubliées, commence dès développement, réduit défauts en production."
+            },
+            {
+                q: "Quel est un défi majeur du test boîte blanche en pratique ?",
+                options: [
+                    { text: "Aucun défi; c'est trivial de couvrir tout le code", explain: "Plusieurs défis majeurs existent" },
+                    { text: "La couverture complète peut être prohibée pour des systèmes complexes; boucles infinies, états impossibles, outils de coverage imparfaits", explain: "" },
+                    { text: "Les testeurs ne comprennent pas le code", explain: "Ils doivent le comprendre, mais c'est gérable" },
+                    { text: "Le test boîte blanche coûte zéro ressource", explain: "Il nécessite expertise et outils spécialisés" }
+                ],
+                correct: 1,
+                correctExplain: "Défis: complexité exponentielle, boucles infinies/oublis possibles, états logiquement impossibles, outils imparfaits, faux positifs de couverture."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let answers = new Array(questions.length).fill(null);
+        let answered = new Array(questions.length).fill(false);
+
+        function displayQuestion() {
+            const container = document.getElementById('quiz-container');
+            const item = questions[currentQuestion];
+            
+            let html = `<div class="question">${currentQuestion + 1}. ${item.q}</div>`;
+            const letters = ['A', 'B', 'C', 'D'];
+            item.options.forEach((opt, i) => {
+                let classes = '';
+                if (answers[currentQuestion] === i) {
+                    classes = 'selected ';
+                    if (i === item.correct) {
+                        classes += 'correct';
+                    } else {
+                        classes += 'incorrect';
+                    }
+                }
+                const disabledClass = answered[currentQuestion] ? 'disabled' : '';
+                html += `<div class="option ${classes} ${disabledClass}" onclick="${answered[currentQuestion] ? '' : `handleAnswerClick(${i})`}" style="${answered[currentQuestion] ? 'cursor: not-allowed;' : ''}"><span class="option-letter">${letters[i]}</span> ${opt.text}</div>`;
+            });
+            
+            container.innerHTML = html;
+            
+            if (answered[currentQuestion]) {
+                showFeedback();
+            } else {
+                document.getElementById('feedback').innerHTML = '';
+                document.getElementById('feedback').classList.remove('show');
+            }
+            
+            updateProgressBar();
+            updateNavigationButtons();
+            updateProgressInfo();
+        }
+
+        function handleAnswerClick(index) {
+            if (answered[currentQuestion]) return;
+            
+            answers[currentQuestion] = index;
+            answered[currentQuestion] = true;
+            
+            displayQuestion();
+        }
+
+        function showFeedback() {
+            const item = questions[currentQuestion];
+            const selectedIndex = answers[currentQuestion];
+            const isCorrect = selectedIndex === item.correct;
+            
+            let html = `<div class="feedback ${isCorrect ? 'correct' : 'incorrect'}">`;
+            
+            if (isCorrect) {
+                html += `<strong>✓ Correct !</strong><br>${item.correctExplain}`;
+            } else {
+                html += `<strong>✕ Incorrect</strong><br>`;
+                html += `<p><strong>Explications :</strong></p>`;
+                html += `<p><strong>Votre réponse :</strong> ${item.options[selectedIndex].explain || 'Aucune explication disponible'}</p>`;
+                html += `<p><strong>Bonne réponse :</strong> ${item.options[item.correct].text}<br>${item.correctExplain}</p>`;
+            }
+            
+            html += '</div>';
+            
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.innerHTML = html;
+            feedbackDiv.classList.add('show');
+        }
+
+        function updateProgressBar() {
+            const progressBar = document.getElementById('progressBar');
+            const percentage = ((currentQuestion + 1) / questions.length) * 100;
+            progressBar.innerHTML = `<div class="progress-bar" style="width: ${percentage}%"></div>`;
+        }
+
+        function updateProgressInfo() {
+            document.getElementById('question-counter').textContent = `Question ${currentQuestion + 1} / ${questions.length}`;
+            updateScoreBadges();
+        }
+
+        function updateScoreBadges() {
+            let correctCount = 0;
+            for (let i = 0; i < questions.length; i++) {
+                if (answered[i] && answers[i] === questions[i].correct) {
+                    correctCount++;
+                }
+            }
+            const incorrectCount = answers.filter((a, i) => answered[i] && a !== null && a !== questions[i].correct).length;
+            
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('incorrect-count').textContent = incorrectCount;
+        }
+
+        function updateNavigationButtons() {
+            document.getElementById('prevBtn').disabled = currentQuestion === 0;
+            document.getElementById('nextBtn').disabled = currentQuestion === questions.length - 1;
+            
+            if (currentQuestion === questions.length - 1 && answered[currentQuestion]) {
+                document.getElementById('nextBtn').textContent = 'Afficher Résultats';
+                document.getElementById('nextBtn').disabled = false;
+                document.getElementById('nextBtn').onclick = showFinalResults;
+            } else {
+                document.getElementById('nextBtn').onclick = nextQuestion;
+                document.getElementById('nextBtn').textContent = 'Suivant →';
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                displayQuestion();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        function showFinalResults() {
+            let correctCount = 0;
+            for (let i = 0; i < questions.length; i++) {
+                if (answered[i] && answers[i] === questions[i].correct) {
+                    correctCount++;
+                }
+            }
+            
+            const percentage = (correctCount / questions.length) * 100;
+            let feedback = '';
+            
+            if (percentage === 100) {
+                feedback = 'Excellent ! Vous avez maîtrisé ce sujet !';
+            } else if (percentage >= 80) {
+                feedback = 'Très bien ! Vous avez une bonne compréhension.';
+            } else if (percentage >= 60) {
+                feedback = 'Bien ! Vous pouvez approfondir certains concepts.';
+            } else if (percentage >= 40) {
+                feedback = 'Moyen. Revoyez les concepts clés.';
+            } else {
+                feedback = 'À améliorer. Étudiez le matériel de cours.';
+            }
+            
+            const resultHTML = `
+                <div class="results-container">
+                    <h2>Résultats Finaux</h2>
+                    <div class="score">
+                        <div class="score-number">${correctCount}/${questions.length}</div>
+                        <div class="score-percentage">${percentage.toFixed(1)}%</div>
+                    </div>
+                    <p class="score-feedback">${feedback}</p>
+                    <button onclick="location.reload()">Recommencer</button>
+                    <button onclick="history.back()">Retour au catalogue</button>
+                </div>
+            `;
+            
+            document.getElementById('result').innerHTML = resultHTML;
+            document.getElementById('quiz-container').style.display = 'none';
+            document.getElementById('feedback').style.display = 'none';
+            document.querySelector('.quiz-navigation').style.display = 'none';
+        }
+
+        // Initialiser
+        displayQuestion();
+    </script>
+</body>
+</html>

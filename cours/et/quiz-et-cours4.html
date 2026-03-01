@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz - Tests par boite noire</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <div class="global-course-title">Élaboration des tests</div>
+    <h1>Quiz : Tests par boite noire (Cours 4)</h1>
+    
+    <div class="progress-container">
+        <div class="progress-info">
+            <span id="question-counter">Question 1 / 10</span>
+            <div class="progress-stats">
+                <span class="stat-badge incorrect"><span class="stat-icon">✕</span><span id="incorrect-count">0</span></span>
+                <span class="stat-badge correct"><span class="stat-icon">✓</span><span id="correct-count">0</span></span>
+            </div>
+        </div>
+        <div class="progress-bar-wrapper" id="progressBar"></div>
+    </div>
+    
+    <div id="quiz-container" class="card"></div>
+    
+    <div id="feedback" class="feedback-container"></div>
+    
+    <div class="quiz-navigation">
+        <button id="prevBtn" onclick="previousQuestion()">← Précédent</button>
+        <button id="nextBtn" onclick="nextQuestion()">Suivant →</button>
+    </div>
+    
+    <div id="result"></div>
+
+    <script>
+        const questions = [
+            {
+                q: "Qu'est-ce que le test de boite noire (black-box testing) ?",
+                options: [
+                    { text: "Un test qui examine le code source du logiciel", explain: "C'est la définition du test de boite blanche" },
+                    { text: "Un test qui se concentre sur les entrées et sorties sans connaître la structure interne", explain: "" },
+                    { text: "Un test visant uniquement à trouver des défauts de sécurité", explain: "Le test de boite noire couvre bien plus" },
+                    { text: "Un test effectué uniquement par le fournisseur du logiciel", explain: "N'importe quel testeur peut faire du test de boite noire" }
+                ],
+                correct: 1,
+                correctExplain: "Le test de boite noire traite le système comme une boite noire: on teste les sorties pour des entrées données sans accès au code interne."
+            },
+            {
+                q: "Quel est l'objectif principal du test de boite noire ?",
+                options: [
+                    { text: "Vérifier que le code est efficace et optimisé", explain: "C'est secondaire; le focus est sur la conformité" },
+                    { text: "Vérifier que le système fonctionne conformément aux exigences sans connaître l'implémentation", explain: "" },
+                    { text: "Identifier tous les chemins d'exécution possible dans le code", explain: "C'est un objectif du test de boite blanche" },
+                    { text: "Mesurer la couverture de code", explain: "Impossible sans accès au code source" }
+                ],
+                correct: 1,
+                correctExplain: "Le test de boite noire valide que le système répond aux exigences fonctionnelles et respecte les spécifications."
+            },
+            {
+                q: "Quels sont les avantages du test de boite noire par rapport au test de boite blanche ?",
+                options: [
+                    { text: "Il ne nécessite pas de compétences techniques spécialisées en programmation", explain: "" },
+                    { text: "Il est toujours plus rapide à exécuter", explain: "La rapidité dépend du ratio cas/couverture" },
+                    { text: "Il trouve 100% des défauts", explain: "Aucun type de test ne trouve tous les défauts" },
+                    { text: "Il remplace complètement le test de boite blanche", explain: "Les deux sont complémentaires" }
+                ],
+                correct: 0,
+                correctExplain: "Le test de boite noire ne nécessite pas l'accès au code, les testeurs peuvent être non-techniques et se concentrer sur le comportement externe."
+            },
+            {
+                q: "Qu'est-ce que la technique de partitionnement par équivalence (equivalence partitioning) ?",
+                options: [
+                    { text: "Diviser les entrées possibles en classes d'équivalence pour réduire le nombre de cas de test", explain: "" },
+                    { text: "Tester chaque valeur d'entrée possible individuellement", explain: "C'est ce qu'on évite avec partitionnement" },
+                    { text: "Créer des partitions dans la base de données de test", explain: "Pas lié au partitionnement par équivalence" },
+                    { text: "Vérifier que le logiciel partage équitablement les ressources", explain: "Aucun rapport avec cette technique" }
+                ],
+                correct: 0,
+                correctExplain: "Partitionnement par équivalence groupe les entrées en classes où on attend un comportement similaire du système, réduisant les cas de test requis."
+            },
+            {
+                q: "Dans la technique des valeurs limites (boundary value analysis), pourquoi teste-t-on les limites ?",
+                options: [
+                    { text: "Parce que les défauts surgissent souvent aux frontières entre partitions d'équivalence", explain: "" },
+                    { text: "Parce que c'est exigé par la norme ISO", explain: "C'est une bonne pratique empirique, pas normalisé" },
+                    { text: "Parce que tester les limites est plus facile que tester les valeurs internes", explain: "L'inverse est généralement vrai" },
+                    { text: "Parce qu'on ne peut pas tester les valeurs internes", explain: "On teste les deux, mais les limites comptent plus car risky" }
+                ],
+                correct: 0,
+                correctExplain: "L'expérience montre que les erreurs de programmation surviennent fréquemment aux limites (min, max, juste avant/après transition)."
+            },
+            {
+                q: "Quel est le lien entre les partitions d'équivalence et l'analyse des valeurs limites ?",
+                options: [
+                    { text: "Ce sont deux techniques complètement indépendantes sans relation", explain: "Non, il y a une relation forte" },
+                    { text: "Les valeurs limites sont les frontières des partitions d'équivalence", explain: "" },
+                    { text: "Les partitions d'équivalence sont des cas spéciaux de valeurs limites", explain: "C'est l'inverse" },
+                    { text: "L'analyse de valeurs limites remplace complètement le partitionnement", explain: "Elles se complètent" }
+                ],
+                correct: 1,
+                correctExplain: "L'analyse des valeurs limites applique le partitionnement par équivalence en testant précisément les frontières entre les partitions."
+            },
+            {
+                q: "Qu'est-ce qu'un cas de test basé sur les décisions/ramifications dans le test de boite noire ?",
+                options: [
+                    { text: "Un cas qui teste le comportement logique du système pour des chemins de décision différents (ex: SI condition vraie OU fausse)", explain: "" },
+                    { text: "Un cas qui teste uniquement les fonctionnalités principales du système", explain: "Bien trop large" },
+                    { text: "Un cas qui explore tous les chemins d'exécution possible du code source", explain: "C'est le test de boite blanche" },
+                    { text: "Un cas conçu seulement pour trouver des failles de sécurité", explain: "Les tests de décision s'appliquent aussi en boite noire" }
+                ],
+                correct: 0,
+                correctExplain: "En boite noire, on teste la logique comportementale (arbre de décisions) sans voir le code: ex. Si détail=oui, alors confirmer est affiché."
+            },
+            {
+                q: "Quel défi courant affecte l'efficacité du test de boite noire ?",
+                options: [
+                    { text: "Il est difficile de savoir quand la couverture est suffisante sans voir le code", explain: "" },
+                    { text: "Il ne trouve jamais aucun défaut", explain: "C'est faux; le test de boite noire trouve beaucoup de défauts" },
+                    { text: "Il est impossible de tester avec des données réalistes", explain: "La boite noire permet d'utiliser des données réelles" },
+                    { text: "Les exigences du système changent plus vite en test de boite noire", explain: "Non lié à la technique de test" }
+                ],
+                correct: 0,
+                correctExplain: "Difficile d'évaluer si la couverture est adéquate: combien de cas suffisent ? Pas de vue sur la complexité interne."
+            },
+            {
+                q: "Comment les tables de décision (decision tables) se rapportent-elles au test de boite noire ?",
+                options: [
+                    { text: "Elles structurent les cas de test en visualisant les combinaisons de conditions et leurs résultats attendus", explain: "" },
+                    { text: "Elles remplacent le besoin d'exigences pour tester", explain: "Elles aident à clarifier les exigences" },
+                    { text: "Elles sont utilisées uniquement dans les tests de performance", explain: "Elles s'appliquent aux tests fonctionnels" },
+                    { text: "Elles éliminent le besoin de partitionnement par équivalence", explain: "Elles se complètent" }
+                ],
+                correct: 0,
+                correctExplain: "Les tables de décision cartographient combinaisons de conditions → résultats, facilitant identification des cas de test critiques en boite noire."
+            },
+            {
+                q: "Quel est un avantage clé de combiner le test de boite noire et le test de boite blanche ?",
+                options: [
+                    { text: "Cela coûte deux fois moins cher d'effectuer les deux types de test", explain: "Non, cela coûte plus" },
+                    { text: "Cela double la couverture et réduit les risques: boite noire teste la conformité, boite blanche teste la structure interne", explain: "" },
+                    { text: "Cela élimine le besoin de tous les autres types de test", explain: "Non, d'autres types (performance, sécurité) restent utiles" },
+                    { text: "Cela accélère le processus de test d'un facteur de 10", explain: "Pas nécessairement; il y a surcharge potentielle" }
+                ],
+                correct: 1,
+                correctExplain: "Combinaison: boite noire valide comportement/conformité, boite blanche valide structure/chemins; cela couvre fonctionnel + technique."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let answers = new Array(questions.length).fill(null);
+        let answered = new Array(questions.length).fill(false);
+
+        function displayQuestion() {
+            const container = document.getElementById('quiz-container');
+            const item = questions[currentQuestion];
+            
+            let html = `<div class="question">${currentQuestion + 1}. ${item.q}</div>`;
+            const letters = ['A', 'B', 'C', 'D'];
+            item.options.forEach((opt, i) => {
+                let classes = '';
+                if (answers[currentQuestion] === i) {
+                    classes = 'selected ';
+                    if (i === item.correct) {
+                        classes += 'correct';
+                    } else {
+                        classes += 'incorrect';
+                    }
+                }
+                const disabledClass = answered[currentQuestion] ? 'disabled' : '';
+                html += `<div class="option ${classes} ${disabledClass}" onclick="${answered[currentQuestion] ? '' : `handleAnswerClick(${i})`}" style="${answered[currentQuestion] ? 'cursor: not-allowed;' : ''}"><span class="option-letter">${letters[i]}</span> ${opt.text}</div>`;
+            });
+            
+            container.innerHTML = html;
+            
+            if (answered[currentQuestion]) {
+                showFeedback();
+            } else {
+                document.getElementById('feedback').innerHTML = '';
+                document.getElementById('feedback').classList.remove('show');
+            }
+            
+            updateProgressBar();
+            updateNavigationButtons();
+            updateProgressInfo();
+        }
+
+        function handleAnswerClick(index) {
+            if (answered[currentQuestion]) return;
+            
+            answers[currentQuestion] = index;
+            answered[currentQuestion] = true;
+            
+            displayQuestion();
+        }
+
+        function showFeedback() {
+            const item = questions[currentQuestion];
+            const selectedIndex = answers[currentQuestion];
+            const isCorrect = selectedIndex === item.correct;
+            
+            let html = `<div class="feedback ${isCorrect ? 'correct' : 'incorrect'}">`;
+            
+            if (isCorrect) {
+                html += `<strong>✓ Correct !</strong><br>${item.correctExplain}`;
+            } else {
+                html += `<strong>✕ Incorrect</strong><br>`;
+                html += `<p><strong>Explications :</strong></p>`;
+                html += `<p><strong>Votre réponse :</strong> ${item.options[selectedIndex].explain || 'Aucune explication disponible'}</p>`;
+                html += `<p><strong>Bonne réponse :</strong> ${item.options[item.correct].text}<br>${item.correctExplain}</p>`;
+            }
+            
+            html += '</div>';
+            
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.innerHTML = html;
+            feedbackDiv.classList.add('show');
+        }
+
+        function updateProgressBar() {
+            const progressBar = document.getElementById('progressBar');
+            const percentage = ((currentQuestion + 1) / questions.length) * 100;
+            progressBar.innerHTML = `<div class="progress-bar" style="width: ${percentage}%"></div>`;
+        }
+
+        function updateProgressInfo() {
+            document.getElementById('question-counter').textContent = `Question ${currentQuestion + 1} / ${questions.length}`;
+            updateScoreBadges();
+        }
+
+        function updateScoreBadges() {
+            let correctCount = 0;
+            for (let i = 0; i < questions.length; i++) {
+                if (answered[i] && answers[i] === questions[i].correct) {
+                    correctCount++;
+                }
+            }
+            const incorrectCount = answers.filter((a, i) => answered[i] && a !== null && a !== questions[i].correct).length;
+            
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('incorrect-count').textContent = incorrectCount;
+        }
+
+        function updateNavigationButtons() {
+            document.getElementById('prevBtn').disabled = currentQuestion === 0;
+            document.getElementById('nextBtn').disabled = currentQuestion === questions.length - 1;
+            
+            if (currentQuestion === questions.length - 1 && answered[currentQuestion]) {
+                document.getElementById('nextBtn').textContent = 'Afficher Résultats';
+                document.getElementById('nextBtn').disabled = false;
+                document.getElementById('nextBtn').onclick = showFinalResults;
+            } else {
+                document.getElementById('nextBtn').onclick = nextQuestion;
+                document.getElementById('nextBtn').textContent = 'Suivant →';
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                displayQuestion();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        function showFinalResults() {
+            let correctCount = 0;
+            for (let i = 0; i < questions.length; i++) {
+                if (answered[i] && answers[i] === questions[i].correct) {
+                    correctCount++;
+                }
+            }
+            
+            const percentage = (correctCount / questions.length) * 100;
+            let feedback = '';
+            
+            if (percentage === 100) {
+                feedback = 'Excellent ! Vous avez maîtrisé ce sujet !';
+            } else if (percentage >= 80) {
+                feedback = 'Très bien ! Vous avez une bonne compréhension.';
+            } else if (percentage >= 60) {
+                feedback = 'Bien ! Vous pouvez approfondir certains concepts.';
+            } else if (percentage >= 40) {
+                feedback = 'Moyen. Revoyez les concepts clés.';
+            } else {
+                feedback = 'À améliorer. Étudiez le matériel de cours.';
+            }
+            
+            const resultHTML = `
+                <div class="results-container">
+                    <h2>Résultats Finaux</h2>
+                    <div class="score">
+                        <div class="score-number">${correctCount}/${questions.length}</div>
+                        <div class="score-percentage">${percentage.toFixed(1)}%</div>
+                    </div>
+                    <p class="score-feedback">${feedback}</p>
+                    <button onclick="location.reload()">Recommencer</button>
+                    <button onclick="history.back()">Retour au catalogue</button>
+                </div>
+            `;
+            
+            document.getElementById('result').innerHTML = resultHTML;
+            document.getElementById('quiz-container').style.display = 'none';
+            document.getElementById('feedback').style.display = 'none';
+            document.querySelector('.quiz-navigation').style.display = 'none';
+        }
+
+        // Initialiser
+        displayQuestion();
+    </script>
+</body>
+</html>

@@ -1,0 +1,112 @@
+[
+  {
+    "q": "Qu'est-ce qu'une métrique du logiciel?",
+    "options": [
+      { "text": "Un outil de programmation utilisé pour écrire du code", "explain": "Les outils de programmation ne sont pas des métriques, ce sont des instruments de développement." },
+      { "text": "Un processus pour tester le logiciel en environnement de production", "explain": "Le testing est une activité de qualité, pas une métrique de mesure." },
+      { "text": "Un moyen de quantifier une propriété du monde logiciel", "explain": "" },
+      { "text": "Une documentation technique qui décrit le fonctionnement du code", "explain": "La documentation est une communication, pas une quantification de propriété." }
+    ],
+    "correct": 2,
+    "correctExplain": "Une métrique du logiciel est précisément un moyen de quantifier une propriété du monde logiciel. Par exemple, le nombre d'erreurs dans un programme permet de quantifier la qualité du programme. Les métriques sont essentielles pour un chef de projet et son équipe car elles permettent de mesurer et d'évaluer différents aspects du logiciel."
+  },
+  {
+    "q": "Lequel des éléments suivants N'est PAS un rôle des métriques en gestion de projet?",
+    "options": [
+      { "text": "Évaluer le travail effectué et la productivité", "explain": "C'est justement un rôle clé : évaluer l'effort, la pertinence et la quantité de travail." },
+      { "text": "Faire des prévisions sur le projet", "explain": "" },
+      { "text": "Remplacer complètement les compétences du chef de projet", "explain": "Les métriques sont des outils d'aide et de support, pas des remplaçants du jugement humain. C'est ce qui en fait un outil et non un substitut." },
+      { "text": "Détecter des problèmes imminents ou potentiels", "explain": "La détection de problèmes est un rôle fondamental des métriques." }
+    ],
+    "correct": 2,
+    "correctExplain": "Les métriques supportent la gestion de projet mais elles ne remplacent jamais les compétences et le jugement d'un chef de projet. Les métriques sont des outils d'aide à la décision, pas des éléments qui suppriment la nécessité d'expertise humaine. Les trois autres options sont effectivement des rôles des métriques."
+  },
+  {
+    "q": "Qu'appelle-t-on les 'attributs internes' d'un logiciel?",
+    "options": [
+      { "text": "Les interfaces graphiques et les menus du logiciel", "explain": "Les interfaces sont des attributs externes, visibles par l'utilisateur." },
+      { "text": "Les constituants construits durant le processus de développement qui impactent le comportement du logiciel", "explain": "" },
+      { "text": "Les serveurs et les bases de données utilisés par le logiciel", "explain": "Les infrastructures sont des éléments externes, pas les constituants internes du code." },
+      { "text": "Les rapports de test et la documentation générée par les phases de test", "explain": "La documentation teste est un produit externe, pas un constituant interne du logiciel lui-même." }
+    ],
+    "correct": 1,
+    "correctExplain": "Les attributs internes d'un logiciel sont tous les constituants construits durant le processus de développement. Ces attributs internes ont un impact direct et important sur le comportement du logiciel. C'est en agissant sur la structure interne que l'on peut améliorer les attributs externes et donc la qualité globale du produit final."
+  },
+  {
+    "q": "Quelle est la principale difficultée liée à l'utilisation du Nombre de Lignes de Code (LOC) comme métrique?",
+    "options": [
+      { "text": "C'est la métrique la plus difficile à calculer", "explain": "LOC est une des métriques les plus faciles à obtenir, c'est justement pour cela qu'elle est largement utilisée." },
+      { "text": "L'absence d'une définition standardisée crée de l'ambiguïté dans le calcul", "explain": "" },
+      { "text": "Elle ne peut être utilisée que dans les langages orientés objet", "explain": "LOC peut être calculée dans n'importe quel langage de programmation." },
+      { "text": "Les outils d'analyse statique refusent de la calculer", "explain": "Au contraire, la plupart des environnements de développement et outils d'analyse fournissent cette mesure." }
+    ],
+    "correct": 1,
+    "correctExplain": "La principale difficulté de LOC est son caractère ambigu. Il y a différentes façons de la calculer : inclusion ou non des commentaires, comment compter les lignes avec plusieurs instructions, les différences entre les langages et IDEs, l'expérience du développeur, la réutilisation et la génération de code, et même les possibles manipulations. Cette ambiguïté est pourquoi il est essentiel qu'une équipe définisse une convention commune."
+  },
+  {
+    "q": "Définissez la métrique NCLOC et ses implications pour la qualité du code.",
+    "options": [
+      { "text": "Le nombre total de lignes incluant les commentaires et les instructions", "explain": "Cela décrirait LOC, pas NCLOC. NCLOC exclut spécifiquement les commentaires." },
+      { "text": "Le nombre de lignes de code sans les commentaires, aussi appelée ELOC", "explain": "" },
+      { "text": "Le nombre de lignes vides et de lignes de commentaires uniquement", "explain": "C'est l'inverse : NCLOC mesure le code effectif, pas les commentaires." },
+      { "text": "Le nombre de fonctionnalités implémentées dans le code source", "explain": "NCLOC n'est pas une mesure de fonctionnalités, c'est une mesure du volume de code effectif." }
+    ],
+    "correct": 1,
+    "correctExplain": "NCLOC signifie Non Commented source Lines Of Code et est aussi désignée par ELOC (Effective Lines Of Code). Cette métrique mesure le nombre de lignes de code sans compter les commentaires. Elle est importante pour évaluer la quantité réelle de code effectivement écrit, en supprimant le 'bruit' des commentaires, ce qui donne une image plus precise de l'effort de développement."
+  },
+  {
+    "q": "Comment les trois métriques LOC, NCLOC et CLOC sont-elles reliées mathématiquement?",
+    "options": [
+      { "text": "LOC = NCLOC + CLOC + (nombre de lignes vides)", "explain": "Les lignes vides ne sont pas incluses dans LOC." },
+      { "text": "LOC = NCLOC + CLOC", "explain": "" },
+      { "text": "NCLOC = LOC + CLOC", "explain": "Cela n'a pas de sens mathématiquement. CLOC et NCLOC sont des parties constituantes de LOC." },
+      { "text": "CLOC = LOC - NCLOC", "explain": "Formulé inversement, c'est correct, mais la relation directe entre les trois est LOC = NCLOC + CLOC." }
+    ],
+    "correct": 1,
+    "correctExplain": "La relation mathématique fondamentale est : LOC (Lignes Of Code totales) = NCLOC (lignes de code sans commentaires) + CLOC (lignes de commentaires). Cette équation montre que le nombre total de lignes dans un fichier est composé de deux parties : le code effectif et les commentaires. Cela permet de compléter les deux métriques précédentes de manière cohérente."
+  },
+  {
+    "q": "Quel est le calcul correct for la densité de commentaire et qu'indique-t-elle sur la qualité du code?",
+    "options": [
+      { "text": "Densité = LOC / NCLOC; indique la proportion de code par rapport aux commentaires", "explain": "Cette formule indique l'inverse de ce qu'on cherche - elle augmente quand il y a moins de commentaires." },
+      { "text": "Densité = CLOC / LOC; évalue la lisibilité, l'analysabilité et la modifiabilité du code selon ISO 9126", "explain": "" },
+      { "text": "Densité = NCLOC / CLOC; mesure la complexité algorithmique du code", "explain": "Cette formule ne mesure pas la complexité ; la complexité se mesure par d'autres métriques comme McCabe." },
+      { "text": "Densité = CLOC - NCLOC; indique le niveau de détail des commentaires", "explain": "Une soustraction n'a pas de sens. La densité est un ratio, pas une différence." }
+    ],
+    "correct": 1,
+    "correctExplain": "La densité de commentaire est calculée comme CLOC / LOC (lignes de commentaires divisées par le nombre total de lignes). Cette mesure est très importante pour la qualité logicielle car elle permet d'évaluer des critères critiques comme la lisibilité du code (un code bien commenté est plus facile à lire), l'analysabilité (plus facile à comprendre et analyser) et la modifiabilité (plus facile à maintenir et modifier). Ces critères sont définis dans les normes ISO 9126 et ISO 25000."
+  },
+  {
+    "q": "Analysez les différents types de duplication de code et leur impact sur la qualité du logiciel.",
+    "options": [
+      { "text": "Seule la duplication imposée par la spécification or le langage affecte la qualité", "explain": "Toutes les formes de duplication affectent la qualité ; certaines peuvent être inévitables mais d'autres sont critiques à gérer." },
+      { "text": "La duplication par impatience (pression des délais) est acceptable car elle sera refactorisée plus tard", "explain": "C'est une fausse économie : la duplication technique crée de la dette technique que l'on doit gérer." },
+      { "text": "Il y a plusieurs sources : imposed by spec/language, inadvertance, impatience, inter-developer; chaque type affecte différemment la maintenabilité et la qualité", "explain": "" },
+      { "text": "La duplication inter-développeur indique toujours un problème de communication dans l'équipe", "explain": "Bien que la communication soit importante, la duplication peut être involontaire même avec bonne communication." }
+    ],
+    "correct": 2,
+    "correctExplain": "Il existe plusieurs sources de duplication : imposée par la spécification ou le langage (inévitable), par inadvertance (manque de conscience), par impatience due à la pression des délais (dette technique), et inter-développeur (manque de réutilisation ou de partage). Chaque type de duplication a un impact différent sur la maintenabilité, la testabilité et la qualité globale du logiciel. La gestion de la duplication est cruciale pour maintenir une base de code de qualité."
+  },
+  {
+    "q": "Qu'est-ce que le nombre cyclomatique de McCabe et comment cette métrique aide-t-elle à évaluer la qualité du code?",
+    "options": [
+      { "text": "C'est le nombre total de fonctions dans un module; plus le nombre est élevé, plus le code est complexe", "explain": "Le nombre de fonctions n'est pas ce que la complexité cyclomatique mesure ; c'est le flux de contrôle qui compte." },
+      { "text": "C'est une mesure du nombre de temps que le code a été révisé; indique l'historique de maintenance", "explain": "McCabe n'a rien à voir avec l'historique des révisions ; c'est une mesure de structure statique." },
+      { "text": "C'est le nombre de chemins linéaires indépendants; décrit la complexité d'écoulement et le nombre de branches conditionnelles", "explain": "" },
+      { "text": "C'est la durée moyenne d'exécution du code; mesure la performance plutôt que la complexité", "explain": "McCabe mesure la structure logique, pas la performance d'exécution." }
+    ],
+    "correct": 2,
+    "correctExplain": "Le nombre cyclomatique v(G) de McCabe décrit précisément la complexité d'écoulement (control flow complexity) d'un programme. Il indique le nombre de chemins linéaires indépendants dans un module de programme et représente finalement la complexité des flux de données. Il correspond au nombre de branches conditionnelles (if, while, for, case, etc.) dans l'organigramme d'un programme. Cette métrique aide à identifier les modules qui sont trop complexes et difficiles à tester et maintenir."
+  },
+  {
+    "q": "En pratique, dans un contexte d'assurance qualité complexe, comment les quatre types de duplication de code interagissent-ils avec l'implémentation des métriques de complexité cyclomatique?",
+    "options": [
+      { "text": "La duplication n'affecte pas la complexité cyclomatique puisque chaque occurrence est calculée indépendamment", "explain": "Bien que chaque occurrence soit calculée séparément, la duplication cumulative affecte directement les efforts de test et de maintenance, ce qui impacte les stratégies de mesure." },
+      { "text": "Seule la duplication imposée par le langage affecte mesurablement la complexité cyclomatique globale", "explain": "Tous les types de duplication contribuent à la complexité globale, pas seulement ceux imposés par le langage." },
+      { "text": "La duplication augmente la complexité cyclomatique moyenne, compliquant la stratégie de test et rendant la maintenance plus coûteuse dans l'analyse des métriques globales", "explain": "" },
+      { "text": "Les métriques de complexité McCabe sont indépendantes de toute considération de duplication car elles mesurent des structures différentes", "explain": "McCabe mesure la structure de contrôle, mais la duplication affecte l'interprétation et l'utilité des métriques globales." }
+    ],
+    "correct": 2,
+    "correctExplain": "La relation entre duplication et complexité cyclomatique est subtile mais critique : bien que McCabe mesure indépendamment chaque instance, la duplication augmente la complexité cyclomatique MOYENNE du système et rend l'analyse des métriques plus difficile. La duplication interagit négativement avec les efforts de test (chaque copie doit être testée séparément), ce qui augmente le coût total d'assurance qualité. Pour les responsables qualité, la duplication signifie que les métriques moyennes de complexité deviennent moins fiables et que les seuils de complexité doivent être ajustés. C'est une interaction clé dans l'analyse avancée des métriques et revues de code."
+  }
+]

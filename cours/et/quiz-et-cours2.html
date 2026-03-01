@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz - Stratégie de tests</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <div class="global-course-title">Élaboration des tests</div>
+    <h1>Quiz : Stratégie de tests (Cours 2)</h1>
+    
+    <div class="progress-container">
+        <div class="progress-info">
+            <span id="question-counter">Question 1 / 10</span>
+            <div class="progress-stats">
+                <span class="stat-badge incorrect"><span class="stat-icon">✕</span><span id="incorrect-count">0</span></span>
+                <span class="stat-badge correct"><span class="stat-icon">✓</span><span id="correct-count">0</span></span>
+            </div>
+        </div>
+        <div class="progress-bar-wrapper" id="progressBar"></div>
+    </div>
+    
+    <div id="quiz-container" class="card"></div>
+    
+    <div id="feedback" class="feedback-container"></div>
+    
+    <div class="quiz-navigation">
+        <button id="prevBtn" onclick="previousQuestion()">← Précédent</button>
+        <button id="nextBtn" onclick="nextQuestion()">Suivant →</button>
+    </div>
+    
+    <div id="result"></div>
+
+    <script>
+        const questions = [
+            {
+                q: "Quelle est la définition principale d'une stratégie de test selon ISTQB ?",
+                options: [
+                    { text: "Un ensemble d'outils et de logiciels de test", explain: "Ce sont les ressources, pas la stratégie elle-même" },
+                    { text: "Un plan de haut niveau décrivant l'approche, les objectifs et la couverture des tests", explain: "" },
+                    { text: "Une documentation détaillée de tous les cas de test", explain: "C'est le plan de test détaillé, pas la stratégie" },
+                    { text: "Une liste de tous les défauts trouvés lors des tests", explain: "C'est un rapport de test, pas une stratégie" }
+                ],
+                correct: 1,
+                correctExplain: "La stratégie de test est un document de haut niveau dans le plan de test qui définit l'approche générale, les objectifs, le périmètre et la couverture."
+            },
+            {
+                q: "Quel est l'objectif principal d'une stratégie de test cohérente ?",
+                options: [
+                    { text: "Minimiser les coûts en testant le moins possible", explain: "L'objectif n'est pas de réduire les tests mais d'être efficace" },
+                    { text: "Aligner les activités de test avec les objectifs métier et assurer une couverture optimale", explain: "" },
+                    { text: "Tester chaque ligne de code du système", explain: "C'est une approche inefficace et non réaliste" },
+                    { text: "Éliminer complètement tous les risques de défaut", explain: "Impossible; la stratégie gère les risques, ne les élimine pas" }
+                ],
+                correct: 1,
+                correctExplain: "Une stratégie de test bien définie assure que les efforts de test sont alignés avec les risques commerciaux et les objectifs métier."
+            },
+            {
+                q: "À quel niveau de planification la stratégie de tests est-elle généralement définie ?",
+                options: [
+                    { text: "Au niveau des cas de test individuels", explain: "Les cas de test sont des détails du plan, pas de la stratégie" },
+                    { text: "Au niveau organisationnel/projet (haut niveau), avant les plans de test détaillés", explain: "" },
+                    { text: "Uniquement pendant l'exécution des tests", explain: "La stratégie doit être définie bien avant l'exécution" },
+                    { text: "À la phase de maintenance en production", explain: "La stratégie est définie au début du projet" }
+                ],
+                correct: 1,
+                correctExplain: "La stratégie de test est un document de haut niveau défini au niveau organisationnel ou du projet, généralement inclus dans le plan de test master."
+            },
+            {
+                q: "Quels éléments clés doit contenir une stratégie de test efficace ?",
+                options: [
+                    { text: "Uniquement la liste des outils de test utilisés", explain: "Les outils sont une partie mineure de la stratégie" },
+                    { text: "Les objectifs de test, l'approche, les critères d'entrée/sortie, les critères de couverture et les risques", explain: "" },
+                    { text: "Uniquement les noms des testeurs et leurs responsabilités", explain: "Les ressources sont documentées ailleurs" },
+                    { text: "Une simple énumération des cas de test à exécuter", explain: "C'est trop détaillé pour être dans la stratégie" }
+                ],
+                correct: 1,
+                correctExplain: "Une stratégie complète inclut: objectifs, approche (boîte noire/blanche, risques), critères d'entrée/sortie, étendue de couverture, et résolution des risques."
+            },
+            {
+                q: "Comment la stratégie de test contribue-t-elle à gérer les risques d'un projet ?",
+                options: [
+                    { text: "Elle définit les zones à tester en priorité en fonction des risques identifiés", explain: "" },
+                    { text: "Elle élimine automatiquement tous les risques du projet", explain: "La stratégie aide à gérer, pas à éliminer, les risques" },
+                    { text: "Elle n'a pas de relation avec la gestion des risques", explain: "La stratégie de test est directement liée aux risques" },
+                    { text: "Elle augmente les risques en ajoutant de la complexité", explain: "Une bonne stratégie réduit les risques testables" }
+                ],
+                correct: 0,
+                correctExplain: "La stratégie de test identifie et priorise les zones à tester (test basé sur les risques) pour assurer que les domaines critiques reçoivent plus d'attention."
+            },
+            {
+                q: "Quelle approche de stratégie de test est recommandée si les ressources sont limitées ?",
+                options: [
+                    { text: "Tester tous les chemins possibles du code", explain: "C'est inefficace avec des ressources limitées" },
+                    { text: "Ne pas faire de tests du tout pour économiser", explain: "Contreproductif; les défauts coûtent plus cher après déploiement" },
+                    { text: "Appliquer une approche basée sur les risques en se concentrant sur les modules critiques", explain: "" },
+                    { text: "Tester seulement les interfaces utilisateur", explain: "Ignorer les tests d'autres niveaux est incomplet" }
+                ],
+                correct: 2,
+                correctExplain: "Avec des ressources limitées, une stratégie basée sur les risques permet de prioriser les tests sur les zones critiques où les défauts auraient le plus d'impact."
+            },
+            {
+                q: "Entre les approches de stratégie de test (adaptative, analytique, préceptive, méthodique), laquelle est préférée pour un projet où les exigences changent fréquemment ?",
+                options: [
+                    { text: "Approche méthodique (test basé sur les checklists)", explain: "Cette approche fonctionne mieux avec des exigences stables" },
+                    { text: "Approche adaptative (réactive, basée sur apprentissage continu)", explain: "" },
+                    { text: "Approche préceptive (procédures prédéfinies rigides)", explain: "Trop rigide pour des changements fréquents d'exigences" },
+                    { text: "Pas de stratégie; improviser au fur et à mesure", explain: "Même avec des changements, une stratégie est nécessaire" }
+                ],
+                correct: 1,
+                correctExplain: "L'approche adaptative permet d'ajuster la stratégie en fonction de ce qui est appris lors de l'exécution, idéale pour les projets avec évolution des exigences."
+            },
+            {
+                q: "Comment les critères de couverture définis dans la stratégie influencent-ils l'exhaustivité des tests ?",
+                options: [
+                    { text: "Ils assurent une couverture à 100% de tous les chemins logiques", explain: "L'exhaustivité n'est pas réaliste; les critères sélectionneront une partie" },
+                    { text: "Ils définissent le niveau de couverture acceptable (ex: branches, instructions) selon les risques", explain: "" },
+                    { text: "Ils n'ont aucun impact sur la couverture", explain: "Les critères de couverture définissent directement ce qui est testé" },
+                    { text: "Ils réduisent l'exhaustivité en limitant les tests", explain: "Ils l'optimisent plutôt que de la réduire" }
+                ],
+                correct: 1,
+                correctExplain: "Les critères de couverture (ex: couverture de branches à 80%, couverture d'instructions à 90%) équilibrent l'exhaustivité avec la faisabilité."
+            },
+            {
+                q: "Dans un contexte de test basé sur les risques (RBT), quel rôle joue la stratégie de test ?",
+                options: [
+                    { text: "Elle ignore complètement les risques et teste tout équitablement", explain: "RBT place les risques au centre de la stratégie" },
+                    { text: "Elle documente comment les risques sont identifiés, analysés et utilisés pour prioriser les tests", explain: "" },
+                    { text: "Elle augmente les risques en concentrant les efforts sur quelques zones", explain: "RBT réduit les risques en testant d'abord les zones critiques" },
+                    { text: "Elle remplace complètement la notion de planification de test", explain: "La stratégie est un élément du plan, pas son remplacement" }
+                ],
+                correct: 1,
+                correctExplain: "En RBT, la stratégie de test décrit comment les risques sont évalués et comment les efforts de test sont concentrés sur les zones à risque élevé."
+            },
+            {
+                q: "Quel est le lien entre la stratégie de test et le succès global du projet logiciel ?",
+                options: [
+                    { text: "Il n'y a aucun lien; les tests sont indépendants du projet", explain: "Les tests sont intégrés au succès du projet" },
+                    { text: "Une stratégie de test claire assure que les efforts de test sont alignés, efficaces et gèrent les risques métier", explain: "" },
+                    { text: "La stratégie garantit que le projet sera exempt de défauts", explain: "Impossible; la stratégie gère les risques, ne les élimine pas" },
+                    { text: "La stratégie n'affecte que les coûts de test, pas le succès", explain: "Elle affecte la qualité, le timing et les risques du projet" }
+                ],
+                correct: 1,
+                correctExplain: "Une stratégie de test bien pensée contribue directement au succès du projet en assurant une couverture appropriée, une gestion des risques et une utilisation efficace des ressources."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let answers = new Array(questions.length).fill(null);
+        let answered = new Array(questions.length).fill(false);
+
+        function displayQuestion() {
+            const container = document.getElementById('quiz-container');
+            const item = questions[currentQuestion];
+            
+            let html = `<div class="question">${currentQuestion + 1}. ${item.q}</div>`;
+            const letters = ['A', 'B', 'C', 'D'];
+            item.options.forEach((opt, i) => {
+                let classes = '';
+                if (answers[currentQuestion] === i) {
+                    classes = 'selected ';
+                    if (i === item.correct) {
+                        classes += 'correct';
+                    } else {
+                        classes += 'incorrect';
+                    }
+                }
+                const disabledClass = answered[currentQuestion] ? 'disabled' : '';
+                html += `<div class="option ${classes} ${disabledClass}" onclick="${answered[currentQuestion] ? '' : `handleAnswerClick(${i})`}" style="${answered[currentQuestion] ? 'cursor: not-allowed;' : ''}"><span class="option-letter">${letters[i]}</span> ${opt.text}</div>`;
+            });
+            
+            container.innerHTML = html;
+            
+            if (answered[currentQuestion]) {
+                showFeedback();
+            } else {
+                document.getElementById('feedback').innerHTML = '';
+                document.getElementById('feedback').classList.remove('show');
+            }
+            
+            updateProgressBar();
+            updateNavigationButtons();
+            updateProgressInfo();
+        }
+
+        function handleAnswerClick(index) {
+            if (answered[currentQuestion]) return;
+            
+            answers[currentQuestion] = index;
+            answered[currentQuestion] = true;
+            
+            displayQuestion();
+        }
+
+        function showFeedback() {
+            const item = questions[currentQuestion];
+            const selectedIndex = answers[currentQuestion];
+            const isCorrect = selectedIndex === item.correct;
+            
+            let html = `<div class="feedback ${isCorrect ? 'correct' : 'incorrect'}">`;
+            
+            if (isCorrect) {
+                html += `<strong>✓ Correct !</strong><br>${item.correctExplain}`;
+            } else {
+                html += `<strong>✕ Incorrect</strong><br>`;
+                html += `<p><strong>Explications :</strong></p>`;
+                html += `<p><strong>Votre réponse :</strong> ${item.options[selectedIndex].explain || 'Aucune explication disponible'}</p>`;
+                html += `<p><strong>Bonne réponse :</strong> ${item.options[item.correct].text}<br>${item.correctExplain}</p>`;
+            }
+            
+            html += '</div>';
+            
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.innerHTML = html;
+            feedbackDiv.classList.add('show');
+        }
+
+        function updateProgressBar() {
+            const progressBar = document.getElementById('progressBar');
+            const percentage = ((currentQuestion + 1) / questions.length) * 100;
+            progressBar.innerHTML = `<div class="progress-bar" style="width: ${percentage}%"></div>`;
+        }
+
+        function updateProgressInfo() {
+            document.getElementById('question-counter').textContent = `Question ${currentQuestion + 1} / ${questions.length}`;
+            updateScoreBadges();
+        }
+
+        function updateScoreBadges() {
+            let correctCount = 0;
+            for (let i = 0; i < questions.length; i++) {
+                if (answered[i] && answers[i] === questions[i].correct) {
+                    correctCount++;
+                }
+            }
+            const incorrectCount = answers.filter((a, i) => answered[i] && a !== null && a !== questions[i].correct).length;
+            
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('incorrect-count').textContent = incorrectCount;
+        }
+
+        function updateNavigationButtons() {
+            document.getElementById('prevBtn').disabled = currentQuestion === 0;
+            document.getElementById('nextBtn').disabled = currentQuestion === questions.length - 1;
+            
+            if (currentQuestion === questions.length - 1 && answered[currentQuestion]) {
+                document.getElementById('nextBtn').textContent = 'Afficher Résultats';
+                document.getElementById('nextBtn').disabled = false;
+                document.getElementById('nextBtn').onclick = showFinalResults;
+            } else {
+                document.getElementById('nextBtn').onclick = nextQuestion;
+                document.getElementById('nextBtn').textContent = 'Suivant →';
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                displayQuestion();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        function showFinalResults() {
+            let correctCount = 0;
+            for (let i = 0; i < questions.length; i++) {
+                if (answered[i] && answers[i] === questions[i].correct) {
+                    correctCount++;
+                }
+            }
+            
+            const percentage = (correctCount / questions.length) * 100;
+            let feedback = '';
+            
+            if (percentage === 100) {
+                feedback = 'Excellent ! Vous avez maîtrisé ce sujet !';
+            } else if (percentage >= 80) {
+                feedback = 'Très bien ! Vous avez une bonne compréhension.';
+            } else if (percentage >= 60) {
+                feedback = 'Bien ! Vous pouvez approfondir certains concepts.';
+            } else if (percentage >= 40) {
+                feedback = 'Moyen. Revoyez les concepts clés.';
+            } else {
+                feedback = 'À améliorer. Étudiez le matériel de cours.';
+            }
+            
+            const resultHTML = `
+                <div class="results-container">
+                    <h2>Résultats Finaux</h2>
+                    <div class="score">
+                        <div class="score-number">${correctCount}/${questions.length}</div>
+                        <div class="score-percentage">${percentage.toFixed(1)}%</div>
+                    </div>
+                    <p class="score-feedback">${feedback}</p>
+                    <button onclick="location.reload()">Recommencer</button>
+                    <button onclick="history.back()">Retour au catalogue</button>
+                </div>
+            `;
+            
+            document.getElementById('result').innerHTML = resultHTML;
+            document.getElementById('quiz-container').style.display = 'none';
+            document.getElementById('feedback').style.display = 'none';
+            document.querySelector('.quiz-navigation').style.display = 'none';
+        }
+
+        // Initialiser
+        displayQuestion();
+    </script>
+</body>
+</html>

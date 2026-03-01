@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz - Cours 10</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <div class="global-course-title">Gestion de l'assurance qualité</div>
+    <h1>Quiz : La gestion de configuration (Cours 10)</h1>
+    
+    <div class="progress-container">
+        <div class="progress-info">
+            <span id="question-counter">Question 1 / 10</span>
+            <div class="progress-stats">
+                <span class="stat-badge incorrect"><span class="stat-icon">✕</span><span id="incorrect-count">0</span></span>
+                <span class="stat-badge correct"><span class="stat-icon">✓</span><span id="correct-count">0</span></span>
+            </div>
+        </div>
+        <div class="progress-bar-wrapper" id="progressBar"></div>
+    </div>
+    
+    <div id="quiz-container" class="card"></div>
+    
+    <div id="feedback" class="feedback-container"></div>
+    
+    <div class="quiz-navigation">
+        <button id="prevBtn" onclick="previousQuestion()">← Précédent</button>
+        <button id="nextBtn" onclick="nextQuestion()">Suivant →</button>
+    </div>
+    
+    <div id="result"></div>
+
+    <script>
+        const questions = [
+            {
+                        "q": "Qu'est-ce qu'un élément de configuration (CI) dans le contexte de la gestion de configuration?",
+                        "options": [
+                                    {
+                                                "text": "Une entité à laquelle une référence unique est attribuée dans le cadre de la configuration du système",
+                                                "explain": ""
+                                    },
+                                    {
+                                                "text": "Un document qui décrit uniquement les procédures de test du logiciel",
+                                                "explain": "Un CI n'est pas limité aux procédures de test; c'est une entité beaucoup plus large incluant documents, code, exécutables, etc."
+                                    },
+                                    {
+                                                "text": "Un membre de l'équipe responsable de gérer les configurations",
+                                                "explain": "Un CI est un artefact du système, pas une personne ou un rôle organisationnel."
+                                    },
+                                    {
+                                                "text": "Un outil logiciel utilisé exclusivement pour le contrôle de version",
+                                                "explain": "Un CI n'est pas un outil; c'est un élément du système qui doit être géré et versionné."
+                                    }
+                        ],
+                        "correct": 0,
+                        "correctExplain": "Un élément de configuration (CI - Configuration Item) est une entité à laquelle une référence unique est attribuée dans le cadre de la configuration du système. Les CI peuvent être des documents (spécifications, plans, procédures), du code source, des exécutables, des bases de données, ou de la configuration matérielle. Cette définition établit que les CI sont les composants identifiables et traçables d'un système qui doivent être gérés."
+            },
+            {
+                        "q": "Parmi les options suivantes, laquelle N'est PAS un des quatre piliers de la gestion de configuration?",
+                        "options": [
+                                    {
+                                                "text": "Identification de la configuration",
+                                                "explain": "C'est le premier pilier fondamental de la gestion de configuration."
+                                    },
+                                    {
+                                                "text": "Audit de configuration",
+                                                "explain": "C'est le quatrième pilier essentiel de la gestion de configuration."
+                                    },
+                                    {
+                                                "text": "Optimisation de la performance du code",
+                                                "explain": ""
+                                    },
+                                    {
+                                                "text": "Comptabilisation de l'état de la configuration",
+                                                "explain": "C'est le troisième pilier de la gestion de configuration."
+                                    }
+                        ],
+                        "correct": 2,
+                        "correctExplain": "Les quatre piliers de la gestion de configuration sont: (1) Identification de la configuration, (2) Contrôle de la configuration, (3) Comptabilisation de l'état de la configuration, et (4) Audit de configuration. L'optimisation de la performance du code, bien qu'importante en développement logiciel, n'est pas un des piliers fondamentaux de la gestion de configuration, qui se concentre sur la traçabilité, le contrôle et la conformité des éléments du système."
+            },
+            {
+                        "q": "Qu'est-ce qu'une ligne de base (baseline) dans la gestion de configuration?",
+                        "options": [
+                                    {
+                                                "text": "Un document qui liste tous les bugs identifiés durant les tests",
+                                                "explain": "Une baseline n'est pas une liste de bugs; c'est une référence de configuration approuvée."
+                                    },
+                                    {
+                                                "text": "Une configuration approuvée d'un système à un moment donné qui sert de référence",
+                                                "explain": ""
+                                    },
+                                    {
+                                                "text": "La première version jamais créée d'un logiciel",
+                                                "explain": "Bien que la première version puisse être une baseline, une baseline peut être établie à n'importe quel moment significatif."
+                                    },
+                                    {
+                                                "text": "Un outil de gestion de projet pour planifier les sprints",
+                                                "explain": "Une baseline est un concept de gestion de configuration, pas un outil de gestion de projet Agile."
+                                    }
+                        ],
+                        "correct": 1,
+                        "correctExplain": "Une ligne de base (baseline) est une configuration approuvée d'un système ou d'un élément de configuration à un moment donné. Elle sert de référence pour les modifications futures, l'audit de configuration, et la construction et livraison du système. Les types de lignes de base incluent la ligne de base fonctionnelle (caractéristiques fonctionnelles initiales), la ligne de base de développement (code source et documentation), et la ligne de base de produit (configuration finale livrée)."
+            },
+            {
+                        "q": "Quel est le rôle principal du Comité de Contrôle des Modifications (CCB)?",
+                        "options": [
+                                    {
+                                                "text": "Écrire le code source des nouvelles fonctionnalités",
+                                                "explain": "Le CCB ne code pas; il évalue et approuve les changements proposés au système."
+                                    },
+                                    {
+                                                "text": "Évaluer et approuver ou rejeter les demandes de modification",
+                                                "explain": ""
+                                    },
+                                    {
+                                                "text": "Effectuer les tests d'acceptation utilisateur uniquement",
+                                                "explain": "Le CCB n'est pas responsable des tests; il prend des décisions sur les modifications proposées."
+                                    },
+                                    {
+                                                "text": "Gérer les ressources humaines de l'équipe de développement",
+                                                "explain": "Le CCB ne gère pas les RH; c'est un comité technique qui évalue les impacts des modifications."
+                                    }
+                        ],
+                        "correct": 1,
+                        "correctExplain": "Le Comité de Contrôle des Modifications (CCB - Change Control Board) est un groupe de personnes responsable d'évaluer et d'approuver les demandes de modification. Le CCB examine chaque demande, évalue l'impact technique et commercial, approuve, rejette ou diffère la modification, et assure la cohérence de la configuration. C'est un mécanisme de gouvernance crucial pour maintenir l'intégrité du système."
+            },
+            {
+                        "q": "Dans un système de contrôle de version, que signifie l'opération 'merge' (fusion)?",
+                        "options": [
+                                    {
+                                                "text": "Supprimer définitivement une branche du repository",
+                                                "explain": "Le merge ne supprime pas; il combine les modifications de différentes branches."
+                                    },
+                                    {
+                                                "text": "Créer une nouvelle branche de développement parallèle",
+                                                "explain": "Créer une branche est l'opération 'branch', pas 'merge'."
+                                    },
+                                    {
+                                                "text": "Combiner des modifications de différentes branches",
+                                                "explain": ""
+                                    },
+                                    {
+                                                "text": "Restaurer le code à une version antérieure",
+                                                "explain": "Restaurer à une version antérieure est un 'rollback' ou 'revert', pas un merge."
+                                    }
+                        ],
+                        "correct": 2,
+                        "correctExplain": "Dans le contrôle de version, 'merge' (fusion) est l'opération qui combine des modifications de différentes branches. Cela permet d'intégrer le travail effectué en parallèle sur différentes fonctionnalités ou corrections. Le merge est essentiel pour coordonner le travail d'équipes distribuées et pour intégrer les développements parallèles dans une branche principale. Les conflits peuvent survenir lors d'un merge et doivent être résolus manuellement."
+            },
+            {
+                        "q": "Quelle information doit obligatoirement contenir une demande de modification (Change Request)?",
+                        "options": [
+                                    {
+                                                "text": "Uniquement le nom de la personne qui la soumet",
+                                                "explain": "Le nom seul est insuffisant; une CR doit contenir description, justification, impact, coût et priorité."
+                                    },
+                                    {
+                                                "text": "Description, justification, impact sur les autres CI, coût estimé et priorité",
+                                                "explain": ""
+                                    },
+                                    {
+                                                "text": "Seulement le code source complet de la modification proposée",
+                                                "explain": "Le code n'est pas requis dans la CR initiale; elle doit d'abord expliquer et justifier le changement."
+                                    },
+                                    {
+                                                "text": "La date de livraison finale du projet entier",
+                                                "explain": "La date de livraison du projet n'est pas spécifique à une demande de modification individuelle."
+                                    }
+                        ],
+                        "correct": 1,
+                        "correctExplain": "Une demande de modification (Change Request - CR) est une demande formelle pour modifier un élément de configuration. Elle doit contenir: description de la modification proposée, justification de la modification, impact sur les autres CI, coût et effort estimés, et priorité. Ces éléments permettent au CCB de prendre une décision éclairée sur l'approbation de la modification en comprenant pleinement ses implications techniques, commerciales et organisationnelles."
+            },
+            {
+                        "q": "Quelle est la différence fondamentale entre un Audit de Configuration Fonctionnelle (FCA) et un Audit de Configuration Physique (PCA)?",
+                        "options": [
+                                    {
+                                                "text": "Le FCA vérifie les caractéristiques fonctionnelles, le PCA vérifie que la configuration physique correspond à la documentation",
+                                                "explain": ""
+                                    },
+                                    {
+                                                "text": "Le FCA concerne uniquement le matériel, le PCA concerne uniquement le logiciel",
+                                                "explain": "Les deux audits couvrent tous les aspects du système, pas seulement matériel ou logiciel."
+                                    },
+                                    {
+                                                "text": "Le FCA est optionnel, le PCA est obligatoire",
+                                                "explain": "Les deux types d'audit sont importants et complémentaires dans la gestion de configuration."
+                                    },
+                                    {
+                                                "text": "Il n'y a aucune différence; ce sont deux noms pour le même processus",
+                                                "explain": "Ce sont deux types d'audit distincts avec des objectifs différents et complémentaires."
+                                    }
+                        ],
+                        "correct": 0,
+                        "correctExplain": "L'Audit de Configuration Fonctionnelle (FCA - Functional Configuration Audit) vérifie que les caractéristiques fonctionnelles du système sont conformes aux spécifications. L'Audit de Configuration Physique (PCA - Physical Configuration Audit) vérifie que la configuration physique réelle (code, matériel, documentation) correspond exactement à la documentation technique. Ces deux audits complémentaires assurent que le système fonctionne comme prévu ET que la documentation reflète fidèlement la réalité du système."
+            },
+            {
+                        "q": "En considérant les stratégies de branchement modernes, comment Git Flow se distingue-t-il du modèle Trunk-based development en termes de complexité et d'adaptation aux équipes?",
+                        "options": [
+                                    {
+                                                "text": "Git Flow est plus simple avec une seule branche principale, Trunk-based est complexe avec multiples branches permanentes",
+                                                "explain": "C'est l'inverse: Git Flow utilise multiples branches (master, develop, feature, release, hotfix), tandis que Trunk-based se concentre sur une branche principale."
+                                    },
+                                    {
+                                                "text": "Git Flow utilise plusieurs branches permanentes (master, develop) et types de branches, tandis que Trunk-based privilégie une branche unique avec intégration fréquente",
+                                                "explain": ""
+                                    },
+                                    {
+                                                "text": "Les deux stratégies sont identiques, seuls les noms de branches diffèrent",
+                                                "explain": "Ce sont des philosophies fondamentalement différentes avec des implications majeures pour le workflow de l'équipe."
+                                    },
+                                    {
+                                                "text": "Git Flow est obsolète et n'est plus utilisé dans l'industrie moderne",
+                                                "explain": "Git Flow reste largement utilisé, particulièrement pour les projets avec processus de release structurés, bien que d'autres approches gagnent en popularité."
+                                    }
+                        ],
+                        "correct": 1,
+                        "correctExplain": "Git Flow est un modèle de branchement structuré avec des branches permanentes (master pour production, develop pour développement) et des branches temporaires (feature, release, hotfix). Il convient aux projets avec cycles de release formels. Trunk-based development privilégie le développement principal sur une branche unique avec intégrations fréquentes, réduisant la complexité du merge mais nécessitant une discipline rigoureuse et des tests automatisés robustes. Le choix dépend de la maturité de l'équipe, du contexte de release, et de l'infrastructure CI/CD."
+            },
+            {
+                        "q": "Dans le contexte de Continuous Integration (CI) et Continuous Deployment (CD), quel est l'impact majeur de la gestion de configuration sur la fiabilité et la traçabilité des déploiements automatisés?",
+                        "options": [
+                                    {
+                                                "text": "La gestion de configuration ralentit les déploiements et devrait être évitée dans un contexte CI/CD",
+                                                "explain": "Au contraire, la gestion de configuration est cruciale pour la fiabilité des déploiements automatisés, pas un obstacle."
+                                    },
+                                    {
+                                                "text": "La gestion de configuration fournit la traçabilité des modifications, facilite les rollbacks, et assure la cohérence entre environnements",
+                                                "explain": ""
+                                    },
+                                    {
+                                                "text": "CI/CD remplace complètement le besoin de gestion de configuration traditionnelle",
+                                                "explain": "CI/CD et gestion de configuration sont complémentaires; CI/CD s'appuie sur une bonne gestion de configuration."
+                                    },
+                                    {
+                                                "text": "La gestion de configuration ne concerne que les grandes entreprises, pas les équipes agiles modernes",
+                                                "explain": "La gestion de configuration est essentielle pour toutes les équipes, peut-être encore plus pour les déploiements fréquents en agile."
+                                    }
+                        ],
+                        "correct": 1,
+                        "correctExplain": "Dans un contexte CI/CD, la gestion de configuration est fondamentale pour: (1) Traçabilité complète des modifications déployées (qui, quoi, quand, pourquoi), (2) Capacité de rollback rapide en cas de problème grâce aux lignes de base, (3) Cohérence des configurations entre environnements (dev, test, staging, production), (4) Automatisation fiable des builds et déploiements, et (5) Audit et conformité. Sans gestion de configuration rigoureuse, les déploiements automatisés deviennent imprévisibles et risqués. L'intégration des pratiques de gestion de configuration avec CI/CD est ce qui permet des déploiements fréquents avec confiance."
+            },
+            {
+                        "q": "Comment la comptabilisation de l'état de la configuration contribue-t-elle spécifiquement à la gouvernance et à la prise de décision dans les projets complexes impliquant multiples équipes et dépendances inter-systèmes?",
+                        "options": [
+                                    {
+                                                "text": "Elle enregistre et rapporte l'information nécessaire incluant l'état des CI, des modifications, des livraisons et l'historique, permettant la visibilité globale et la coordination",
+                                                "explain": ""
+                                    },
+                                    {
+                                                "text": "Elle remplace le besoin de communication entre équipes en automatisant toutes les décisions",
+                                                "explain": "La comptabilisation fournit des informations pour les décisions humaines, elle ne les automatise ni ne remplace la communication."
+                                    },
+                                    {
+                                                "text": "Elle ne sert qu'à générer des rapports pour la direction sans valeur opérationnelle pour les équipes",
+                                                "explain": "La comptabilisation a une valeur opérationnelle directe pour la coordination quotidienne des équipes."
+                                    },
+                                    {
+                                                "text": "Elle est utile uniquement lors d'audits annuels, pas pour la gestion quotidienne",
+                                                "explain": "La comptabilisation est un processus continu fournissant une visibilité en temps réel, pas seulement pour les audits."
+                                    }
+                        ],
+                        "correct": 0,
+                        "correctExplain": "La comptabilisation de l'état de la configuration enregistre et rapporte l'information nécessaire pour gérer efficacement la configuration, incluant: l'état de chaque CI (en développement, approuvé, modifié), l'état des demandes de modification, l'état des livraisons et lignes de base, et l'historique complet des modifications. Dans les projets complexes avec multiples équipes et dépendances, cela fournit la visibilité globale essentielle pour: éviter les conflits de modifications, coordonner les livraisons interdépendantes, prendre des décisions éclairées sur les impacts de changements, identifier les goulots d'étranglement, et maintenir la cohérence globale du système. Sans cette traçabilité structurée, les projets complexes deviennent ingérables."
+            }
+];
+
+        let currentQuestion = 0;
+        let answers = new Array(questions.length).fill(null);
+        let answered = new Array(questions.length).fill(false);
+
+        function displayQuestion() {
+            const container = document.getElementById('quiz-container');
+            const item = questions[currentQuestion];
+            
+            let html = `<div class="question">${currentQuestion + 1}. ${item.q}</div>`;
+            const letters = ['A', 'B', 'C', 'D'];
+            item.options.forEach((opt, i) => {
+                let classes = '';
+                if (answers[currentQuestion] === i) {
+                    classes = 'selected ';
+                    if (i === item.correct) {
+                        classes += 'correct';
+                    } else {
+                        classes += 'incorrect';
+                    }
+                }
+                const disabledClass = answered[currentQuestion] ? 'disabled' : '';
+                html += `<div class="option ${classes} ${disabledClass}" onclick="${answered[currentQuestion] ? '' : `handleAnswerClick(${i})`}" style="${answered[currentQuestion] ? 'cursor: not-allowed;' : ''}"><span class="option-letter">${letters[i]}</span> ${opt.text}</div>`;
+            });
+            
+            container.innerHTML = html;
+            
+            if (answered[currentQuestion]) {
+                showFeedback();
+            } else {
+                document.getElementById('feedback').innerHTML = '';
+                document.getElementById('feedback').classList.remove('show');
+            }
+            
+            updateProgressBar();
+            updateNavigationButtons();
+            updateProgressInfo();
+        }
+
+        function handleAnswerClick(index) {
+            if (answered[currentQuestion]) return;
+            
+            answers[currentQuestion] = index;
+            answered[currentQuestion] = true;
+            
+            showFeedback();
+            updateProgressBar();
+            updateProgressInfo();
+            updateNavigationButtons();
+            displayQuestion();
+        }
+
+        function showFeedback() {
+            const feedbackDiv = document.getElementById('feedback');
+            const item = questions[currentQuestion];
+            const isCorrect = answers[currentQuestion] === item.correct;
+            const selectedOption = item.options[answers[currentQuestion]];
+            
+            feedbackDiv.className = 'feedback-container show ' + (isCorrect ? 'feedback-correct' : 'feedback-incorrect');
+            
+            let html = '';
+            
+            if (isCorrect) {
+                html += `
+                    <div class="feedback-header">Bonne réponse!</div>
+                    <div class="feedback-explanation">${item.correctExplain}</div>
+                `;
+            } else {
+                html += `
+                    <div class="feedback-header">Pas tout à fait</div>
+                    <div class="feedback-explanation">${selectedOption.explain}</div>
+                    <div class="correct-answer-box">
+                        <div class="correct-answer-label">✓ Bonne réponse:</div>
+                        <div>${item.options[item.correct].text}</div>
+                        <div style="margin-top: 8px; font-size: 0.9em;">${item.correctExplain}</div>
+                    </div>
+                `;
+            }
+            
+            feedbackDiv.innerHTML = html;
+        }
+
+        function updateProgressBar() {
+            const progressBar = document.getElementById('progressBar');
+            progressBar.innerHTML = '';
+            
+            for (let i = 0; i < questions.length; i++) {
+                const segment = document.createElement('div');
+                segment.className = 'progress-segment';
+                
+                if (!answered[i]) {
+                    segment.classList.add('unanswered');
+                } else if (answers[i] === questions[i].correct) {
+                    segment.classList.add('correct');
+                } else {
+                    segment.classList.add('incorrect');
+                }
+                
+                progressBar.appendChild(segment);
+            }
+        }
+
+        function updateNavigationButtons() {
+            const isAnswered = answered[currentQuestion];
+            document.getElementById('prevBtn').disabled = currentQuestion === 0 || !isAnswered;
+            document.getElementById('nextBtn').disabled = !isAnswered;
+            
+            if (currentQuestion === questions.length - 1) {
+                document.getElementById('nextBtn').textContent = 'Voir Résultat';
+            } else {
+                document.getElementById('nextBtn').textContent = 'Suivant →';
+            }
+        }
+
+        function updateProgressInfo() {
+            document.getElementById('question-counter').textContent = `Question ${currentQuestion + 1} / ${questions.length}`;
+            
+            let correctCount = 0;
+            let incorrectCount = 0;
+            
+            for (let i = 0; i < answers.length; i++) {
+                if (answered[i]) {
+                    if (answers[i] === questions[i].correct) {
+                        correctCount++;
+                    } else {
+                        incorrectCount++;
+                    }
+                }
+            }
+            
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('incorrect-count').textContent = incorrectCount;
+        }
+
+        function nextQuestion() {
+            if (currentQuestion === questions.length - 1) {
+                showFinalResults();
+                return;
+            }
+            
+            currentQuestion++;
+            displayQuestion();
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        function showFinalResults() {
+            let score = 0;
+            answers.forEach((answer, index) => {
+                if (answer === questions[index].correct) score++;
+            });
+            
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '<div class="question">Quiz terminé!</div>';
+            
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.className = 'feedback-container';
+            feedbackDiv.innerHTML = '';
+            
+            let recapHtml = '<div class="recap-title">Résumé de vos réponses</div>';
+            
+            questions.forEach((question, index) => {
+                const userAnswer = question.options[answers[index]];
+                const correctAnswer = question.options[question.correct];
+                const isCorrect = answers[index] === question.correct;
+                
+                recapHtml += `
+                    <div class="recap-card ${isCorrect ? 'correct' : 'incorrect'}">
+                        <div class="recap-number">Question ${index + 1} / ${questions.length}</div>
+                        <div class="recap-question">${question.q}</div>
+                        <div class="recap-answer-item user">
+                            <span class="recap-label">Votre réponse:</span>
+                            ${userAnswer.text}
+                            <span class="recap-result ${isCorrect ? 'correct' : 'incorrect'}">
+                                ${isCorrect ? '✓ Correct' : '✗ Incorrect'}
+                            </span>
+                        </div>
+                        ${!isCorrect ? `
+                            <div class="recap-answer-item correct-answer">
+                                <span class="recap-label">Bonne réponse:</span>
+                                ${correctAnswer.text}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            
+            document.getElementById('result').innerHTML = `
+                <div style="font-size: 2em; margin: 30px 0 20px;">Votre score : ${score} / ${questions.length}</div>
+                <div style="font-size: 1.1em; color: #555; margin-bottom: 30px;">Réussite : ${Math.round(score / questions.length * 100)}%</div>
+                <div class="recap-container">${recapHtml}</div>
+            `;
+            
+            document.getElementById('prevBtn').disabled = false;
+            document.getElementById('nextBtn').textContent = 'Recommencer';
+            document.getElementById('nextBtn').disabled = false;
+            document.getElementById('nextBtn').onclick = function() { location.reload(); };
+            document.getElementById('prevBtn').onclick = function() {
+                currentQuestion = questions.length - 1;
+                displayQuestion();
+            };
+        }
+
+        displayQuestion();
+    </script>
+</body>
+</html>

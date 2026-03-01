@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz - Cours X</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <div class="global-course-title">Gestion de l'assurance qualité</div>
+    <h1>Quiz : Le plan d'assurance qualité (Cours 7)</h1>
+    
+    <div class="progress-container">
+        <div class="progress-info">
+            <span id="question-counter">Question 1 / 10</span>
+            <div class="progress-stats">
+                <span class="stat-badge incorrect"><span class="stat-icon">✕</span><span id="incorrect-count">0</span></span>
+                <span class="stat-badge correct"><span class="stat-icon">✓</span><span id="correct-count">0</span></span>
+            </div>
+        </div>
+        <div class="progress-bar-wrapper" id="progressBar"></div>
+    </div>
+    
+    <div id="quiz-container" class="card"></div>
+    
+    <div id="feedback" class="feedback-container"></div>
+    
+    <div class="quiz-navigation">
+        <button id="prevBtn" onclick="previousQuestion()">← Précédent</button>
+        <button id="nextBtn" onclick="nextQuestion()">Suivant →</button>
+    </div>
+    
+    <div id="result"></div>
+
+    <script>
+        const questions = [
+  {
+    "q": "Qu'est-ce qu'un Plan d'Assurance Qualité (PAQ) ?",
+    "options": [
+      {
+        "text": "Un document décrivant les dispositions particulières mises en œuvre pour la réalisation d'un produit ou service afin de répondre aux exigences contractuelles en matière de qualité",
+        "explain": "C'est exact. Le PAQ est un outil du management de la qualité qui décrit les dispositions spécifiques pour atteindre les objectifs qualité contractuels. Il permet aux clients et fournisseurs de s'accorder sur le contexte, le périmètre, les enjeux et les attentes. C'est un document de référence validé par les parties, et toute dérogation doit faire l'objet d'un accord préalable. La norme IEEE 730 propose une description détaillée de son contenu."
+      },
+      {
+        "text": "Un document qui liste uniquement les tests à effectuer sur le logiciel",
+        "explain": "Le PAQ couvre bien plus que les tests. Il inclut l'organisation, les processus, les rôles, les normes, les ressources et bien d'autres aspects de l'assurance qualité, pas seulement les activités de test."
+      },
+      {
+        "text": "Un rapport de bugs et de défauts trouvés durant le développement",
+        "explain": "Un PAQ n'est pas un rapport de bugs. C'est un document de planification qui définit comment la qualité sera assurée tout au long du projet, pas un document de suivi des défauts."
+      },
+      {
+        "text": "Un manuel d'utilisation du logiciel pour les utilisateurs finaux",
+        "explain": "Le PAQ est destiné aux équipes de développement et d'assurance qualité, pas aux utilisateurs finaux. Il décrit comment le produit sera développé avec qualité, pas comment l'utiliser."
+      }
+    ],
+    "correct": 0,
+    "correctExplain": "C'est exact. Le PAQ est un outil du management de la qualité qui décrit les dispositions spécifiques pour atteindre les objectifs qualité contractuels. Il permet aux clients et fournisseurs de s'accorder sur le contexte, le périmètre, les enjeux et les attentes. C'est un document de référence validé par les parties, et toute dérogation doit faire l'objet d'un accord préalable. La norme IEEE 730 propose une description détaillée de son contenu."
+  },
+  {
+    "q": "Quelle norme propose une description détaillée du contenu d'un PAQ ?",
+    "options": [
+      {
+        "text": "ISO 9001",
+        "explain": "ISO 9001 est une norme de management de la qualité générale, mais ce n'est pas la norme spécifique qui détaille le contenu d'un PAQ selon le cours."
+      },
+      {
+        "text": "IEEE 730",
+        "explain": "Correct. La norme IEEE 730 propose une description détaillée du contenu d'un Plan d'Assurance Qualité. Elle définit les 12 sections principales que doit contenir un PAQ, incluant l'intention et portée, les définitions, les documents de référence, l'organisation, les activités du cycle de vie, les rôles d'assurance du produit et du processus, les processus additionnels et les enregistrements. Cette norme est la référence standard pour structurer un PAQ dans le domaine du logiciel."
+      },
+      {
+        "text": "CMMI",
+        "explain": "CMMI est un modèle de maturité des processus, pas une norme qui détaille spécifiquement la structure et le contenu d'un PAQ."
+      },
+      {
+        "text": "ITIL",
+        "explain": "ITIL est un référentiel de bonnes pratiques pour la gestion des services informatiques, pas une norme pour les Plans d'Assurance Qualité logiciel."
+      }
+    ],
+    "correct": 1,
+    "correctExplain": "Correct. La norme IEEE 730 propose une description détaillée du contenu d'un Plan d'Assurance Qualité. Elle définit les 12 sections principales que doit contenir un PAQ, incluant l'intention et portée, les définitions, les documents de référence, l'organisation, les activités du cycle de vie, les rôles d'assurance du produit et du processus, les processus additionnels et les enregistrements. Cette norme est la référence standard pour structurer un PAQ dans le domaine du logiciel."
+  },
+  {
+    "q": "Combien de sections principales contient la table des matières d'un PAQ selon IEEE 730 ?",
+    "options": [
+      {
+        "text": "8 sections",
+        "explain": "Ce nombre est insuffisant. Le PAQ selon IEEE 730 est plus complet et contient davantage de sections pour couvrir tous les aspects de l'assurance qualité."
+      },
+      {
+        "text": "10 sections",
+        "explain": "Presque, mais pas tout à fait. La norme IEEE 730 définit un nombre légèrement supérieur de sections principales pour un PAQ complet."
+      },
+      {
+        "text": "15 sections",
+        "explain": "Ce nombre est trop élevé. Bien que le PAQ soit un document complet, IEEE 730 définit un nombre plus restreint de sections principales."
+      },
+      {
+        "text": "12 sections",
+        "explain": "Correct. Selon IEEE 730, un PAQ contient 12 sections principales : 1) Intention et portée, 2) Définitions et abréviations, 3) Documents de référence, 4) Survol du PAQ, 5) Organisation, 6) Activités et tâches du cycle de vie de l'AQL, 7) Rôle de l'assurance du produit, 8) Rôle de l'assurance du processus, 9) Assurance sur les activités et tâches du système qualité, 10) Activités et tâches additionnelles, 11) Processus additionnels, 12) Enregistrements et rapports de l'AQL."
+      }
+    ],
+    "correct": 3,
+    "correctExplain": "Correct. Selon IEEE 730, un PAQ contient 12 sections principales : 1) Intention et portée, 2) Définitions et abréviations, 3) Documents de référence, 4) Survol du PAQ, 5) Organisation, 6) Activités et tâches du cycle de vie de l'AQL, 7) Rôle de l'assurance du produit, 8) Rôle de l'assurance du processus, 9) Assurance sur les activités et tâches du système qualité, 10) Activités et tâches additionnelles, 11) Processus additionnels, 12) Enregistrements et rapports de l'AQL."
+  },
+  {
+    "q": "Dans la section 'Organisation' d'un PAQ, quel élément influence particulièrement le choix des pratiques qualité et la manière de réaliser les tâches ?",
+    "options": [
+      {
+        "text": "Le niveau de criticité du logiciel",
+        "explain": "Exact. Le niveau de criticité du logiciel est un élément crucial qui influence directement le choix des pratiques qualité et la manière de réaliser les tâches. Il faut analyser la criticité du logiciel et décrire son niveau d'intégrité. Un logiciel critique (comme un système médical ou aéronautique) nécessitera des pratiques qualité plus rigoureuses, des revues plus fréquentes et approfondies, et des tests plus exhaustifs qu'un logiciel moins critique. Ce niveau détermine l'intensité et la rigueur des activités d'assurance qualité à mettre en place."
+      },
+      {
+        "text": "Le nombre de développeurs dans l'équipe",
+        "explain": "Bien que la taille de l'équipe soit importante pour l'organisation, ce n'est pas le facteur principal qui influence le choix des pratiques qualité et leur mise en œuvre selon le cours."
+      },
+      {
+        "text": "Le budget alloué au projet",
+        "explain": "Le budget est un facteur important mais ce n'est pas l'élément mentionné dans le cours comme influençant principalement le choix des pratiques qualité et la manière de réaliser les tâches."
+      },
+      {
+        "text": "Le langage de programmation utilisé",
+        "explain": "Le langage de programmation est un choix technique mais n'est pas l'élément clé qui détermine le niveau de rigueur des pratiques qualité à appliquer selon le PAQ."
+      }
+    ],
+    "correct": 0,
+    "correctExplain": "Exact. Le niveau de criticité du logiciel est un élément crucial qui influence directement le choix des pratiques qualité et la manière de réaliser les tâches. Il faut analyser la criticité du logiciel et décrire son niveau d'intégrité. Un logiciel critique (comme un système médical ou aéronautique) nécessitera des pratiques qualité plus rigoureuses, des revues plus fréquentes et approfondies, et des tests plus exhaustifs qu'un logiciel moins critique. Ce niveau détermine l'intensité et la rigueur des activités d'assurance qualité à mettre en place."
+  },
+  {
+    "q": "Parmi les éléments suivants, lesquels font partie des 'Outils, techniques et méthodologies' mentionnés dans un PAQ ?",
+    "options": [
+      {
+        "text": "UML pour la modélisation, SCRUM pour la conduite de projet, JUnit pour les tests unitaires",
+        "explain": "Parfaitement correct. Ces trois éléments sont explicitement mentionnés dans le cours comme exemples d'outils, techniques et méthodologies à documenter dans un PAQ. UML (Unified Modeling Language) est utilisé pour la modélisation des systèmes, SCRUM est une méthodologie agile pour la conduite de projet, et JUnit est un framework de tests unitaires pour Java. D'autres exemples cités incluent MSProject (gestion de projet), NetBeans (codage), Selenium (tests fonctionnels) et TestLink (gestion des cas de test). Ces outils doivent être clairement identifiés dans le PAQ."
+      },
+      {
+        "text": "Uniquement les outils de gestion de version comme Git",
+        "explain": "C'est trop restrictif. La section sur les outils, techniques et méthodologies couvre un spectre beaucoup plus large incluant la modélisation, la gestion de projet, le développement, et les tests."
+      },
+      {
+        "text": "Seulement les méthodologies de développement sans les outils",
+        "explain": "Non, cette section couvre à la fois les outils (logiciels), les techniques et les méthodologies. Il faut documenter l'ensemble de ces éléments dans le PAQ."
+      },
+      {
+        "text": "Les processus RH et de recrutement de l'équipe",
+        "explain": "Les processus RH ne font pas partie de cette section. Les outils, techniques et méthodologies concernent les aspects techniques du développement logiciel (modélisation, développement, tests, gestion de projet)."
+      }
+    ],
+    "correct": 0,
+    "correctExplain": "Parfaitement correct. Ces trois éléments sont explicitement mentionnés dans le cours comme exemples d'outils, techniques et méthodologies à documenter dans un PAQ. UML (Unified Modeling Language) est utilisé pour la modélisation des systèmes, SCRUM est une méthodologie agile pour la conduite de projet, et JUnit est un framework de tests unitaires pour Java. D'autres exemples cités incluent MSProject (gestion de projet), NetBeans (codage), Selenium (tests fonctionnels) et TestLink (gestion des cas de test). Ces outils doivent être clairement identifiés dans le PAQ."
+  },
+  {
+    "q": "Que doit contenir la section 'Échéancier' d'un PAQ ?",
+    "options": [
+      {
+        "text": "Uniquement les dates de livraison finales du projet",
+        "explain": "C'est trop limité. L'échéancier doit contenir beaucoup plus d'informations pour être utile dans le cadre de l'assurance qualité."
+      },
+      {
+        "text": "Les jalons importants, les activités d'AQ sur l'échéancier, les livrables et le personnel assigné",
+        "explain": "Tout à fait correct. La section Échéancier d'un PAQ doit être complète et inclure quatre éléments essentiels : les jalons importants du projet qui marquent les étapes clés, les activités d'assurance qualité positionnées sur l'échéancier pour garantir un suivi en temps réel, les livrables issus de ces activités qui constituent les preuves de conformité, et le personnel assigné à chaque activité pour clarifier les responsabilités. Cette approche intégrée permet de s'assurer que les activités d'AQ sont bien planifiées et synchronisées avec le cycle de vie du projet."
+      },
+      {
+        "text": "Seulement les vacances et jours fériés de l'équipe",
+        "explain": "Les congés peuvent impacter le planning mais ne constituent pas le contenu principal de la section Échéancier d'un PAQ, qui se concentre sur les activités qualité."
+      },
+      {
+        "text": "Les heures de travail quotidiennes des développeurs",
+        "explain": "Le détail des heures quotidiennes n'est pas l'objet de cette section. L'échéancier se concentre sur les jalons, activités d'AQ, livrables et affectations de personnel."
+      }
+    ],
+    "correct": 1,
+    "correctExplain": "Tout à fait correct. La section Échéancier d'un PAQ doit être complète et inclure quatre éléments essentiels : les jalons importants du projet qui marquent les étapes clés, les activités d'assurance qualité positionnées sur l'échéancier pour garantir un suivi en temps réel, les livrables issus de ces activités qui constituent les preuves de conformité, et le personnel assigné à chaque activité pour clarifier les responsabilités. Cette approche intégrée permet de s'assurer que les activités d'AQ sont bien planifiées et synchronisées avec le cycle de vie du projet."
+  },
+  {
+    "q": "Quelle est la différence principale entre le rôle de l'assurance du produit et le rôle de l'assurance du processus dans un PAQ ?",
+    "options": [
+      {
+        "text": "L'assurance du produit vérifie que le produit est conforme aux exigences, tandis que l'assurance du processus s'assure que les processus sont appropriés selon le niveau de criticité",
+        "explain": "Excellent. C'est la distinction fondamentale entre ces deux rôles d'assurance qualité. L'assurance du produit se concentre sur le résultat final : elle définit les caractéristiques et métriques pour évaluer si le produit répond aux exigences du client et aux normes du métier. L'assurance du processus se concentre sur la méthode : elle vérifie que les processus utilisés (modèle de cycle de vie, pratiques, gabarits, qualifications du personnel) sont adaptés au niveau de criticité du logiciel. Ces deux aspects sont complémentaires et essentiels pour une assurance qualité complète."
+      },
+      {
+        "text": "L'assurance du produit concerne uniquement le code source tandis que l'assurance du processus concerne la documentation",
+        "explain": "Cette distinction est incorrecte et trop restrictive. L'assurance du produit couvre tous les aspects du produit, pas seulement le code, et l'assurance du processus ne se limite pas à la documentation."
+      },
+      {
+        "text": "Il n'y a pas de différence, ce sont deux termes pour désigner la même chose",
+        "explain": "Faux. Ce sont deux rôles distincts et complémentaires de l'assurance qualité, chacun avec des objectifs et des vérifications spécifiques selon le cours."
+      },
+      {
+        "text": "L'assurance du produit est faite en début de projet et l'assurance du processus en fin de projet",
+        "explain": "Non, ce n'est pas une question de temporalité. Les deux types d'assurance sont actifs tout au long du projet mais se concentrent sur des aspects différents (conformité du produit vs pertinence des processus)."
+      }
+    ],
+    "correct": 0,
+    "correctExplain": "Excellent. C'est la distinction fondamentale entre ces deux rôles d'assurance qualité. L'assurance du produit se concentre sur le résultat final : elle définit les caractéristiques et métriques pour évaluer si le produit répond aux exigences du client et aux normes du métier. L'assurance du processus se concentre sur la méthode : elle vérifie que les processus utilisés (modèle de cycle de vie, pratiques, gabarits, qualifications du personnel) sont adaptés au niveau de criticité du logiciel. Ces deux aspects sont complémentaires et essentiels pour une assurance qualité complète."
+  },
+  {
+    "q": "Dans un contexte d'acquisition de logiciel avec des fournisseurs externes, quel élément du PAQ devient particulièrement important ?",
+    "options": [
+      {
+        "text": "Le processus de revue de contrat, incluant les étapes du cycle de vie d'acquisition et la procédure de gestion des changements au contrat",
+        "explain": "Absolument correct. Lorsqu'on travaille avec des fournisseurs, sous-traitants ou consultants externes, le processus de revue de contrat devient crucial dans le PAQ. Il doit définir plusieurs éléments clés : les étapes du cycle de vie d'acquisition pour structurer la relation, le type de revue que le fournisseur doit effectuer pour garantir la qualité, le type de contrat approprié et le gabarit associé pour formaliser les engagements, et surtout la procédure de gestion des changements au contrat car les projets évoluent souvent. Ce processus assure que les exigences qualité sont transmises et respectées tout au long de la chaîne de sous-traitance."
+      },
+      {
+        "text": "Uniquement le coût des prestations externes",
+        "explain": "Le coût est important pour la gestion financière mais ce n'est pas l'aspect qualité prioritaire dans le PAQ lors d'une acquisition. Le PAQ se concentre sur les aspects qualité de la relation contractuelle."
+      },
+      {
+        "text": "Le nombre de réunions hebdomadaires avec le fournisseur",
+        "explain": "La fréquence des réunions peut être utile mais n'est pas l'élément structurant du PAQ pour gérer la qualité avec des fournisseurs externes. Le processus de revue de contrat est bien plus fondamental."
+      },
+      {
+        "text": "La localisation géographique des bureaux du fournisseur",
+        "explain": "La localisation peut avoir un impact logistique mais n'est pas un élément qualité central du PAQ pour l'acquisition de logiciel avec des fournisseurs externes."
+      }
+    ],
+    "correct": 0,
+    "correctExplain": "Absolument correct. Lorsqu'on travaille avec des fournisseurs, sous-traitants ou consultants externes, le processus de revue de contrat devient crucial dans le PAQ. Il doit définir plusieurs éléments clés : les étapes du cycle de vie d'acquisition pour structurer la relation, le type de revue que le fournisseur doit effectuer pour garantir la qualité, le type de contrat approprié et le gabarit associé pour formaliser les engagements, et surtout la procédure de gestion des changements au contrat car les projets évoluent souvent. Ce processus assure que les exigences qualité sont transmises et respectées tout au long de la chaîne de sous-traitance."
+  },
+  {
+    "q": "Une équipe détecte un défaut critique dans un module déjà validé. Quelle politique du PAQ détermine si une réexécution complète des activités de test est nécessaire ?",
+    "options": [
+      {
+        "text": "La politique de dérogation et déviation",
+        "explain": "Non, cette politique concerne l'acceptation des écarts par rapport aux standards, pas la réexécution des tests après détection d'un défaut."
+      },
+      {
+        "text": "Le processus de mesure de la qualité",
+        "explain": "Ce processus définit les métriques et objectifs qualité à atteindre, mais ne détermine pas spécifiquement les actions à prendre lors de la détection d'un défaut nécessitant une itération."
+      },
+      {
+        "text": "La politique d'itération des tâches, qui définit la nature des défauts nécessitant une itération et les activités d'essai concernées",
+        "explain": "Parfaitement exact. La politique d'itération des tâches est spécifiquement conçue pour gérer ce type de situation. Elle établit des règles claires lors de la détection d'un défaut : quels types de défauts nécessitent une réexécution (par exemple, défauts critiques, défauts affectant plusieurs modules), quelles tâches doivent être réitérées (retests, tests de régression, revues de code), et quelles activités d'essai sont concernées. Cette politique évite les décisions ad hoc et assure une réponse cohérente et proportionnée à la gravité du défaut détecté, garantissant ainsi que la qualité du produit n'est pas compromise."
+      },
+      {
+        "text": "Les enregistrements qualité",
+        "explain": "Les enregistrements qualité documentent ce qui a été fait et les résultats obtenus, mais ne définissent pas la politique à suivre lorsqu'un défaut nécessite des itérations."
+      }
+    ],
+    "correct": 2,
+    "correctExplain": "Parfaitement exact. La politique d'itération des tâches est spécifiquement conçue pour gérer ce type de situation. Elle établit des règles claires lors de la détection d'un défaut : quels types de défauts nécessitent une réexécution (par exemple, défauts critiques, défauts affectant plusieurs modules), quelles tâches doivent être réitérées (retests, tests de régression, revues de code), et quelles activités d'essai sont concernées. Cette politique évite les décisions ad hoc et assure une réponse cohérente et proportionnée à la gravité du défaut détecté, garantissant ainsi que la qualité du produit n'est pas compromise."
+  },
+  {
+    "q": "Un client souhaite valider qu'un projet respecte bien son PAQ. Quels éléments devrait-il examiner en priorité pour vérifier la traçabilité et la conformité des activités d'assurance qualité réalisées ?",
+    "options": [
+      {
+        "text": "Le code source du logiciel et les commentaires",
+        "explain": "Le code source montre le produit final mais ne démontre pas la traçabilité des activités d'assurance qualité qui ont été menées selon le PAQ."
+      },
+      {
+        "text": "Les enregistrements qualité qui prouvent l'exécution des activités et les résultats obtenus, ainsi que les rapports qualité avec leur contenu, validation et destinataires",
+        "explain": "Excellente réponse qui démontre une compréhension approfondie du PAQ. Les enregistrements qualité sont la preuve tangible que les activités planifiées ont été réellement exécutées : ils sont générés à des jalons précis, documentent les résultats obtenus, et sont classés et archivés pour assurer la traçabilité. Les rapports qualité complètent cette vérification en fournissant une vue synthétique : leur nom, contenu, étape de préparation, moyens de validation et destinataires permettent au client de vérifier que l'information qualité circule correctement et que les parties prenantes appropriées sont informées. Ensemble, ils constituent le système de preuve que le PAQ est suivi et non pas seulement un document théorique."
+      },
+      {
+        "text": "Les factures émises par l'équipe de développement",
+        "explain": "Les factures démontrent l'aspect financier mais ne prouvent pas que les activités d'assurance qualité définies dans le PAQ ont été effectivement réalisées avec les résultats attendus."
+      },
+      {
+        "text": "Les curriculum vitae des membres de l'équipe",
+        "explain": "Les CV montrent les qualifications du personnel, ce qui est important pour la section Ressources du PAQ, mais ne démontrent pas la traçabilité des activités d'AQ effectuées durant le projet."
+      }
+    ],
+    "correct": 1,
+    "correctExplain": "Excellente réponse qui démontre une compréhension approfondie du PAQ. Les enregistrements qualité sont la preuve tangible que les activités planifiées ont été réellement exécutées : ils sont générés à des jalons précis, documentent les résultats obtenus, et sont classés et archivés pour assurer la traçabilité. Les rapports qualité complètent cette vérification en fournissant une vue synthétique : leur nom, contenu, étape de préparation, moyens de validation et destinataires permettent au client de vérifier que l'information qualité circule correctement et que les parties prenantes appropriées sont informées. Ensemble, ils constituent le système de preuve que le PAQ est suivi et non pas seulement un document théorique."
+  }
+];
+
+        let currentQuestion = 0;
+        let answers = new Array(questions.length).fill(null);
+        let answered = new Array(questions.length).fill(false);
+
+        function displayQuestion() {
+            const container = document.getElementById('quiz-container');
+            const item = questions[currentQuestion];
+            
+            let html = `<div class="question">${currentQuestion + 1}. ${item.q}</div>`;
+            const letters = ['A', 'B', 'C', 'D'];
+            item.options.forEach((opt, i) => {
+                let classes = '';
+                if (answers[currentQuestion] === i) {
+                    classes = 'selected ';
+                    if (i === item.correct) {
+                        classes += 'correct';
+                    } else {
+                        classes += 'incorrect';
+                    }
+                }
+                const disabledClass = answered[currentQuestion] ? 'disabled' : '';
+                html += `<div class="option ${classes} ${disabledClass}" onclick="${answered[currentQuestion] ? '' : `handleAnswerClick(${i})`}" style="${answered[currentQuestion] ? 'cursor: not-allowed;' : ''}"><span class="option-letter">${letters[i]}</span> ${opt.text}</div>`;
+            });
+            
+            container.innerHTML = html;
+            
+            if (answered[currentQuestion]) {
+                showFeedback();
+            } else {
+                document.getElementById('feedback').innerHTML = '';
+                document.getElementById('feedback').classList.remove('show');
+            }
+            
+            updateProgressBar();
+            updateNavigationButtons();
+            updateProgressInfo();
+        }
+
+        function handleAnswerClick(index) {
+            if (answered[currentQuestion]) return;
+            
+            answers[currentQuestion] = index;
+            answered[currentQuestion] = true;
+            
+            showFeedback();
+            updateProgressBar();
+            updateProgressInfo();
+            updateNavigationButtons();
+            displayQuestion();
+        }
+
+        function showFeedback() {
+            const feedbackDiv = document.getElementById('feedback');
+            const item = questions[currentQuestion];
+            const isCorrect = answers[currentQuestion] === item.correct;
+            const selectedOption = item.options[answers[currentQuestion]];
+            
+            feedbackDiv.className = 'feedback-container show ' + (isCorrect ? 'feedback-correct' : 'feedback-incorrect');
+            
+            let html = '';
+            
+            if (isCorrect) {
+                html += `
+                    <div class="feedback-header">Bonne réponse!</div>
+                    <div class="feedback-explanation">${item.correctExplain}</div>
+                `;
+            } else {
+                html += `
+                    <div class="feedback-header">Pas tout à fait</div>
+                    <div class="feedback-explanation">${selectedOption.explain}</div>
+                    <div class="correct-answer-box">
+                        <div class="correct-answer-label">✓ Bonne réponse:</div>
+                        <div>${item.options[item.correct].text}</div>
+                        <div style="margin-top: 8px; font-size: 0.9em;">${item.correctExplain}</div>
+                    </div>
+                `;
+            }
+            
+            feedbackDiv.innerHTML = html;
+        }
+
+        function updateProgressBar() {
+            const progressBar = document.getElementById('progressBar');
+            progressBar.innerHTML = '';
+            
+            for (let i = 0; i < questions.length; i++) {
+                const segment = document.createElement('div');
+                segment.className = 'progress-segment';
+                
+                if (!answered[i]) {
+                    segment.classList.add('unanswered');
+                } else if (answers[i] === questions[i].correct) {
+                    segment.classList.add('correct');
+                } else {
+                    segment.classList.add('incorrect');
+                }
+                
+                progressBar.appendChild(segment);
+            }
+        }
+
+        function updateNavigationButtons() {
+            const isAnswered = answered[currentQuestion];
+            document.getElementById('prevBtn').disabled = currentQuestion === 0 || !isAnswered;
+            document.getElementById('nextBtn').disabled = !isAnswered;
+            
+            if (currentQuestion === questions.length - 1) {
+                document.getElementById('nextBtn').textContent = 'Voir Résultat';
+            } else {
+                document.getElementById('nextBtn').textContent = 'Suivant →';
+            }
+        }
+
+        function updateProgressInfo() {
+            document.getElementById('question-counter').textContent = `Question ${currentQuestion + 1} / ${questions.length}`;
+            
+            let correctCount = 0;
+            let incorrectCount = 0;
+            
+            for (let i = 0; i < answers.length; i++) {
+                if (answered[i]) {
+                    if (answers[i] === questions[i].correct) {
+                        correctCount++;
+                    } else {
+                        incorrectCount++;
+                    }
+                }
+            }
+            
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('incorrect-count').textContent = incorrectCount;
+        }
+
+        function nextQuestion() {
+            if (currentQuestion === questions.length - 1) {
+                showFinalResults();
+                return;
+            }
+            
+            currentQuestion++;
+            displayQuestion();
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        function showFinalResults() {
+            let score = 0;
+            answers.forEach((answer, index) => {
+                if (answer === questions[index].correct) score++;
+            });
+            
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '<div class="question">Quiz terminé!</div>';
+            
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.className = 'feedback-container';
+            feedbackDiv.innerHTML = '';
+            
+            let recapHtml = '<div class="recap-title">Résumé de vos réponses</div>';
+            
+            questions.forEach((question, index) => {
+                const userAnswer = question.options[answers[index]];
+                const correctAnswer = question.options[question.correct];
+                const isCorrect = answers[index] === question.correct;
+                
+                recapHtml += `
+                    <div class="recap-card ${isCorrect ? 'correct' : 'incorrect'}">
+                        <div class="recap-number">Question ${index + 1} / ${questions.length}</div>
+                        <div class="recap-question">${question.q}</div>
+                        <div class="recap-answer-item user">
+                            <span class="recap-label">Votre réponse:</span>
+                            ${userAnswer.text}
+                            <span class="recap-result ${isCorrect ? 'correct' : 'incorrect'}">
+                                ${isCorrect ? '✓ Correct' : '✗ Incorrect'}
+                            </span>
+                        </div>
+                        ${!isCorrect ? `
+                            <div class="recap-answer-item correct-answer">
+                                <span class="recap-label">Bonne réponse:</span>
+                                ${correctAnswer.text}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            
+            document.getElementById('result').innerHTML = `
+                <div style="font-size: 2em; margin: 30px 0 20px;">Votre score : ${score} / ${questions.length}</div>
+                <div style="font-size: 1.1em; color: #555; margin-bottom: 30px;">Réussite : ${Math.round(score / questions.length * 100)}%</div>
+                <div class="recap-container">${recapHtml}</div>
+            `;
+            
+            document.getElementById('prevBtn').disabled = false;
+            document.getElementById('nextBtn').textContent = 'Recommencer';
+            document.getElementById('nextBtn').disabled = false;
+            document.getElementById('nextBtn').onclick = function() { location.reload(); };
+            document.getElementById('prevBtn').onclick = function() {
+                currentQuestion = questions.length - 1;
+                displayQuestion();
+            };
+        }
+
+        displayQuestion();
+    </script>
+</body>
+</html>

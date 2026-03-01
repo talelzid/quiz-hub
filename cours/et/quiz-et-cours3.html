@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz - Plan de tests</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <div class="global-course-title">Élaboration des tests</div>
+    <h1>Quiz : Plan de tests (Cours 3)</h1>
+    
+    <div class="progress-container">
+        <div class="progress-info">
+            <span id="question-counter">Question 1 / 10</span>
+            <div class="progress-stats">
+                <span class="stat-badge incorrect"><span class="stat-icon">✕</span><span id="incorrect-count">0</span></span>
+                <span class="stat-badge correct"><span class="stat-icon">✓</span><span id="correct-count">0</span></span>
+            </div>
+        </div>
+        <div class="progress-bar-wrapper" id="progressBar"></div>
+    </div>
+    
+    <div id="quiz-container" class="card"></div>
+    
+    <div id="feedback" class="feedback-container"></div>
+    
+    <div class="quiz-navigation">
+        <button id="prevBtn" onclick="previousQuestion()">← Précédent</button>
+        <button id="nextBtn" onclick="nextQuestion()">Suivant →</button>
+    </div>
+    
+    <div id="result"></div>
+
+    <script>
+        const questions = [
+            {
+                q: "Qu'est-ce qu'un plan de test selon ISTQB ?",
+                options: [
+                    { text: "Un document qui énumère simplement les outils utilisés", explain: "Ce n'est qu'une partie mineure du plan" },
+                    { text: "Un document décrivant le périmètre, l'approche, les ressources, les calendriers et les activités de test", explain: "" },
+                    { text: "Une liste de tous les cas de test sans aucune organisation", explain: "C'est bien plus structuré qu'une simple liste" },
+                    { text: "Un document créé uniquement après le développement", explain: "Le plan doit être créé bien avant, pendant la planification" }
+                ],
+                correct: 1,
+                correctExplain: "Le plan de test est un document maître qui définit le périmètre (quoi tester), l'approche (comment), ressources, calendrier et activités."
+            },
+            {
+                q: "Quel est l'objectif principal d'un plan de test ?",
+                options: [
+                    { text: "Documenter uniquement les défauts trouvés", explain: "C'est le rôle d'un rapport, pas du plan" },
+                    { text: "Guider les activités de test et assurer une couverture cohérente des risques identifiés", explain: "" },
+                    { text: "Remplacer la stratégie de test", explain: "Le plan s'appuie sur la stratégie, ne la remplace pas" },
+                    { text: "Éliminer tous les défauts du logiciel", explain: "Aucun document ne peut éliminer les défauts; il guide le test" }
+                ],
+                correct: 1,
+                correctExplain: "Le plan de test oriente les testeurs sur quoi, comment et quand tester, basé sur la stratégie et les risques."
+            },
+            {
+                q: "Quels sont les éléments clés typiquement inclus dans un plan de test ?",
+                options: [
+                    { text: "Uniquement les noms des testeurs", explain: "C'est une partie, pas l'essentiel" },
+                    { text: "Périmètre, approche, ressources, calendrier, risques, critères de sortie", explain: "" },
+                    { text: "Seulement la liste des cas de test avec numéros", explain: "Trop détaillé; c'est un plan de test détaillé, pas le master" },
+                    { text: "Aucun élément structuré; c'est informel", explain: "Au contraire, un plan est très structuré" }
+                ],
+                correct: 1,
+                correctExplain: "Plan master inclut: périmètre, approche, ressources, calendrier, critères d'entrée/sortie, risques et escalade."
+            },
+            {
+                q: "Quel est le lien entre le plan de test et la stratégie de test ?",
+                options: [
+                    { text: "Aucun lien; ce sont des documents complètement indépendants", explain: "Il y a un lien direct et hiérarchique" },
+                    { text: "Le plan de test dérive de la stratégie et l'adapte au contexte spécifique du projet", explain: "" },
+                    { text: "La stratégie dérive du plan, pas l'inverse", explain: "C'est hiérarchiquement l'inverse" },
+                    { text: "Le plan remplace complètement la stratégie", explain: "Le plan s'appuie sur la stratégie, ne la remplace pas" }
+                ],
+                correct: 1,
+                correctExplain: "Hiérarchie: Stratégie (haut niveau, organisationnel) → Plan de test (projet spécifique) → Plans détaillés (features)."
+            },
+            {
+                q: "Quel problème majeur peut survenir si le plan de test n'est pas bien défini ?",
+                options: [
+                    { text: "Aucun problème; les tests s'arrangent toujours", explain: "Les problèmes arrivent sans planification" },
+                    { text: "Couverture incohérente, gaspillage de ressources, risques manqués, délais dépassés", explain: "" },
+                    { text: "Les défauts diminuent magiquement", explain: "Sans planification, les défauts augmentent" },
+                    { text: "Une meilleure détection des défauts", explain: "C'est l'inverse: moins de planification = moins de détection" }
+                ],
+                correct: 1,
+                correctExplain: "Sans plan: tests chaotiques, ressources mal allouées, certains systèmes surexposés, d'autres ignorés, délais imprévisibles."
+            },
+            {
+                q: "Quand le plan de test devrait-il être créé dans le cycle de vie du projet ?",
+                options: [
+                    { text: "Juste avant le déploiement en production", explain: "Trop tard; le plan doit guider le test" },
+                    { text: "Pendant la phase de planification du projet, après la stratégie (early planning)", explain: "" },
+                    { text: "Une fois le code complètement développé", explain: "Trop tard pour influencer le développement" },
+                    { text: "Après tous les défauts trouvés et corrigés", explain: "Le plan guide la détection, c'est l'inverse" }
+                ],
+                correct: 1,
+                correctExplain: "Tôt dans le projet (phase de planification), pour guider le développement et influencer les décisions test."
+            },
+            {
+                q: "Quel est le rôle des ressources et du calendrier dans le plan de test ?",
+                options: [
+                    { text: "Aucun rôle; ce ne sont que des informations administratives", explain: "C'est crucial pour la faisabilité" },
+                    { text: "Définir qui teste (roles), avec quelles compétences, et quand (timeline), pour assurer la faisabilité", explain: "" },
+                    { text: "Lister seulement les coûts sans relation avec le test", explain: "C'est plus que ça: c'est la viabilité" },
+                    { text: "Maximiser le nombre de testeurs sans limite budgétaire", explain: "Le plan doit être réaliste aux constraintes" }
+                ],
+                correct: 1,
+                correctExplain: "Ressources (qui, expertise) et calendrier (quand) garantissent que le plan de test est réalisable avec les moyens disponibles."
+            },
+            {
+                q: "Qu'est-ce que les critères d'entrée et de sortie dans un plan de test ?",
+                options: [
+                    { text: "Des conditions aléatoires pour commencer/terminer les tests", explain: "Ce sont des critères précis, pas aléatoires" },
+                    { text: "Les conditions qui doivent être satisfaites pour débuter et terminer les phases/activités de test", explain: "" },
+                    { text: "Seulement la date de début et la date de fin du projet", explain: "C'est bien plus détaillé que ça" },
+                    { text: "Les portes d'entrée du bâtiment où les testeurs travaillent", explain: "Cela n'a rien à voir avec le test" }
+                ],
+                correct: 1,
+                correctExplain: "Entrée: build suffisant, exigences stables, testeurs prêts. Sortie: couverture atteinte, défauts critiques corrigés, approval manager."
+            },
+            {
+                q: "Comment les risques identifiés influencent-ils le plan de test ?",
+                options: [
+                    { text: "Aucune influence; les risques ne concernent pas le test", explain: "Les risques sont centraux au test basé sur risques" },
+                    { text: "Ils priorisent les activités/ressources sur les zones à risque élevé pour réduire les expositions", explain: "" },
+                    { text: "Ils augmentent le nombre de testeurs sans ciblage", explain: "Le ciblage est crucial, pas du chaos" },
+                    { text: "Ils éliminent automatiquement tous les risques", explain: "Le test réduit les risques résiduels, ne les élimine pas" }
+                ],
+                correct: 1,
+                correctExplain: "Plan basé sur risques: zones critiques reçoivent plus de ressources/temps; zones bas-risque moins; optimise ROI du test."
+            },
+            {
+                q: "Quel est un défi courant lors de la formulation d'un plan de test efficace ?",
+                options: [
+                    { text: "Il n'y a aucun défi; c'est trivial de planifier le test", explain: "Plusieurs défis importants existent" },
+                    { text: "Équilibrer la couverture requise avec les ressources/délais limités; gérer l'incertitude et l'évolution des exigences", explain: "" },
+                    { text: "Le plan est toujours parfait dès la première version", explain: "Le plan évolue souvent avec le projet" },
+                    { text: "Les défauts disparaissent sans même tester", explain: "C'est impossible; le test est nécessaire" }
+                ],
+                correct: 1,
+                correctExplain: "Défis: ressources limitées, exigences changeantes, périmètre croissant, timing serré, balancer exhaustivité et faisabilité."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let answers = new Array(questions.length).fill(null);
+        let answered = new Array(questions.length).fill(false);
+
+        function displayQuestion() {
+            const container = document.getElementById('quiz-container');
+            const item = questions[currentQuestion];
+            
+            let html = `<div class="question">${currentQuestion + 1}. ${item.q}</div>`;
+            const letters = ['A', 'B', 'C', 'D'];
+            item.options.forEach((opt, i) => {
+                let classes = '';
+                if (answers[currentQuestion] === i) {
+                    classes = 'selected ';
+                    if (i === item.correct) {
+                        classes += 'correct';
+                    } else {
+                        classes += 'incorrect';
+                    }
+                }
+                const disabledClass = answered[currentQuestion] ? 'disabled' : '';
+                html += `<div class="option ${classes} ${disabledClass}" onclick="${answered[currentQuestion] ? '' : `handleAnswerClick(${i})`}" style="${answered[currentQuestion] ? 'cursor: not-allowed;' : ''}"><span class="option-letter">${letters[i]}</span> ${opt.text}</div>`;
+            });
+            
+            container.innerHTML = html;
+            
+            if (answered[currentQuestion]) {
+                showFeedback();
+            } else {
+                document.getElementById('feedback').innerHTML = '';
+                document.getElementById('feedback').classList.remove('show');
+            }
+            
+            updateProgressBar();
+            updateNavigationButtons();
+            updateProgressInfo();
+        }
+
+        function handleAnswerClick(index) {
+            if (answered[currentQuestion]) return;
+            
+            answers[currentQuestion] = index;
+            answered[currentQuestion] = true;
+            
+            displayQuestion();
+        }
+
+        function showFeedback() {
+            const item = questions[currentQuestion];
+            const selectedIndex = answers[currentQuestion];
+            const isCorrect = selectedIndex === item.correct;
+            
+            let html = `<div class="feedback ${isCorrect ? 'correct' : 'incorrect'}">`;
+            
+            if (isCorrect) {
+                html += `<strong>✓ Correct !</strong><br>${item.correctExplain}`;
+            } else {
+                html += `<strong>✕ Incorrect</strong><br>`;
+                html += `<p><strong>Explications :</strong></p>`;
+                html += `<p><strong>Votre réponse :</strong> ${item.options[selectedIndex].explain || 'Aucune explication disponible'}</p>`;
+                html += `<p><strong>Bonne réponse :</strong> ${item.options[item.correct].text}<br>${item.correctExplain}</p>`;
+            }
+            
+            html += '</div>';
+            
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.innerHTML = html;
+            feedbackDiv.classList.add('show');
+        }
+
+        function updateProgressBar() {
+            const progressBar = document.getElementById('progressBar');
+            const percentage = ((currentQuestion + 1) / questions.length) * 100;
+            progressBar.innerHTML = `<div class="progress-bar" style="width: ${percentage}%"></div>`;
+        }
+
+        function updateProgressInfo() {
+            document.getElementById('question-counter').textContent = `Question ${currentQuestion + 1} / ${questions.length}`;
+            updateScoreBadges();
+        }
+
+        function updateScoreBadges() {
+            let correctCount = 0;
+            for (let i = 0; i < questions.length; i++) {
+                if (answered[i] && answers[i] === questions[i].correct) {
+                    correctCount++;
+                }
+            }
+            const incorrectCount = answers.filter((a, i) => answered[i] && a !== null && a !== questions[i].correct).length;
+            
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('incorrect-count').textContent = incorrectCount;
+        }
+
+        function updateNavigationButtons() {
+            document.getElementById('prevBtn').disabled = currentQuestion === 0;
+            document.getElementById('nextBtn').disabled = currentQuestion === questions.length - 1;
+            
+            if (currentQuestion === questions.length - 1 && answered[currentQuestion]) {
+                document.getElementById('nextBtn').textContent = 'Afficher Résultats';
+                document.getElementById('nextBtn').disabled = false;
+                document.getElementById('nextBtn').onclick = showFinalResults;
+            } else {
+                document.getElementById('nextBtn').onclick = nextQuestion;
+                document.getElementById('nextBtn').textContent = 'Suivant →';
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                displayQuestion();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        function showFinalResults() {
+            let correctCount = 0;
+            for (let i = 0; i < questions.length; i++) {
+                if (answered[i] && answers[i] === questions[i].correct) {
+                    correctCount++;
+                }
+            }
+            
+            const percentage = (correctCount / questions.length) * 100;
+            let feedback = '';
+            
+            if (percentage === 100) {
+                feedback = 'Excellent ! Vous avez maîtrisé ce sujet !';
+            } else if (percentage >= 80) {
+                feedback = 'Très bien ! Vous avez une bonne compréhension.';
+            } else if (percentage >= 60) {
+                feedback = 'Bien ! Vous pouvez approfondir certains concepts.';
+            } else if (percentage >= 40) {
+                feedback = 'Moyen. Revoyez les concepts clés.';
+            } else {
+                feedback = 'À améliorer. Étudiez le matériel de cours.';
+            }
+            
+            const resultHTML = `
+                <div class="results-container">
+                    <h2>Résultats Finaux</h2>
+                    <div class="score">
+                        <div class="score-number">${correctCount}/${questions.length}</div>
+                        <div class="score-percentage">${percentage.toFixed(1)}%</div>
+                    </div>
+                    <p class="score-feedback">${feedback}</p>
+                    <button onclick="location.reload()">Recommencer</button>
+                    <button onclick="history.back()">Retour au catalogue</button>
+                </div>
+            `;
+            
+            document.getElementById('result').innerHTML = resultHTML;
+            document.getElementById('quiz-container').style.display = 'none';
+            document.getElementById('feedback').style.display = 'none';
+            document.querySelector('.quiz-navigation').style.display = 'none';
+        }
+
+        // Initialiser
+        displayQuestion();
+    </script>
+</body>
+</html>

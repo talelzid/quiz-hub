@@ -1,0 +1,648 @@
+Tu es un expert en génération de questions de quiz éducatif.
+
+CONTENU DU COURS:
+---
+GESTION DE L'ASSURANCE QUALITÉ
+Revues avancées
+Les métriques du logiciel
+2
+Une métrique du logiciel sert à quantifier une propriété du monde logiciel.
+
+Exemple: nombre d’erreurs dans un programme: permet de quantifier la “qualité”
+
+du programme.
+L’utilisation des métriques est une nécessité pour un chef de projet logiciel et pour
+
+l'ensemble des membres de son équipe.
+L'utilisation des métriques doit être prévue à l’avance.
+
+Les métriques ont plusieurs rôles en gestion de projet :
+
+Savoir où on en est (temps, coût, risque).
+
+Evaluer le travail effectué (estimation d’effort, pertinence, quantité, productivité).
+
+Evaluer le produit (pertinence, qualité, mesure de complexité).
+
+Détecter des problèmes imminents ou potentiels.
+
+Faire des prévisions.
+
+Les métriques du logiciel
+3
+La qualité d’un logiciel dépend de ses constituants.
+
+Les constituants d’un logiciel représentent tout ce qui est construit durant le
+
+processus de développement.
+On appelle ses constituants : les attributs internes.
+
+Ces attributs internes ont un impact direct et important sur le comportement
+
+du logiciel.
+Ils façonnent donc ses attributs externes.
+
+Si on agit sur la structure interne, cela permet donc d’agir sur la qualité du
+
+produit final.
+Les métriques du logiciel
+4
+Exemples d'attributs internes :
+
+Produit Attributs internes (exemples)
+Besoins Taille, Cohérence, Priorité, redondance, complexité,
+fonctionnels …
+Taille, nombre de fonctionnalités, réutilisabilité,
+Spécification
+modularité, …
+Taille, réutilisabilité, modularité, couplage, nombre
+Conception
+de fonctionnalités, …
+Taille, réutilisabilité, modularité, couplage,
+Code cohésion, complexité algorithmique, duplication,
+densité des commentaires, …
+Données de Taille, niveau de couverture, nombre d’échecs,
+test nombre de cas de tests, …
+Les métriques du logiciel
+5
+Mesures de taille : C’est les mesures les plus utilisées.
+
+Elles sont faciles à obtenir.
+
+Elles sont aussi faciles à analyser et à interpréter.
+
+La plupart des environnements de développement fournissent ces mesures.
+
+Elles sont également disponibles sur plusieurs outils d’analyse statique du code.
+
+Il existe plusieurs mesures de taille :
+
+Taille physique du code
+
+Taille des commentaires
+
+Taille des fonctionnalités
+
+Complexité du code
+
+etc
+
+Les métriques du logiciel
+6
+Difficultés liées à la mesure de la taille du code source :
+
+La mesure la plus utilisée est le Nombre de Lignes de Code. C’est une mesure ambiguë
+
+car il y a différentes façons de la calculer :
+Inclusion ou non des commentaires et des déclarations ?
+◼
+Comment compter si une ligne contient plusieurs instructions ?
+◼
+Les différences entre les langages et les IDE.
+◼
+L'expérience et le degré de compétence du développeur.
+◼
+La réutilisation de code.
+◼
+La génération de code.
+◼
+La fiabilité de l'outil de mesure.
+◼
+Les potentielles manipulations de la part des développeurs.
+◼
+L'augmentation du niveau de la productivité avec le temps.
+◼
+Les tâches hors développement.
+◼
+Les métriques du logiciel
+7
+Il existe plusieurs définitions de la métrique lignes de code et donc plusieurs
+
+manières de la calculer :
+Nombre de lignes physiques terminées par un retour chariot.
+
+Nombre de lignes physiques terminées par un retour chariot mais excluant les lignes
+
+vides.
+Nombre de lignes physiques terminées par un retour chariot mais excluant les
+
+commentaires.
+Nombre de lignes physiques terminées par un retour chariot mais excluant les lignes
+
+vides et les commentaires.
+Nombre d’instructions.
+
+…
+
+Les métriques du logiciel
+8
+Le plus important dans une équipe est de définir une convention commune
+
+pour calculer la taille d’un programme.
+La mesure la plus utilisée est LOC.
+
+LOC : Lignes Of Code
+
+Elle inclut :
+
+Toutes les lignes de code sans distinction.
+
+Les lignes de commentaire.
+
+Les déclarations et les entêtes.
+
+Elle n’inclut pas :
+
+Les lignes vides.
+
+Les métriques du logiciel
+9
+Une autre mesure importante est NCLOC :
+
+NCLOC : Non Commented source Lines Of Code.
+
+Cette mesure est aussi désignée par : ELOC
+
+ELOC : Effective Lines Of Code
+
+NCLOC mesure donc le nombre de lignes de code sans commentaires.
+
+Les métriques du logiciel
+10
+Pour compléter les deux métriques précédentes, il en existe une troisième :
+
+CLOC
+CLOC : Commented source Lines Of Code.
+
+CLOC mesure donc le nombre de lignes de commentaires dans le code.
+
+Cette mesure prend en compte deux types de commentaire :
+
+Les blocs de commentaire en début de classes ou en début de méthodes.
+
+Les lignes de commentaire qui expliquent les lignes de code à l’intérieur d’une méthode.
+
+Les métriques du logiciel
+11
+Récapitulatif des trois métriques :
+
+LOC
+Lignes Of Code
+NCLOC
+Non Commented source Lines Of Code
+CLOC
+Commented source Lines Of Code
+La taille totale du code est calculée de la manière suivante :
+
+LOC NCLOC CLOC
+Les métriques du logiciel
+12
+Il possible de calculer la densité du commentaire à partir de ces métriques :
+
+Densité de commentaire CLOC LOC
+Cette mesure est importante pour la qualité logicielle.
+
+Elle permet d’évaluer des critères comme :
+
+La lisibilité du code (ISO 9126 et ISO 25000)
+
+L’analysabilité du code (ISO 9126 et ISO 25000)
+
+La modifiabilité du code (ISO 9126 et ISO 25000)
+
+Les métriques du logiciel
+13
+Il existe d'autres mesures qui s'appliquent au code :
+
+Le degré de duplication du code :
+
+La duplication imposée par la spécification ou le langage.
+◼
+La duplication par inadvertance.
+◼
+La duplication par impatience (pression des délais).
+◼
+La duplication inter-développeur.
+◼
+Les métriques du logiciel
+14
+Nombre de complexité de Mc Cabe (complexité cyclomatique) :
+
+Le nombre cyclomatique v(G) décrit la complexité d'écoulement (control flow
+
+complexity) d´un programme.
+Il indique le nombre de chemins linéaires indépendants dans un module de programme.
+
+Représente finalement la complexité des flux de données.
+
+Il correspond au nombre de branches conditionnelles dans l’organigramme d’un
+
+programme.
+Les métriques du logiciel
+15
+Nombre de complexité de Mc Cabe (complexité cyclomatique) :
+
+Soit G un graphe.
+
+e : le nombre de cotés
+
+n : le nombre de nœuds
+
+V(G) = e – n + 2 : c'est le nombre de complexité cyclomatique du graphe.
+
+Les métriques du logiciel
+16
+Exemple : Calculer V(G) pour ce graphe.
+
+Les métriques du logiciel
+17
+Exemple : Calculer V(G) pour ce graphe.
+
+e = 16
+
+n = 13
+
+V(G) = 16-13 + 2 = 5
+
+5 représente le nombre de
+
+chemins linéairement indépendants.
+Ce nombre est également obtenu en
+ajoutant 1 au nombre de conditions.
+L’analyse statique du code
+18
+C’est une technique de vérification statique.
+
+Elle consiste à examiner le code de manière automatisée à l’aide d’un outil.
+
+Le but étant d’identifier le maximum de défauts et de vulnérabilités connues afin de
+
+les corriger.
+Cette technique n’est pas capable d’identifier toutes les failles en parcourant le code
+
+source.
+Elle constitue donc est un complément précieux aux méthodes classiques de révision
+
+de code (Revues).
+La démarche idéale consiste à commencer par une analyse statique du code (à l’aide
+
+d’un outil) et de continuer avec une revue de code.
+SonarQube
+19
+SonarQube est un logiciel libre de qualimétrie de code en continu.
+
+Il aide à la détection, la classification et la résolution de défauts dans le code source.
+
+Il permet :
+
+de calculer l’ensemble des mesures de taille
+
+D’identifier les défauts dans le code (code smells)
+
+d'identifier les duplications de code
+
+de mesurer le niveau de documentation
+
+de connaître la couverture de tests déployée
+
+de mesurer la complexité cyclomatique et la complexité cognitive
+
+d’évaluer la maintenabilité du code
+
+…
+
+https://fr.wikipedia.org/wiki/SonarQube
+SonarQube
+20
+SonarQube :
+
+Installation des préalables : Java
+21
+La version actuelle de Sonarqube est compatible avec la version 17 de Java.
+
+Il faut télécharger la version 17 de Java sur le lien suivant :
+
+https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html
+
+Installation des préalables : Java
+22
+Après l’installation de Java, il faut ajouter
+
+une variable d’environnement système
+qui pointe sur l’emplacement du dossier
+"bin" de Java.
+Installation des préalables : Maven
+23
+Il faut également télécharger et installer Maven afin de pouvoir exécuter la
+
+commande d’analyse du code avec Sonarqube.
+Il faut télécharger la version la plus récente de Maven sur le lien suivant :
+
+https://maven.apache.org/download.cgi
+
+Installation des préalables : Maven
+24
+Après l’installation de Maven, il faut
+
+ajouter une variable d’environnement
+système qui pointe sur l’emplacement du
+dossier "bin" de Maven.
+Téléchargement
+25
+Téléchargement de SonarQube :
+
+https://www.sonarsource.com/products/sonarqube/downloads/
+
+Téléchargement
+26
+Téléchargement de SonarQube :
+
+Installation
+27
+Décompresser le fichier téléchargé dans un dossier.
+
+Exécuter sur la console le fichier StartSonar.bat
+
+Installation
+28
+Patienter jusqu’au chargement complet de SonarQube :
+
+Lancement et connexion
+29
+Ouvrir un navigateur web et saisir l’URL : localhost:9000
+
+Login : admin
+
+PW : admin
+
+Préparation d’un projet Java
+30
+Créer un nouveau projet Java Maven sur IntelliJ :
+
+Préparation d’un projet Java
+31
+Créer une classe java dans main/java :
+
+Ajouter le code fourni :
+
+Préparation d’un projet Java
+32
+Créer une classe de test Junit :
+
+Préparation d’un projet Java
+33
+Créer une classe de test Junit :
+
+Préparation d’un projet Java
+34
+Ajouter le code de test fourni (3 méthodes de test) :
+
+Préparation d’un projet Java
+35
+Ajouter le code fourni dans le fichier pom.xml :
+
+Création du projet sur SonarQube
+36
+Créer un nouveau projet manuellement sur Sonarqube et saisir les
+
+données :
+Création du projet sur SonarQube
+37
+Sélectionner l’option par défaut :
+
+Création du projet sur SonarQube
+38
+Sélectionner projet local :
+
+Création du projet sur SonarQube
+39
+Générer le Token pour établir l’accès et le lien.
+
+Création du projet sur SonarQube
+40
+Cliquer sur Continue :
+
+Création du projet sur SonarQube
+41
+Sélectionner le type de projet Maven.
+
+Copier la commande SonarQube :
+
+Lancement du calcul des métriques
+42
+Ouvrir la console de commande et se positionner sur le dossier du projet :
+
+Puis coller la commande copiée précédemment :
+
+Lancement du calcul des métriques
+43
+Exécuter la commande et attendre la génération des résultats :
+
+Résultats
+44
+SonarQube affiche 3 problèmes : Code Smells, Couverture et Duplication.
+
+Pourtant le Quality Gate affiche un succès.
+
+Résultats
+45
+Il faut définir les seuils critiques de qualité adaptés à notre projet.
+
+Résultats
+46
+Choisir un nom pour le nouveau Quality Gate personnalisé pour le projet.
+
+Résultats
+47
+Déverrouiller les modifications sur le nouveau Quality Gate.
+
+Résultats
+48
+Cliquer sur Add Condition.
+
+Résultats
+49
+Ajouter une première condition tel que indiqué ci-dessous :
+
+Résultats
+50
+Ajouter une deuxième condition tel que indiqué ci-dessous :
+
+Résultats
+51
+Ajouter une troisième condition tel que indiqué ci-dessous :
+
+Résultats
+52
+Revenir au projet, sélectionnez Quality Gate.
+
+Affecter au projet le nouveau Quality Gate.
+
+Relance du calcul des métriques
+53
+Relancer le calcul des métriques avec la commande précédemment
+
+utilisée :
+Résultats
+54
+Sonarqube affiche maintenant un échec causé par trois métriques.
+
+Analyse des résultats
+55
+3 échecs sont signalés par Sonarqube :
+
+Un taux de couverture de seulement 40.2%, donc inférieur à 90%.
+
+Un taux de duplication supérieur à 20%.
+
+Un taux de commentaire inférieur à 20%.
+
+De plus, Sonarqube détecte 10 Code Smells
+
+Analyse des résultats
+56
+Nous allons commencer par analyser la duplication :
+
+Cliquer sur le taux de duplication.
+
+Analyse des résultats
+57
+Sonarqube indique la classe concernée par la duplication:
+
+Cliquer sur le nom de la classe Java.
+
+Analyse des résultats
+58
+Sonarqube affiche le code dupliqué :
+
+Aller sur le projet IntelliJ et supprimer la
+
+méthode add.
+Relance du calcul des métriques
+59
+Relancer le calcul des métriques avec la commande précédemment
+
+utilisée :
+Nouveaux résultats
+60
+Les métriques ont été mises à jour :
+
+ Le taux de duplication est passé à 0%
+ Le taux de couverture est passé à 79.5%, mais toujours pas suffisant.
+ Un taux de commentaire est toujours inférieur à 20%.
+ Sonarqube détecte 8 Code Smells
+Amélioration de la couverture
+61
+Nous allons améliorer le taux de couverture des tests en ajoutant une
+
+méthode de tests paramétrée.
+Relance du calcul des métriques
+62
+Relancer le calcul des métriques avec la commande précédemment
+
+utilisée :
+Analyse des résultats
+63
+Examinons les nouveaux résultats :
+
+Le taux de couverture est passé à 100%.
+
+Le taux de commentaire est toujours inférieur à 20%.
+
+Sonarqube détecte 9 Code Smells.
+
+Analyse des Code Smells
+64
+Cliquer sur le nombre de Code Smells.
+
+Analyse des Code Smells
+65
+La liste des Code Smells est affichée. Cliquer sur le premier lien :
+
+Analyse des Code Smells
+66
+Explorer les 3 premiers onglets pour comprendre la nature de l’erreur et
+
+les correctifs possibles :
+Analyse des Code Smells
+67
+Analyser et corriger les Code Smells un par un sauf celui lié à la complexité:
+
+Relance du calcul des métriques
+68
+Relancer le calcul des métriques avec la commande précédemment
+
+utilisée :
+Bilan des résultats
+69
+Les Code Smells ont tous été corrigés sauf celui de la complexité.
+
+Supposons que le taux de complexité est acceptable pour ce projet. On
+
+souhaite donc garder le code tel quel.
+Correction du dernier Code Smell
+70
+Cliquer sur le Code Smells.
+
+Correction du dernier Code Smell
+71
+Cliquer sur Resolve as won’t fix.
+
+Sonarqube vous demandera de saisir un commentaire pour documenter
+
+la raison pour laquelle vous considérez le code smell comme résolu.
+Bilan des modifications
+72
+Les métriques sont mises à jour.
+
+Il ne reste que le taux de commentaire à améliorer.
+
+Bilan des modifications
+73
+Ajouter suffisamment de commentaire afin d’avoir un taux supérieur au
+
+seuil défini dans le Quality Gate.
+---
+
+TÂCHE:
+Génère exactement 10 questions de quiz basées sur le contenu du cours ci-dessus.
+
+STRUCTURE REQUIS:
+- Questions 1-3: FACILE (vocabulaire/concepts fondamentaux)
+- Questions 4-7: MOYEN (compréhension + réflexion)
+- Questions 8-10: DIFFICILE (concepts avancés, cas limites, synthèse)
+
+CHAQUE QUESTION:
+1. Doit avoir 4 options de réponse (A, B, C, D)
+2. UNE SEULE bonne réponse
+3. La position de la bonne réponse doit être RANDOMISÉE (index 0-3, pas toujours 1)
+4. Les 3 mauvaises réponses doivent avoir explication courte (< 100 mots)
+5. La bonne réponse doit avoir explication détaillée (< 200 mots) sur pourquoi c'est correct
+
+FORMAT JSON OBLIGATOIRE (Array valide):
+[
+  {
+    "q": "Question texte ici ?",
+    "options": [
+      { "text": "Option 1", "explain": "Explication si faux" },
+      { "text": "Option 2", "explain": "Explication si faux" },
+      { "text": "Option 3", "explain": "Explication si faux" },
+      { "text": "Option 4", "explain": "Explication si faux" }
+    ],
+    "correct": 0,
+    "correctExplain": "Détail complet pourquoi c'est correct..."
+  }
+]
+
+RÈGLES ESSENTIELLES:
+✓ Retourner EXACTEMENT 10 questions
+✓ JSON doit être valide (parseable)
+✓ Chaque question a EXACTEMENT 4 options
+✓ Index 'correct' est dans [0-3] (RANDOMISÉ, pas toujours à la position 1)
+✓ Pas d'options vides
+✓ Couvrir maximum de sujets du contenu du cours
+✓ Pas de dupliquats de questions
+✓ Texte en FRANÇAIS
+
+RETOUR:
+Retourne UNIQUEMENT l'array JSON, sans commentaires, sans markdown code blocks.

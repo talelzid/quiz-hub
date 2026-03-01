@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz - Cours X</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <div class="global-course-title">Gestion de l'assurance qualité</div>
+    <h1>Quiz : L'audit de processus (Cours 5)</h1>
+    
+    <div class="progress-container">
+        <div class="progress-info">
+            <span id="question-counter">Question 1 / 10</span>
+            <div class="progress-stats">
+                <span class="stat-badge incorrect"><span class="stat-icon">✕</span><span id="incorrect-count">0</span></span>
+                <span class="stat-badge correct"><span class="stat-icon">✓</span><span id="correct-count">0</span></span>
+            </div>
+        </div>
+        <div class="progress-bar-wrapper" id="progressBar"></div>
+    </div>
+    
+    <div id="quiz-container" class="card"></div>
+    
+    <div id="feedback" class="feedback-container"></div>
+    
+    <div class="quiz-navigation">
+        <button id="prevBtn" onclick="previousQuestion()">← Précédent</button>
+        <button id="nextBtn" onclick="nextQuestion()">Suivant →</button>
+    </div>
+    
+    <div id="result"></div>
+
+    <script>
+        const questions = [
+  {
+    "q": "Selon le cours, ce qui caractérise un processus d'audit est:",
+    "options": [
+      { "text": "Un examen indépendant, systématique et documenté visant à évaluer la conformité", "explain": "Correct - c'est la définition exacte du cours." },
+      { "text": "Une inspection policière pour punir les non-conformités", "explain": "Incorrect - le cours précise que l'audit n'est PAS une inspection policière, mais un outil d'amélioration continue." },
+      { "text": "Une activité ponctuelle sans critères préétablis", "explain": "Incorrect - l'audit est un processus systématique qui s'appuie sur des critères d'audit établis." },
+      { "text": "Un processus effectué par n'importe quel employé de l'organisation", "explain": "Incorrect - l'audit doit être effectué par une personne habilitée et indépendante." }
+    ],
+    "correct": 0,
+    "correctExplain": "Selon le cours, l'audit est défini comme 'un examen indépendant, systématique et documenté' qui vise 'à évaluer la conformité' en comparant 'l'écart entre le réel et les critères d'audit (spécifications, normes, accords contractuels, exigences)'. C'est un processus structuré et encadré."
+  },
+  {
+    "q": "Les trois piliers fondamentaux de l'audit sont:",
+    "options": [
+      { "text": "Transparence, Contrôle, Documentation", "explain": "Incorrect - ces principes ne correspondent pas aux 3 piliers énoncés dans le cours." },
+      { "text": "Expertise, Impartialité, Communication", "explain": "Incorrect - bien que pertinents, ce ne sont pas les 3 piliers explicitement définis." },
+      { "text": "Audit, Conformité, Amélioration", "explain": "Incorrect - ce sont des résultats ou objectifs, pas les piliers structurels de l'audit." },
+      { "text": "Indépendance, Objectivité, Approche factuelle", "explain": "Correct - ce sont exactement les 3 piliers énumérés dans le cours." }
+    ],
+    "correct": 3,
+    "correctExplain": "Le cours énumère explicitement 'LES 3 PILIERS DE L'AUDIT': (1) Indépendance - l'auditeur ne doit pas être responsable de l'activité auditée pour éviter les conflits; (2) Objectivité - les conclusions reposent sur des faits observables et des preuves vérifiables; (3) Approche factuelle - l'évaluation se base sur la comparaison entre les preuves et les critères d'audit établis."
+  },
+  {
+    "q": "Selon ISO 9001, quel est le rôle principal de l'audit interne?",
+    "options": [
+      { "text": "Punir les départements qui ne respectent pas les normes", "explain": "Incorrect - l'audit est une activité d'évaluation et d'amélioration, non de punition." },
+      { "text": "Générer des rapports administratifs et archiver les documents", "explain": "Incorrect - bien que la documentation soit importante, ce n'est pas l'objectif principal." },
+      { "text": "Vérifier la conformité du SMQ et l'efficacité de sa mise en œuvre", "explain": "Correct - le cours le stipule explicitement dans la section sur l'audit interne." },
+      { "text": "Remplacer les inspections externes mandatées par les organismes de certification", "explain": "Incorrect - l'audit interne complète mais ne remplace pas les audits externes obligatoires." }
+    ],
+    "correct": 2,
+    "correctExplain": "Le cours stipule que 'L'AUDIT INTERNE (selon ISO 9001)' impose à l'organisme de 'mener des audits internes à intervalles planifiés' pour 'Vérifier la conformité au Système de Management de la Qualité (SMQ)', 'vérifier l'adéquation avec les exigences propres' et 'évaluer l'efficacité : L'audit permet de confirmer que le système est efficacement mis en œuvre et entretenu'."
+  },
+  {
+    "q": "Lequel des éléments suivants constitue un motif de déclenchement d'un audit?",
+    "options": [
+      { "text": "Un événement particulier, l'atteinte d'un jalon projet, ou la découverte d'une non-conformité", "explain": "Correct - le cours énumère exactement ces déclencheurs." },
+      { "text": "L'obtention d'une nouvelle certification industrielle", "explain": "Incorrect - ce n'est pas mentionné comme motif de déclenchement dans le cours." },
+      { "text": "L'arrivée d'un nouvel auditeur qualifié dans l'équipe", "explain": "Incorrect - le changement de personnel n'est pas cité comme motif." },
+      { "text": "Le changement de saison ou le passage à une nouvelle année budgétaire", "explain": "Incorrect - ces éléments administratifs ne constituent pas des motifs d'audit selon le cours." }
+    ],
+    "correct": 0,
+    "correctExplain": "Le cours énumère dans 'PRÉPARATION ET CADRAGE STRATÉGIQUE' que les 'Motifs de déclenchement' sont: 'événement particulier, atteinte d'un jalon projet, suspicion de problème, découverte d'une non-conformité'. Ce sont les déclencheurs stratégiques qui motivent la décision d'initier un audit."
+  },
+  {
+    "q": "Lorsqu'un auditeur effectue un entretien, quelle est l'attitude recommandée?",
+    "options": [
+      { "text": "Poser exclusivement des questions fermées pour valider rapidement les faits", "explain": "Incorrect - le cours recommande le questionnement ouvert, pas des questions fermées." },
+      { "text": "Diriger les réponses subtilement pour confirmer ses hypothèses de départ", "explain": "Incorrect - cela violent les principes d'objectivité et d'impartialité énoncés." },
+      { "text": "Adopter l'écoute active, une attitude ouverte et utiliser des questions ouvertes", "explain": "Correct - c'est exactement la posture recommandée dans le cours." },
+      { "text": "Rester distant et impersonnel pour préserver objectivement l'indépendance", "explain": "Incorrect - bien que l'indépendance soit importante, l'ouverture et la confiance sont essentielles." }
+    ],
+    "correct": 2,
+    "correctExplain": "Le cours détaille 'LA POSTURE DE L'AUDITEUR' en recommandant: (1) 'L'écoute active : Laisser l'audité s'exprimer pleinement'; (2) 'La communication non-verbale : Adopter une attitude ouverte pour instaurer un climat de confiance'; (3) 'Le questionnement ouvert : Utiliser des questions commençant par \"Comment\", \"Pourquoi\" ou \"Montrez-moi\"'; et (4) 'La neutralité bienveillante : Observer et noter sans juger les personnes'."
+  },
+  {
+    "q": "Quel principe d'éthique de l'auditeur garantit la sécurité des informations et des documents?",
+    "options": [
+      { "text": "Intégrité - agir avec honnêteté et responsabilité", "explain": "Incorrect - l'intégrité relève plutôt des comportements et de la règle personnelle." },
+      { "text": "Confidentialité - garantir la sécurité des informations et des documents", "explain": "Correct - le cours le stipule explicitement comme principe d'éthique." },
+      { "text": "Professionnalisme - ne pas outrepasser son rôle", "explain": "Incorrect - le professionnalisme concerne le respect des limites de responsabilité." },
+      { "text": "Absence d'influence - être exempt de toute pression afin de préserver la neutralité", "explain": "Incorrect - ce principe concerne l'indépendance décisionnelle, non la sécurité des données." }
+    ],
+    "correct": 1,
+    "correctExplain": "Le cours énumère dans la section 'ÉTHIQUE ET DÉONTOLOGIE' quatre principes: Intégrité, Confidentialité, Absence d'influence, et Professionnalisme. La 'Confidentialité' est définie comme 'Garantir la sécurité des informations et des documents', ce qui est le principe directement responsable de la protection des données auditées."
+  },
+  {
+    "q": "Comment utilise-t-on le BPMN lors de la préparation d'un audit?",
+    "options": [
+      { "text": "C'est une obligation légale pour tous les audits sans exception", "explain": "Incorrect - le BPMN est un outil de compréhension, non une obligation légale universelle." },
+      { "text": "Uniquement pour documenter les résultats et conclusions après l'audit", "explain": "Incorrect - le BPMN s'utilise PENDANT la préparation, pas après." },
+      { "text": "C'est optionnel et sans réelle importance pour la qualité de l'audit", "explain": "Incorrect - le cours indique clairement l'importance du BPMN pour identifier les points critiques." },
+      { "text": "Pour identifier les rôles, l'enchaînement des activités, les passerelles de décision et vérifier la conformité avec la réalité", "explain": "Correct - c'est le processus décrit dans la section 'UTILISATION DU BPMN'." }
+    ],
+    "correct": 3,
+    "correctExplain": "Le cours stipule dans 'UTILISATION DU BPMN': (1) 'Lecture du flux et des acteurs : Utiliser les diagrammes BPMN pour identifier les rôles et l'enchaînement des activités'; (2) 'Identification des passerelles de décision : Repérer les passerelles pour déterminer où des preuves de validation doivent exister'; (3) 'Ciblage des points de transfert'; et (4) 'Comparaison du modèle théorique à la réalité terrain'."
+  },
+  {
+    "q": "La triangulation des preuves en audit signifie:",
+    "options": [
+      { "text": "Vérifier chaque preuve trois fois de manière indépendante pour éviter les erreurs", "explain": "Incorrect - la triangulation ne consiste pas à tripler les vérifications." },
+      { "text": "Consulter trois auditeurs différents pour valider les mêmes constats", "explain": "Incorrect - ce n'est pas le nombre d'auditeurs qui prime, mais la diversité des sources." },
+      { "text": "Croiser trois types de sources : entretiens, documents, et observation directe", "explain": "Correct - c'est la définition exacte de la triangulation dans le cours." },
+      { "text": "Remplir trois formulaires d'audit distincts pour documenter les mêmes informations", "explain": "Incorrect - la triangulation ne relève pas d'une procédure documentaire multiple." }
+    ],
+    "correct": 2,
+    "correctExplain": "Le cours énonce dans 'CONDUITE DE L'AUDIT' que 'Corrélation des preuves (triangulation) : Croiser trois types de sources (entretiens, documents, observation)'. Cette technique consiste à valider les informations en les recoupant depuis trois perspectives différentes : ce que les personnes disent, ce que les documents montrent, et ce qu'on observe concrètement sur le terrain. C'est une garantie de fiabilité."
+  },
+  {
+    "q": "La méthode des 3P pour rédiger les non-conformités requiert:",
+    "options": [
+      { "text": "Point de référence (critère), Preuve (fait), Problème (écart)", "explain": "Correct - le cours énonce explicitement cette méthode." },
+      { "text": "Planning (planification), Performance (résultats), Procédure (processus)", "explain": "Incorrect - bien que ces éléments soient importants, ce ne sont pas les 3P du cours." },
+      { "text": "Priorité (urgence), Procédé (méthode), Personne (responsable)", "explain": "Incorrect - cette combinaison ne correspond pas à la méthode officielle." },
+      { "text": "Préparation (avant), Présentation (during), Preuve (après l'audit)", "explain": "Incorrect - ce découpage temporel n'est pas la méthode des 3P décrite." }
+    ],
+    "correct": 0,
+    "correctExplain": "Le cours énonce clairement dans 'RÉDACTION DES NON-CONFORMITÉS': 'Méthode des 3 \"P\" : Point de référence (critère), Preuve (fait), Problème (écart)'. Chaque non-conformité doit identifier (1) le critère ou la norme violée (Point de référence), (2) les faits objectifs observés qui le prouvent (Preuve), et (3) l'écart décrivant où et comment la non-conformité s'est produite (Problème)."
+  },
+  {
+    "q": "Pourquoi l'indépendance de l'auditeur est-elle un pilier critique de l'audit?",
+    "options": [
+      { "text": "Parce qu'elle éloigne physiquement l'auditeur du terrain et réduit les biais", "explain": "Incorrect - une distance physique n'est ni nécessaire ni suffisante pour assurer l'indépendance." },
+      { "text": "Pour éviter les conflits d'intérêts et assurer que l'auditeur ne juge pas sa propre activité", "explain": "Correct - c'est la raison explicitement donnée dans le cours." },
+      { "text": "Pour réduire les coûts et la durée des audit internes", "explain": "Incorrect - l'indépendance n'est pas motivée par des considérations économiques." },
+      { "text": "Parce que c'est une obligation administrative imposée par les normes ISO", "explain": "Incorrect - bien que normalisée, la raison fondamentale est bien plus profonde." }
+    ],
+    "correct": 1,
+    "correctExplain": "Le cours définit dans 'LES 3 PILIERS DE L'AUDIT': 'Indépendance : L'auditeur ne doit pas être responsable de l'activité ou du produit qu'il vérifie afin d'éviter les conflits d'intérêts.' L'indépendance est critique parce qu'elle garantit que l'évaluation n'est pas biaisée ou entachée par les responsabilités personnelles de l'auditeur relativement aux activités auditées. Sans cette séparation, l'objectivité (le deuxième pilier) devient impossible à atteindre."
+  }
+];
+
+        let currentQuestion = 0;
+        let answers = new Array(questions.length).fill(null);
+        let answered = new Array(questions.length).fill(false);
+
+        function displayQuestion() {
+            const container = document.getElementById('quiz-container');
+            const item = questions[currentQuestion];
+            
+            let html = `<div class="question">${currentQuestion + 1}. ${item.q}</div>`;
+            const letters = ['A', 'B', 'C', 'D'];
+            item.options.forEach((opt, i) => {
+                let classes = '';
+                if (answers[currentQuestion] === i) {
+                    classes = 'selected ';
+                    if (i === item.correct) {
+                        classes += 'correct';
+                    } else {
+                        classes += 'incorrect';
+                    }
+                }
+                const disabledClass = answered[currentQuestion] ? 'disabled' : '';
+                html += `<div class="option ${classes} ${disabledClass}" onclick="${answered[currentQuestion] ? '' : `handleAnswerClick(${i})`}" style="${answered[currentQuestion] ? 'cursor: not-allowed;' : ''}"><span class="option-letter">${letters[i]}</span> ${opt.text}</div>`;
+            });
+            
+            container.innerHTML = html;
+            
+            if (answered[currentQuestion]) {
+                showFeedback();
+            } else {
+                document.getElementById('feedback').innerHTML = '';
+                document.getElementById('feedback').classList.remove('show');
+            }
+            
+            updateProgressBar();
+            updateNavigationButtons();
+            updateProgressInfo();
+        }
+
+        function handleAnswerClick(index) {
+            if (answered[currentQuestion]) return;
+            
+            answers[currentQuestion] = index;
+            answered[currentQuestion] = true;
+            
+            showFeedback();
+            updateProgressBar();
+            updateProgressInfo();
+            updateNavigationButtons();
+            displayQuestion();
+        }
+
+        function showFeedback() {
+            const feedbackDiv = document.getElementById('feedback');
+            const item = questions[currentQuestion];
+            const isCorrect = answers[currentQuestion] === item.correct;
+            const selectedOption = item.options[answers[currentQuestion]];
+            
+            feedbackDiv.className = 'feedback-container show ' + (isCorrect ? 'feedback-correct' : 'feedback-incorrect');
+            
+            let html = '';
+            
+            if (isCorrect) {
+                html += `
+                    <div class="feedback-header">Bonne réponse!</div>
+                    <div class="feedback-explanation">${item.correctExplain}</div>
+                `;
+            } else {
+                html += `
+                    <div class="feedback-header">Pas tout à fait</div>
+                    <div class="feedback-explanation">${selectedOption.explain}</div>
+                    <div class="correct-answer-box">
+                        <div class="correct-answer-label">✓ Bonne réponse:</div>
+                        <div>${item.options[item.correct].text}</div>
+                        <div style="margin-top: 8px; font-size: 0.9em;">${item.correctExplain}</div>
+                    </div>
+                `;
+            }
+            
+            feedbackDiv.innerHTML = html;
+        }
+
+        function updateProgressBar() {
+            const progressBar = document.getElementById('progressBar');
+            progressBar.innerHTML = '';
+            
+            for (let i = 0; i < questions.length; i++) {
+                const segment = document.createElement('div');
+                segment.className = 'progress-segment';
+                
+                if (!answered[i]) {
+                    segment.classList.add('unanswered');
+                } else if (answers[i] === questions[i].correct) {
+                    segment.classList.add('correct');
+                } else {
+                    segment.classList.add('incorrect');
+                }
+                
+                progressBar.appendChild(segment);
+            }
+        }
+
+        function updateNavigationButtons() {
+            const isAnswered = answered[currentQuestion];
+            document.getElementById('prevBtn').disabled = currentQuestion === 0 || !isAnswered;
+            document.getElementById('nextBtn').disabled = !isAnswered;
+            
+            if (currentQuestion === questions.length - 1) {
+                document.getElementById('nextBtn').textContent = 'Voir Résultat';
+            } else {
+                document.getElementById('nextBtn').textContent = 'Suivant →';
+            }
+        }
+
+        function updateProgressInfo() {
+            document.getElementById('question-counter').textContent = `Question ${currentQuestion + 1} / ${questions.length}`;
+            
+            let correctCount = 0;
+            let incorrectCount = 0;
+            
+            for (let i = 0; i < answers.length; i++) {
+                if (answered[i]) {
+                    if (answers[i] === questions[i].correct) {
+                        correctCount++;
+                    } else {
+                        incorrectCount++;
+                    }
+                }
+            }
+            
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('incorrect-count').textContent = incorrectCount;
+        }
+
+        function nextQuestion() {
+            if (currentQuestion === questions.length - 1) {
+                showFinalResults();
+                return;
+            }
+            
+            currentQuestion++;
+            displayQuestion();
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        function showFinalResults() {
+            let score = 0;
+            answers.forEach((answer, index) => {
+                if (answer === questions[index].correct) score++;
+            });
+            
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '<div class="question">Quiz terminé!</div>';
+            
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.className = 'feedback-container';
+            feedbackDiv.innerHTML = '';
+            
+            let recapHtml = '<div class="recap-title">Résumé de vos réponses</div>';
+            
+            questions.forEach((question, index) => {
+                const userAnswer = question.options[answers[index]];
+                const correctAnswer = question.options[question.correct];
+                const isCorrect = answers[index] === question.correct;
+                
+                recapHtml += `
+                    <div class="recap-card ${isCorrect ? 'correct' : 'incorrect'}">
+                        <div class="recap-number">Question ${index + 1} / ${questions.length}</div>
+                        <div class="recap-question">${question.q}</div>
+                        <div class="recap-answer-item user">
+                            <span class="recap-label">Votre réponse:</span>
+                            ${userAnswer.text}
+                            <span class="recap-result ${isCorrect ? 'correct' : 'incorrect'}">
+                                ${isCorrect ? '✓ Correct' : '✗ Incorrect'}
+                            </span>
+                        </div>
+                        ${!isCorrect ? `
+                            <div class="recap-answer-item correct-answer">
+                                <span class="recap-label">Bonne réponse:</span>
+                                ${correctAnswer.text}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            
+            document.getElementById('result').innerHTML = `
+                <div style="font-size: 2em; margin: 30px 0 20px;">Votre score : ${score} / ${questions.length}</div>
+                <div style="font-size: 1.1em; color: #555; margin-bottom: 30px;">Réussite : ${Math.round(score / questions.length * 100)}%</div>
+                <div class="recap-container">${recapHtml}</div>
+            `;
+            
+            document.getElementById('prevBtn').disabled = false;
+            document.getElementById('nextBtn').textContent = 'Recommencer';
+            document.getElementById('nextBtn').disabled = false;
+            document.getElementById('nextBtn').onclick = function() { location.reload(); };
+            document.getElementById('prevBtn').onclick = function() {
+                currentQuestion = questions.length - 1;
+                displayQuestion();
+            };
+        }
+
+        displayQuestion();
+    </script>
+</body>
+</html>

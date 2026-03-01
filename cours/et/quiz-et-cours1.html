@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz - Introduction à l'élaboration des tests</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <div class="global-course-title">Élaboration des tests</div>
+    <h1>Quiz : Introduction à l'élaboration des tests (Cours 1)</h1>
+    
+    <div class="progress-container">
+        <div class="progress-info">
+            <span id="question-counter">Question 1 / 10</span>
+            <div class="progress-stats">
+                <span class="stat-badge incorrect"><span class="stat-icon">✕</span><span id="incorrect-count">0</span></span>
+                <span class="stat-badge correct"><span class="stat-icon">✓</span><span id="correct-count">0</span></span>
+            </div>
+        </div>
+        <div class="progress-bar-wrapper" id="progressBar"></div>
+    </div>
+    
+    <div id="quiz-container" class="card"></div>
+    
+    <div id="feedback" class="feedback-container"></div>
+    
+    <div class="quiz-navigation">
+        <button id="prevBtn" onclick="previousQuestion()">← Précédent</button>
+        <button id="nextBtn" onclick="nextQuestion()">Suivant →</button>
+    </div>
+    
+    <div id="result"></div>
+
+    <script>
+        const questions = [
+            {
+                q: "Quelle est la définition principale du test logiciel selon ISTQB ?",
+                options: [
+                    { text: "L'inspection du code source par des développeurs", explain: "C'est une activité statique, pas du test dynamique." },
+                    { text: "L'exécution d'un programme ou système avec l'intention de trouver des défauts", explain: "" },
+                    { text: "La documentation des exigences du client", explain: "C'est une activité de spécification, pas de test." },
+                    { text: "L'installation du logiciel en environnement de production", explain: "C'est un déploiement, pas du test." }
+                ],
+                correct: 1,
+                correctExplain: "Le test logiciel est l'exécution contrôlée d'un logiciel pour identifier des comportements non conformes aux spécifications ou aux attentes."
+            },
+            {
+                q: "Quel est le premier principe fondamental du test logiciel ?",
+                options: [
+                    { text: "Le test doit éliminer 100% des défauts", explain: "Impossible à atteindre en pratique" },
+                    { text: "Le test ne peut démontrer l'absence de défauts", explain: "" },
+                    { text: "Le test doit commencer immédiatement après le développement", explain: "Le test devrait commencer lors de la phase de planification" },
+                    { text: "Tous les tests doivent être automatisés", explain: "Certains tests nécessitent une intervention manuelle" }
+                ],
+                correct: 1,
+                correctExplain: "Aucune quantité de tests ne peut prouver l'absence de défauts. Le test peut seulement montrer la présence de défauts."
+            },
+            {
+                q: "À quelle phase du cycle de vie le test devrait-il commencer idealement ?",
+                options: [
+                    { text: "Après la mise en production", explain: "Trop tard; les défauts auraient déjà impacté les utilisateurs" },
+                    { text: "Dès la phase de planification et de spécification", explain: "" },
+                    { text: "Uniquement pendant la phase de développement", explain: "Le test statique peut commencer avant" },
+                    { text: "Lors de la revue de code uniquement", explain: "C'est un type de test statique, mais pas le seul" }
+                ],
+                correct: 1,
+                correctExplain: "Le test précoce (early testing) commence dès la définition des exigences. Plus tôt les défauts sont détectés, moins ils coûtent à corriger."
+            },
+            {
+                q: "Quel est l'objectif principal du test lors de la phase d'analyse des exigences ?",
+                options: [
+                    { text: "Exécuter tous les scénarios de test possibles", explain: "Cela se fait lors de la phase d'exécution" },
+                    { text: "Réviser les exigences pour identifier les incohérences et les ambiguïtés", explain: "" },
+                    { text: "Déployer le système en production", explain: "Ceci n'est pas un objectif de test" },
+                    { text: "Écrire tous les scripts de test", explain: "C'est une activité de préparation, pas d'analyse" }
+                ],
+                correct: 1,
+                correctExplain: "L'analyse des exigences par le test (test analysis) vise à détecter les défauts dans les exigences avant qu'ils ne soient implémentés."
+            },
+            {
+                q: "Quels sont les deux types principaux de test logiciel basés sur le niveau de connaissance du système ?",
+                options: [
+                    { text: "Test manuel et test automatisé", explain: "C'est une classification par exécution, pas par connaissance" },
+                    { text: "Test boîte noire et test boîte blanche", explain: "" },
+                    { text: "Test fonctionnel et test non-fonctionnel", explain: "C'est une classification par type de propriété testée" },
+                    { text: "Test de régression et test de fumée", explain: "C'est une classification par étape du cycle de test" }
+                ],
+                correct: 1,
+                correctExplain: "Le test boîte noire teste le système sans connaître sa structure interne, tandis que le test boîte blanche accède au code interne pour tester les chemins d'exécution."
+            },
+            {
+                q: "Quel rôle est responsable de la création du plan de test global et de la coordination des activités de test ?",
+                options: [
+                    { text: "Le développeur", explain: "Le développeur implémente le code, pas le plan de test" },
+                    { text: "Le testeur", explain: "Le testeur exécute les tests, mais pas la responsable du plan" },
+                    { text: "Le chef de projet de test (Test Manager)", explain: "" },
+                    { text: "L'utilisateur final", explain: "L'utilisateur final n'est pas impliqué dans la planification du test" }
+                ],
+                correct: 2,
+                correctExplain: "Le Test Manager est responsable de la planification, de la coordination et de la supervision des activités de test. Le Test Manager établit la stratégie de test et gère les ressources."
+            },
+            {
+                q: "Quelle est la différence entre un défaut et une défaillance en test logiciel ?",
+                options: [
+                    { text: "Il n'y a aucune différence; ce sont des synonymes", explain: "Il y a une distinction importante en terminologie ISTQB" },
+                    { text: "Un défaut est la cause (dans le code), une défaillance est l'effet observé", explain: "" },
+                    { text: "Un défaut est observé dynamiquement, une défaillance est trouvée statiquement", explain: "C'est l'inverse" },
+                    { text: "Une défaillance est plus grave qu'un défaut", explain: "La sévérité ne définit pas la terminologie" }
+                ],
+                correct: 1,
+                correctExplain: "Un défaut (bug, anomalie) est une imperfection ou déficiency (ex: code incorrect). Une défaillance en est la manifestation concrète (ex: le programme crash, résultat incorrect)."
+            },
+            {
+                q: "Quel principe ISTQB affirme que les efforts de test doivent être concentrés sur les zones à haut risque ?",
+                options: [
+                    { text: "Principe d'absence d'exhaustivité", explain: "Ce principe parle de l'impossibilité de tester tout" },
+                    { text: "Principe de test basé sur les risques", explain: "" },
+                    { text: "Principe de clustering de défauts", explain: "Ce principe concerne la concentration des défauts dans certains modules" },
+                    { text: "Principe de test précoce", explain: "Ce principe parle du timing du test, pas de sa concentration" }
+                ],
+                correct: 1,
+                correctExplain: "Le test basé sur les risques priorise les activités de test en fonction des risques identifiés. Les zones critiques reçoivent plus d'efforts de test."
+            },
+            {
+                q: "Comment les paradoxes du test (ex: « plus on teste, moins on trouve de défauts ») peuvent-ils être explicités par rapport aux stratégies adoptées ?",
+                options: [
+                    { text: "Les défauts disparaissent d'eux-mêmes après plusieurs tests", explain: "C'est une mauvaise interprétation" },
+                    { text: "Après avoir trouvé et corrigé les défauts majeurs, les défauts restants sont plus rares (loi de Pareto appliquée)", explain: "" },
+                    { text: "Les testeurs deviennent plus paresseux au fil du temps", explain: "La professionnalité du testeur reste constante" },
+                    { text: "Le nombre de défauts est prédéterminé et diminue naturellement", explain: "Les défauts proviennent d'erreurs de développement, pas d'une liste figée" }
+                ],
+                correct: 1,
+                correctExplain: "Selon la loi de Pareto, ~80% des défauts proviennent de ~20% du code. Après correction des zones critiques, trouver des défauts supplémentaires devient progressivement plus difficile."
+            },
+            {
+                q: "En fonction de la taxonomie ISTQB, quel impact a le contexte organisationnel (processus métier, culture, risques métier) sur la stratégie de test adoptée ?",
+                options: [
+                    { text: "Le contexte n'a aucun impact; la stratégie est la même pour tous les projets", explain: "Le contexte est fondamental pour adapter la stratégie" },
+                    { text: "Le contexte détermine totalement l'approche de test et les priorités; chaque organisation adapte selon ses besoins spécifiques", explain: "" },
+                    { text: "Seul le budget impact la stratégie, pas le contexte", explain: "Plusieurs facteurs contextuels influencent la stratégie" },
+                    { text: "Le contexte technique (langages, frameworks) est le seul facteur pertinent", explain: "Le contexte métier est tout aussi important" }
+                ],
+                correct: 1,
+                correctExplain: "ISTQB reconnaît que le test dépend du contexte. La stratégie de test doit s'adapter aux besoins métier, aux risques identifiés, à la culture organisationnelle et aux ressources disponibles."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let answers = new Array(questions.length).fill(null);
+        let answered = new Array(questions.length).fill(false);
+
+        function displayQuestion() {
+            const container = document.getElementById('quiz-container');
+            const item = questions[currentQuestion];
+            
+            let html = `<div class="question">${currentQuestion + 1}. ${item.q}</div>`;
+            const letters = ['A', 'B', 'C', 'D'];
+            item.options.forEach((opt, i) => {
+                let classes = '';
+                if (answers[currentQuestion] === i) {
+                    classes = 'selected ';
+                    if (i === item.correct) {
+                        classes += 'correct';
+                    } else {
+                        classes += 'incorrect';
+                    }
+                }
+                const disabledClass = answered[currentQuestion] ? 'disabled' : '';
+                html += `<div class="option ${classes} ${disabledClass}" onclick="${answered[currentQuestion] ? '' : `handleAnswerClick(${i})`}" style="${answered[currentQuestion] ? 'cursor: not-allowed;' : ''}"><span class="option-letter">${letters[i]}</span> ${opt.text}</div>`;
+            });
+            
+            container.innerHTML = html;
+            
+            if (answered[currentQuestion]) {
+                showFeedback();
+            } else {
+                document.getElementById('feedback').innerHTML = '';
+                document.getElementById('feedback').classList.remove('show');
+            }
+            
+            updateProgressBar();
+            updateNavigationButtons();
+            updateProgressInfo();
+        }
+
+        function handleAnswerClick(index) {
+            if (answered[currentQuestion]) return;
+            
+            answers[currentQuestion] = index;
+            answered[currentQuestion] = true;
+            
+            displayQuestion();
+        }
+
+        function showFeedback() {
+            const item = questions[currentQuestion];
+            const selectedIndex = answers[currentQuestion];
+            const isCorrect = selectedIndex === item.correct;
+            
+            let html = `<div class="feedback ${isCorrect ? 'correct' : 'incorrect'}">`;
+            
+            if (isCorrect) {
+                html += `<strong>✓ Correct !</strong><br>${item.correctExplain}`;
+            } else {
+                html += `<strong>✕ Incorrect</strong><br>`;
+                html += `<p><strong>Explications :</strong></p>`;
+                html += `<p><strong>Votre réponse :</strong> ${item.options[selectedIndex].explain || 'Aucune explication disponible'}</p>`;
+                html += `<p><strong>Bonne réponse :</strong> ${item.options[item.correct].text}<br>${item.correctExplain}</p>`;
+            }
+            
+            html += '</div>';
+            
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.innerHTML = html;
+            feedbackDiv.classList.add('show');
+        }
+
+        function updateProgressBar() {
+            const progressBar = document.getElementById('progressBar');
+            const percentage = ((currentQuestion + 1) / questions.length) * 100;
+            progressBar.innerHTML = `<div class="progress-bar" style="width: ${percentage}%"></div>`;
+        }
+
+        function updateProgressInfo() {
+            document.getElementById('question-counter').textContent = `Question ${currentQuestion + 1} / ${questions.length}`;
+            updateScoreBadges();
+        }
+
+        function updateScoreBadges() {
+            let correctCount = 0;
+            for (let i = 0; i < questions.length; i++) {
+                if (answered[i] && answers[i] === questions[i].correct) {
+                    correctCount++;
+                }
+            }
+            const incorrectCount = answers.filter((a, i) => answered[i] && a !== null && a !== questions[i].correct).length;
+            
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('incorrect-count').textContent = incorrectCount;
+        }
+
+        function updateNavigationButtons() {
+            document.getElementById('prevBtn').disabled = currentQuestion === 0;
+            document.getElementById('nextBtn').disabled = currentQuestion === questions.length - 1;
+            
+            if (currentQuestion === questions.length - 1 && answered[currentQuestion]) {
+                document.getElementById('nextBtn').textContent = 'Afficher Résultats';
+                document.getElementById('nextBtn').disabled = false;
+                document.getElementById('nextBtn').onclick = showFinalResults;
+            } else {
+                document.getElementById('nextBtn').onclick = nextQuestion;
+                document.getElementById('nextBtn').textContent = 'Suivant →';
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                displayQuestion();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        function showFinalResults() {
+            let correctCount = 0;
+            for (let i = 0; i < questions.length; i++) {
+                if (answered[i] && answers[i] === questions[i].correct) {
+                    correctCount++;
+                }
+            }
+            
+            const percentage = (correctCount / questions.length) * 100;
+            let feedback = '';
+            
+            if (percentage === 100) {
+                feedback = 'Excellent ! Vous avez maîtrisé ce sujet !';
+            } else if (percentage >= 80) {
+                feedback = 'Très bien ! Vous avez une bonne compréhension.';
+            } else if (percentage >= 60) {
+                feedback = 'Bien ! Vous pouvez approfondir certains concepts.';
+            } else if (percentage >= 40) {
+                feedback = 'Moyen. Revoyez les concepts clés.';
+            } else {
+                feedback = 'À améliorer. Étudiez le matériel de cours.';
+            }
+            
+            const resultHTML = `
+                <div class="results-container">
+                    <h2>Résultats Finaux</h2>
+                    <div class="score">
+                        <div class="score-number">${correctCount}/${questions.length}</div>
+                        <div class="score-percentage">${percentage.toFixed(1)}%</div>
+                    </div>
+                    <p class="score-feedback">${feedback}</p>
+                    <button onclick="location.reload()">Recommencer</button>
+                    <button onclick="history.back()">Retour au catalogue</button>
+                </div>
+            `;
+            
+            document.getElementById('result').innerHTML = resultHTML;
+            document.getElementById('quiz-container').style.display = 'none';
+            document.getElementById('feedback').style.display = 'none';
+            document.querySelector('.quiz-navigation').style.display = 'none';
+        }
+
+        // Initialiser
+        displayQuestion();
+    </script>
+</body>
+</html>
