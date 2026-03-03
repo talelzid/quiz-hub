@@ -311,9 +311,11 @@
             let recapHtml = '<div class="recap-title">Résumé de vos réponses</div>';
             
             questions.forEach((question, index) => {
-                const userAnswer = question.options[answers[index]];
+                const userAnswerIndex = answers[index];
+                const userAnswer = userAnswerIndex !== null ? question.options[userAnswerIndex] : null;
                 const correctAnswer = question.options[question.correct];
-                const isCorrect = answers[index] === question.correct;
+                const isAnswered = userAnswerIndex !== null;
+                const isCorrect = isAnswered && userAnswerIndex === question.correct;
                 
                 recapHtml += `
                     <div class="recap-card ${isCorrect ? 'correct' : 'incorrect'}">
@@ -321,9 +323,9 @@
                         <div class="recap-question">${question.q}</div>
                         <div class="recap-answer-item user">
                             <span class="recap-label">Votre réponse:</span>
-                            ${userAnswer.text}
+                            ${userAnswer ? userAnswer.text : 'Non répondu'}
                             <span class="recap-result ${isCorrect ? 'correct' : 'incorrect'}">
-                                ${isCorrect ? '✓ Correct' : '✗ Incorrect'}
+                                ${isCorrect ? '✓ Correct' : (isAnswered ? '✗ Incorrect' : '⚬ Non répondu')}
                             </span>
                         </div>
                         ${!isCorrect ? `

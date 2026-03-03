@@ -277,7 +277,7 @@ NOTES:
 1. **Créer script create_quiz.py**:
    ```python
    import json
-   import sys
+   import re
    from pathlib import Path
    
    # Charger paramètres et questions
@@ -308,254 +308,34 @@ NOTES:
    
    course_title = course_titles.get(course, course.upper())
    
-   # Template HTML
-   html_template = f'''<!DOCTYPE html>
-   <html lang="fr">
-   <head>
-       <meta charset="UTF-8">
-       <title>Quiz - Cours {lesson}</title>
-       <link rel="stylesheet" href="../../css/style.css">
-   </head>
-   <body>
-       <div class="global-course-title">{course_title}</div>
-       <h1>Quiz : {title} (Cours {lesson})</h1>
-       
-       <div class="progress-container">
-           <div class="progress-info">
-               <span id="question-counter">Question 1 / {len(questions)}</span>
-               <div class="progress-stats">
-                   <span class="stat-badge incorrect"><span class="stat-icon">✕</span><span id="incorrect-count">0</span></span>
-                   <span class="stat-badge correct"><span class="stat-icon">✓</span><span id="correct-count">0</span></span>
-               </div>
-           </div>
-           <div class="progress-bar-wrapper" id="progressBar"></div>
-       </div>
-       
-       <div id="quiz-container" class="card"></div>
-       <div id="feedback" class="feedback-container"></div>
-       
-       <div class="quiz-navigation">
-           <button id="prevBtn" onclick="previousQuestion()">← Précédent</button>
-           <button id="nextBtn" onclick="nextQuestion()">Suivant →</button>
-       </div>
-       
-       <div id="result"></div>
-
-       <script>
-           const questions = {json.dumps(questions, ensure_ascii=False)};
-           
-           // [JavaScript du template reste inchangé]
-           let currentQuestion = 0;
-           let answers = new Array(questions.length).fill(null);
-           let answered = new Array(questions.length).fill(false);
-
-           function displayQuestion() {{
-               const container = document.getElementById('quiz-container');
-               const item = questions[currentQuestion];
-               
-               let html = `<div class="question">${{currentQuestion + 1}}. ${{item.q}}</div>`;
-               const letters = ['A', 'B', 'C', 'D'];
-               item.options.forEach((opt, i) => {{
-                   let classes = '';
-                   if (answers[currentQuestion] === i) {{
-                       classes = 'selected ';
-                       if (i === item.correct) {{
-                           classes += 'correct';
-                       }} else {{
-                           classes += 'incorrect';
-                       }}
-                   }}
-                   const disabledClass = answered[currentQuestion] ? 'disabled' : '';
-                   html += `<div class="option ${{classes}} ${{disabledClass}}" onclick="${{answered[currentQuestion] ? '' : `handleAnswerClick(${{i}})`}}" style="${{answered[currentQuestion] ? 'cursor: not-allowed;' : ''}}"><span class="option-letter">${{letters[i]}}</span> ${{opt.text}}</div>`;
-               }});
-               
-               container.innerHTML = html;
-               
-               if (answered[currentQuestion]) {{
-                   showFeedback();
-               }} else {{
-                   document.getElementById('feedback').innerHTML = '';
-                   document.getElementById('feedback').classList.remove('show');
-               }}
-               
-               updateProgressBar();
-               updateNavigationButtons();
-               updateProgressInfo();
-           }}
-
-           function handleAnswerClick(index) {{
-               if (answered[currentQuestion]) return;
-               
-               answers[currentQuestion] = index;
-               answered[currentQuestion] = true;
-               
-               showFeedback();
-               updateProgressBar();
-               updateProgressInfo();
-               updateNavigationButtons();
-               displayQuestion();
-           }}
-
-           function showFeedback() {{
-               const feedbackDiv = document.getElementById('feedback');
-               const item = questions[currentQuestion];
-               const isCorrect = answers[currentQuestion] === item.correct;
-               const selectedOption = item.options[answers[currentQuestion]];
-               
-               feedbackDiv.className = 'feedback-container show ' + (isCorrect ? 'feedback-correct' : 'feedback-incorrect');
-               
-               let html = '';
-               
-               if (isCorrect) {{
-                   html += `
-                       <div class="feedback-header">Bonne réponse!</div>
-                       <div class="feedback-explanation">${{item.correctExplain}}</div>
-                   `;
-               }} else {{
-                   html += `
-                       <div class="feedback-header">Pas tout à fait</div>
-                       <div class="feedback-explanation">${{selectedOption.explain}}</div>
-                       <div class="correct-answer-box">
-                           <div class="correct-answer-label">✓ Bonne réponse:</div>
-                           <div>${{item.options[item.correct].text}}</div>
-                           <div style="margin-top: 8px; font-size: 0.9em;">${{item.correctExplain}}</div>
-                       </div>
-                   `;
-               }}
-               
-               feedbackDiv.innerHTML = html;
-           }}
-
-           function updateProgressBar() {{
-               const progressBar = document.getElementById('progressBar');
-               progressBar.innerHTML = '';
-               
-               for (let i = 0; i < questions.length; i++) {{
-                   const segment = document.createElement('div');
-                   segment.className = 'progress-segment';
-                   
-                   if (!answered[i]) {{
-                       segment.classList.add('unanswered');
-                   }} else if (answers[i] === questions[i].correct) {{
-                       segment.classList.add('correct');
-                   }} else {{
-                       segment.classList.add('incorrect');
-                   }}
-                   
-                   progressBar.appendChild(segment);
-               }}
-           }}
-
-           function updateNavigationButtons() {{
-               const isAnswered = answered[currentQuestion];
-               document.getElementById('prevBtn').disabled = currentQuestion === 0 || !isAnswered;
-               document.getElementById('nextBtn').disabled = !isAnswered;
-               
-               if (currentQuestion === questions.length - 1) {{
-                   document.getElementById('nextBtn').textContent = 'Voir Résultat';
-               }} else {{
-                   document.getElementById('nextBtn').textContent = 'Suivant →';
-               }}
-           }}
-
-           function updateProgressInfo() {{
-               document.getElementById('question-counter').textContent = `Question ${{currentQuestion + 1}} / ${{questions.length}}`;
-               
-               let correctCount = 0;
-               let incorrectCount = 0;
-               
-               for (let i = 0; i < answers.length; i++) {{
-                   if (answered[i]) {{
-                       if (answers[i] === questions[i].correct) {{
-                           correctCount++;
-                       }} else {{
-                           incorrectCount++;
-                       }}
-                   }}
-               }}
-               
-               document.getElementById('correct-count').textContent = correctCount;
-               document.getElementById('incorrect-count').textContent = incorrectCount;
-           }}
-
-           function nextQuestion() {{
-               if (currentQuestion === questions.length - 1) {{
-                   showFinalResults();
-                   return;
-               }}
-               
-               currentQuestion++;
-               displayQuestion();
-           }}
-
-           function previousQuestion() {{
-               if (currentQuestion > 0) {{
-                   currentQuestion--;
-                   displayQuestion();
-               }}
-           }}
-
-           function showFinalResults() {{
-               let score = 0;
-               answers.forEach((answer, index) => {{
-                   if (answer === questions[index].correct) score++;
-               }});
-               
-               const container = document.getElementById('quiz-container');
-               container.innerHTML = '<div class="question">Quiz terminé!</div>';
-               
-               const feedbackDiv = document.getElementById('feedback');
-               feedbackDiv.className = 'feedback-container';
-               feedbackDiv.innerHTML = '';
-               
-               let recapHtml = '<div class="recap-title">Résumé de vos réponses</div>';
-               
-               questions.forEach((question, index) => {{
-                   const userAnswer = question.options[answers[index]];
-                   const correctAnswer = question.options[question.correct];
-                   const isCorrect = answers[index] === question.correct;
-                   
-                   recapHtml += `
-                       <div class="recap-card ${{isCorrect ? 'correct' : 'incorrect'}}">
-                           <div class="recap-number">Question ${{index + 1}} / ${{questions.length}}</div>
-                           <div class="recap-question">${{question.q}}</div>
-                           <div class="recap-answer-item user">
-                               <span class="recap-label">Votre réponse:</span>
-                               ${{userAnswer.text}}
-                               <span class="recap-result ${{isCorrect ? 'correct' : 'incorrect'}}">
-                                   ${{isCorrect ? '✓ Correct' : '✗ Incorrect'}}
-                               </span>
-                           </div>
-                           ${{!isCorrect ? `
-                               <div class="recap-answer-item correct-answer">
-                                   <span class="recap-label">Bonne réponse:</span>
-                                   ${{correctAnswer.text}}
-                               </div>
-                           ` : ''}}
-                       </div>
-                   `;
-               }});
-               
-               document.getElementById('result').innerHTML = `
-                   <div style="font-size: 2em; margin: 30px 0 20px;">Votre score : ${{score}} / ${{questions.length}}</div>
-                   <div style="font-size: 1.1em; color: #555; margin-bottom: 30px;">Réussite : ${{Math.round(score / questions.length * 100)}}%</div>
-                   <div class="recap-container">${{recapHtml}}</div>
-               `;
-               
-               document.getElementById('prevBtn').disabled = false;
-               document.getElementById('nextBtn').textContent = 'Recommencer';
-               document.getElementById('nextBtn').disabled = false;
-               document.getElementById('nextBtn').onclick = function() {{ location.reload(); }};
-               document.getElementById('prevBtn').onclick = function() {{
-                   currentQuestion = questions.length - 1;
-                   displayQuestion();
-               }};
-           }}
-
-           displayQuestion();
-       </script>
-   </body>
-   </html>'''
+   # LIRE LE TEMPLATE OFFICIEL
+   with open("template/quiz-template.html", "r", encoding="utf-8") as f:
+       template_html = f.read()
+   
+   # Remplacer métadonnées en haut de page
+   html_content = template_html.replace(
+       "<title>Quiz - Cours X</title>",
+       f"<title>Quiz - Cours {lesson}</title>"
+   )
+   html_content = html_content.replace(
+       "[Titre global du cours]",
+       course_title
+   )
+   html_content = html_content.replace(
+       "[Titre du Cours] (Cours X)",
+       f"{title} (Cours {lesson})"
+   )
+   
+   # REMPLACER ARRAY QUESTIONS DANS LE JAVASCRIPT
+   # Pattern: const questions = [ ... questions par défaut ... ];
+   # Regex safe pour trouver et remplacer le tableau questions
+   questions_json = json.dumps(questions, ensure_ascii=False)
+   
+   # Pattern: const questions = [ ... ]; (multiligne)
+   pattern = r'const questions = \[[\s\S]*?\];'
+   replacement = f'const questions = {questions_json};'
+   
+   html_content = re.sub(pattern, replacement, html_content)
    
    # Créer dossier cible
    course_dir = Path(f"cours/{course}")
@@ -564,9 +344,11 @@ NOTES:
    # Écrire HTML
    output_file = course_dir / f"quiz-{course}-cours{lesson}.html"
    with open(output_file, "w", encoding="utf-8") as f:
-       f.write(html_template)
+       f.write(html_content)
    
    print(f"✅ HTML créé: {output_file}")
+   print(f"✅ Template appliqué: template/quiz-template.html")
+   print(f"✅ Questions injectées: {len(questions)} questions")
    ```
 
 2. **Exécuter create_quiz.py automatiquement**:

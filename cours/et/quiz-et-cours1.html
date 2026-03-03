@@ -268,45 +268,62 @@
         }
 
         function showFinalResults() {
-            let correctCount = 0;
-            for (let i = 0; i < questions.length; i++) {
-                if (answered[i] && answers[i] === questions[i].correct) {
-                    correctCount++;
-                }
-            }
+            let score = 0;
+            answers.forEach((answer, index) => {
+                if (answer === questions[index].correct) score++;
+            });
             
-            const percentage = (correctCount / questions.length) * 100;
-            let feedback = '';
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '<div class="question">Quiz terminé!</div>';
             
-            if (percentage === 100) {
-                feedback = 'Excellent ! Vous avez maîtrisé ce sujet !';
-            } else if (percentage >= 80) {
-                feedback = 'Très bien ! Vous avez une bonne compréhension.';
-            } else if (percentage >= 60) {
-                feedback = 'Bien ! Vous pouvez approfondir certains concepts.';
-            } else if (percentage >= 40) {
-                feedback = 'Moyen. Revoyez les concepts clés.';
-            } else {
-                feedback = 'À améliorer. Étudiez le matériel de cours.';
-            }
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.className = 'feedback-container';
+            feedbackDiv.innerHTML = '';
             
-            const resultHTML = `
-                <div class="results-container">
-                    <h2>Résultats Finaux</h2>
-                    <div class="score">
-                        <div class="score-number">${correctCount}/${questions.length}</div>
-                        <div class="score-percentage">${percentage.toFixed(1)}%</div>
+            let recapHtml = '<div class="recap-title">Résumé de vos réponses</div>';
+            
+            questions.forEach((question, index) => {
+                const userAnswerIndex = answers[index];
+                const userAnswer = userAnswerIndex !== null ? question.options[userAnswerIndex] : null;
+                const correctAnswer = question.options[question.correct];
+                const isAnswered = userAnswerIndex !== null;
+                const isCorrect = isAnswered && userAnswerIndex === question.correct;
+                
+                recapHtml += `
+                    <div class="recap-card ${isCorrect ? 'correct' : 'incorrect'}">
+                        <div class="recap-number">Question ${index + 1} / ${questions.length}</div>
+                        <div class="recap-question">${question.q}</div>
+                        <div class="recap-answer-item user">
+                            <span class="recap-label">Votre réponse:</span>
+                            ${userAnswer ? userAnswer.text : 'Non répondu'}
+                            <span class="recap-result ${isCorrect ? 'correct' : 'incorrect'}">
+                                ${isCorrect ? '✓ Correct' : (isAnswered ? '✗ Incorrect' : '⚬ Non répondu')}
+                            </span>
+                        </div>
+                        ${!isCorrect ? `
+                            <div class="recap-answer-item correct-answer">
+                                <span class="recap-label">Bonne réponse:</span>
+                                ${correctAnswer.text}
+                            </div>
+                        ` : ''}
                     </div>
-                    <p class="score-feedback">${feedback}</p>
-                    <button onclick="location.reload()">Recommencer</button>
-                    <button onclick="history.back()">Retour au catalogue</button>
-                </div>
+                `;
+            });
+            
+            document.getElementById('result').innerHTML = `
+                <div style="font-size: 2em; margin: 30px 0 20px;">Votre score : ${score} / ${questions.length}</div>
+                <div style="font-size: 1.1em; color: #555; margin-bottom: 30px;">Réussite : ${Math.round(score / questions.length * 100)}%</div>
+                <div class="recap-container">${recapHtml}</div>
             `;
             
-            document.getElementById('result').innerHTML = resultHTML;
-            document.getElementById('quiz-container').style.display = 'none';
-            document.getElementById('feedback').style.display = 'none';
-            document.querySelector('.quiz-navigation').style.display = 'none';
+            document.getElementById('prevBtn').disabled = false;
+            document.getElementById('nextBtn').textContent = 'Recommencer';
+            document.getElementById('nextBtn').disabled = false;
+            document.getElementById('nextBtn').onclick = function() { location.reload(); };
+            document.getElementById('prevBtn').onclick = function() {
+                currentQuestion = questions.length - 1;
+                displayQuestion();
+            };
         }
 
         // Initialiser
