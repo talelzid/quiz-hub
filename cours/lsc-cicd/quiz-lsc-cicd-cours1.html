@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz - Cours 1</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <div class="global-course-title">Langage de script et chaines d'integration continue</div>
+    <h1>Quiz : Introduction aux langages de script et a Python (Cours 1)</h1>
+    
+    <div class="progress-container">
+        <div class="progress-info">
+            <span id="question-counter">Question 1 / 10</span>
+            <div class="progress-stats">
+                <span class="stat-badge incorrect"><span class="stat-icon">✕</span><span id="incorrect-count">0</span></span>
+                <span class="stat-badge correct"><span class="stat-icon">✓</span><span id="correct-count">0</span></span>
+            </div>
+        </div>
+        <div class="progress-bar-wrapper" id="progressBar"></div>
+    </div>
+    
+    <div id="quiz-container" class="card"></div>
+    
+    <div id="feedback" class="feedback-container"></div>
+    
+    <div class="quiz-navigation">
+        <button id="prevBtn" onclick="previousQuestion()">← Precedent</button>
+        <button id="nextBtn" onclick="nextQuestion()">Suivant →</button>
+    </div>
+    
+    <div id="result"></div>
+
+    <script>
+                const questions = [
+    {
+        "q": "Quelle est la caractéristique principale d'un langage interprété comme Python ?",
+        "options": [
+            { "text": "Le code doit être transformé en fichier binaire avant d'être lancé.", "explain": "Faux. Ceci décrit le processus d'un langage compilé." },
+            { "text": "L'exécution est immédiate car l'interpréteur lit le code ligne par ligne.", "explain": "Correct. L'interprétation directe permet un cycle de développement plus rapide sans étape de traduction globale préalable." },
+            { "text": "Il est impossible de lire le code source une fois qu'il est écrit.", "explain": "Faux. Le code source des langages interprétés reste généralement lisible par l'humain." },
+            { "text": "Il nécessite obligatoirement l'utilisation de Java pour fonctionner.", "explain": "Faux. Python possède son propre interpréteur indépendant." }
+        ],
+        "correct": 1,
+        "correctExplain": "Un langage interprété exécute les instructions directement depuis le script source, ce qui facilite les tests rapides en QA."
+    },
+    {
+        "q": "Lors de l'installation sous Windows, pourquoi faut-il cocher 'Add Python to PATH' ?",
+        "options": [
+            { "text": "Pour pouvoir exécuter Python depuis n'importe quel terminal.", "explain": "Correct. Le PATH permet au système de localiser l'exécutable Python sans taper son chemin complet." },
+            { "text": "Pour changer la couleur de l'interface de VS Code.", "explain": "Faux. Le PATH est une configuration système de localisation de fichiers." },
+            { "text": "Pour installer automatiquement toutes les librairies de test.", "explain": "Faux. Cela permet seulement l'accès à l'interpréteur de base." },
+            { "text": "Pour interdire l'utilisation d'autres langages sur l'ordinateur.", "explain": "Faux. Le PATH permet la cohabitation de plusieurs outils." }
+        ],
+        "correct": 0,
+        "correctExplain": "L'ajout au PATH est indispensable pour que des outils comme VS Code puissent lancer vos scripts automatiquement."
+    },
+    {
+        "q": "Quel est l'avantage de VS Code pour un spécialiste QA ?",
+        "options": [
+            { "text": "Il est plus lourd et complexe que PyCharm.", "explain": "Faux. Il est apprécié pour sa légèreté." },
+            { "text": "Il est réservé uniquement aux débutants.", "explain": "Faux. C'est un standard professionnel mondial." },
+            { "text": "Sa polyvalence permet de gérer le code Python et les fichiers de config (YAML, JSON) au même endroit.", "explain": "Correct. Cette interface unique est idéale pour gérer scripts de tests et pipelines CI/CD." },
+            { "text": "Il ne nécessite aucune extension pour Python.", "explain": "Faux. L'extension Python est nécessaire pour l'autocomplétion." }
+        ],
+        "correct": 2,
+        "correctExplain": "En QA, on manipule souvent divers formats de fichiers ; VS Code est l'outil le plus polyvalent pour cela."
+    },
+    {
+        "q": "À quoi sert la commande 'python -m venv .venv' ?",
+        "options": [
+            { "text": "À mettre à jour Python.", "explain": "Faux. Les mises à jour se font via l'installateur officiel." },
+            { "text": "À créer un dossier isolé contenant son propre interpréteur et ses propres librairies.", "explain": "Correct. L'environnement virtuel garantit que les dépendances d'un projet n'interfèrent pas avec un autre." },
+            { "text": "À supprimer tous les fichiers temporaires.", "explain": "Faux. Cette commande crée une structure de dossiers locale." },
+            { "text": "À lancer le premier script de test automatiquement.", "explain": "Faux. Elle prépare l'environnement mais n'exécute pas de code utilisateur." }
+        ],
+        "correct": 1,
+        "correctExplain": "Le venv est une pratique standard en entreprise pour garantir la stabilité des environnements de test."
+    },
+    {
+        "q": "Sous Windows, quel est l'indicateur visuel que l'environnement virtuel est actif ?",
+        "options": [
+            { "text": "Le terminal change de couleur.", "explain": "Faux. L'activation ne modifie pas les couleurs système." },
+            { "text": "Le mot 'SUCCESS' s'affiche après chaque commande.", "explain": "Faux. Il n'y a pas de message de succès automatique." },
+            { "text": "Le nom de l'environnement (ex: (.venv)) apparaît en préfixe de l'invite de commande.", "explain": "Correct. C'est le témoin visuel indispensable pour le développeur." },
+            { "text": "VS Code se ferme et se relance.", "explain": "Faux. L'opération est interne au terminal." }
+        ],
+        "correct": 2,
+        "correctExplain": "Toujours vérifier le préfixe entre parenthèses avant d'installer des librairies."
+    },
+    {
+        "q": "Quelle commande active l'environnement virtuel sous Windows ?",
+        "options": [
+            { "text": "source .venv/bin/activate", "explain": "Faux. C'est la syntaxe pour macOS/Linux." },
+            { "text": ".venv\\Scripts\\activate", "explain": "Correct. Sous Windows, le script se trouve dans le dossier 'Scripts'." },
+            { "text": "start venv now", "explain": "Faux. Cette commande n'existe pas." },
+            { "text": "python activate", "explain": "Faux. L'activation est un script shell, pas un fichier .py." }
+        ],
+        "correct": 1,
+        "correctExplain": "La structure des dossiers venv diffère selon le système d'exploitation utilisé."
+    },
+    {
+        "q": "Que faire en cas d'erreur 'UnauthorizedAccess' (Execution Policy) lors de l'activation ?",
+        "options": [
+            { "text": "Réinstaller Windows.", "explain": "Faux. C'est une simple question de droits PowerShell." },
+            { "text": "Désactiver l'antivirus.", "explain": "Faux. L'antivirus n'est pas en cause ici." },
+            { "text": "Ajuster la 'Execution Policy' via PowerShell en mode Administrateur.", "explain": "Correct. La commande Set-ExecutionPolicy permet d'autoriser les scripts locaux." },
+            { "text": "Supprimer le dossier .venv.", "explain": "Faux. L'erreur reviendra tant que la politique système n'est pas changée." }
+        ],
+        "correct": 2,
+        "correctExplain": "C'est une étape de configuration de sécurité nécessaire sur les systèmes Windows modernes."
+    },
+    {
+        "q": "Quelle est la conséquence d'écrire 'Print()' au lieu de 'print()' ?",
+        "options": [
+            { "text": "Aucune, Python ignore la casse.", "explain": "Faux. Python est strictement 'case-sensitive'." },
+            { "text": "Une erreur de type 'NameError' car 'Print' n'est pas défini.", "explain": "Correct. La fonction native s'écrit obligatoirement en minuscules." },
+            { "text": "Le texte sera affiché en majuscules.", "explain": "Faux. La casse de la fonction ne modifie pas le texte." },
+            { "text": "Le code s'exécutera mais plus lentement.", "explain": "Faux. Le programme s'arrête immédiatement en erreur." }
+        ],
+        "correct": 1,
+        "correctExplain": "En programmation, le respect de la casse est fondamental pour que l'interpréteur comprenne les commandes."
+    },
+    {
+        "q": "Quelle est la syntaxe correcte pour stocker du texte dans une variable ?",
+        "options": [
+            { "text": "resultat = ECHEC", "explain": "Faux. Sans guillemets, Python cherche une variable nommée ECHEC." },
+            { "text": "resultat == \"ECHEC\"", "explain": "Faux. '==' sert à comparer, pas à assigner." },
+            { "text": "resultat = \"ECHEC\"", "explain": "Correct. Le signe '=' assigne la valeur, et les guillemets définissent le texte (string)." },
+            { "text": "variable resultat : ECHEC", "explain": "Faux. Cette syntaxe n'est pas valide en Python." }
+        ],
+        "correct": 2,
+        "correctExplain": "Assignation simple : nom_variable = \"valeur\"."
+    },
+    {
+        "q": "Comment marque-t-on la fin d'une instruction simple en Python ?",
+        "options": [
+            { "text": "Avec un point-virgule (;).", "explain": "Faux. Contrairement à Java, il n'est pas requis." },
+            { "text": "En passant simplement à la ligne suivante.", "explain": "Correct. Python utilise le saut de ligne et l'indentation pour sa structure." },
+            { "text": "Avec le mot-clé 'END'.", "explain": "Faux. 'END' n'est pas utilisé pour les instructions simples." },
+            { "text": "Avec un point (.) final.", "explain": "Faux. Le point sert à accéder aux méthodes d'un objet." }
+        ],
+        "correct": 1,
+        "correctExplain": "L'absence de caractères de fin de ligne (comme le ;) rend le code Python plus lisible."
+    }
+];
+
+        let currentQuestion = 0;
+        let answers = new Array(questions.length).fill(null);
+        let answered = new Array(questions.length).fill(false);
+
+        function displayQuestion() {
+            const container = document.getElementById('quiz-container');
+            const item = questions[currentQuestion];
+            
+            let html = `<div class="question">${currentQuestion + 1}. ${item.q}</div>`;
+            const letters = ['A', 'B', 'C', 'D'];
+            item.options.forEach((opt, i) => {
+                let classes = '';
+                if (answers[currentQuestion] === i) {
+                    classes = 'selected ';
+                    if (i === item.correct) {
+                        classes += 'correct';
+                    } else {
+                        classes += 'incorrect';
+                    }
+                }
+                const disabledClass = answered[currentQuestion] ? 'disabled' : '';
+                html += `<div class="option ${classes} ${disabledClass}" onclick="${answered[currentQuestion] ? '' : `handleAnswerClick(${i})`}" style="${answered[currentQuestion] ? 'cursor: not-allowed;' : ''}"><span class="option-letter">${letters[i]}</span> ${opt.text}</div>`;
+            });
+            
+            container.innerHTML = html;
+            
+            if (answered[currentQuestion]) {
+                showFeedback();
+            } else {
+                document.getElementById('feedback').innerHTML = '';
+                document.getElementById('feedback').classList.remove('show');
+            }
+            
+            updateProgressBar();
+            updateNavigationButtons();
+            updateProgressInfo();
+        }
+
+        function handleAnswerClick(index) {
+            if (answered[currentQuestion]) return;
+            
+            answers[currentQuestion] = index;
+            answered[currentQuestion] = true;
+            
+            showFeedback();
+            updateProgressBar();
+            updateProgressInfo();
+            updateNavigationButtons();
+            displayQuestion();
+        }
+
+        function showFeedback() {
+            const feedbackDiv = document.getElementById('feedback');
+            const item = questions[currentQuestion];
+            const isCorrect = answers[currentQuestion] === item.correct;
+            const selectedOption = item.options[answers[currentQuestion]];
+            
+            feedbackDiv.className = 'feedback-container show ' + (isCorrect ? 'feedback-correct' : 'feedback-incorrect');
+            
+            let html = '';
+            
+            if (isCorrect) {
+                html += `
+                    <div class="feedback-header">Bonne reponse!</div>
+                    <div class="feedback-explanation">${item.correctExplain}</div>
+                `;
+            } else {
+                html += `
+                    <div class="feedback-header">Pas tout a fait</div>
+                    <div class="feedback-explanation">${selectedOption.explain}</div>
+                    <div class="correct-answer-box">
+                        <div class="correct-answer-label">✓ Bonne reponse:</div>
+                        <div>${item.options[item.correct].text}</div>
+                        <div style="margin-top: 8px; font-size: 0.9em;">${item.correctExplain}</div>
+                    </div>
+                `;
+            }
+            
+            feedbackDiv.innerHTML = html;
+        }
+
+        function updateProgressBar() {
+            const progressBar = document.getElementById('progressBar');
+            progressBar.innerHTML = '';
+            
+            for (let i = 0; i < questions.length; i++) {
+                const segment = document.createElement('div');
+                segment.className = 'progress-segment';
+                
+                if (!answered[i]) {
+                    segment.classList.add('unanswered');
+                } else if (answers[i] === questions[i].correct) {
+                    segment.classList.add('correct');
+                } else {
+                    segment.classList.add('incorrect');
+                }
+                
+                progressBar.appendChild(segment);
+            }
+        }
+
+        function updateNavigationButtons() {
+            const isAnswered = answered[currentQuestion];
+            document.getElementById('prevBtn').disabled = currentQuestion === 0 || !isAnswered;
+            document.getElementById('nextBtn').disabled = !isAnswered;
+            
+            if (currentQuestion === questions.length - 1) {
+                document.getElementById('nextBtn').textContent = 'Voir Resultat';
+            } else {
+                document.getElementById('nextBtn').textContent = 'Suivant →';
+            }
+        }
+
+        function updateProgressInfo() {
+            document.getElementById('question-counter').textContent = `Question ${currentQuestion + 1} / ${questions.length}`;
+            
+            let correctCount = 0;
+            let incorrectCount = 0;
+            
+            for (let i = 0; i < answers.length; i++) {
+                if (answered[i]) {
+                    if (answers[i] === questions[i].correct) {
+                        correctCount++;
+                    } else {
+                        incorrectCount++;
+                    }
+                }
+            }
+            
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('incorrect-count').textContent = incorrectCount;
+        }
+
+        function nextQuestion() {
+            if (currentQuestion === questions.length - 1) {
+                showFinalResults();
+                return;
+            }
+            
+            currentQuestion++;
+            displayQuestion();
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        function showFinalResults() {
+            let score = 0;
+            answers.forEach((answer, index) => {
+                if (answer === questions[index].correct) score++;
+            });
+            
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '<div class="question">Quiz termine!</div>';
+            
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.className = 'feedback-container';
+            feedbackDiv.innerHTML = '';
+            
+            let recapHtml = '<div class="recap-title">Resume de vos reponses</div>';
+            
+            questions.forEach((question, index) => {
+                const userAnswer = question.options[answers[index]];
+                const correctAnswer = question.options[question.correct];
+                const isCorrect = answers[index] === question.correct;
+                
+                recapHtml += `
+                    <div class="recap-card ${isCorrect ? 'correct' : 'incorrect'}">
+                        <div class="recap-number">Question ${index + 1} / ${questions.length}</div>
+                        <div class="recap-question">${question.q}</div>
+                        <div class="recap-answer-item user">
+                            <span class="recap-label">Votre reponse:</span>
+                            ${userAnswer.text}
+                            <span class="recap-result ${isCorrect ? 'correct' : 'incorrect'}">
+                                ${isCorrect ? '✓ Correct' : '✗ Incorrect'}
+                            </span>
+                        </div>
+                        ${!isCorrect ? `
+                            <div class="recap-answer-item correct-answer">
+                                <span class="recap-label">Bonne reponse:</span>
+                                ${correctAnswer.text}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            
+            document.getElementById('result').innerHTML = `
+                <div style="font-size: 2em; margin: 30px 0 20px;">Votre score : ${score} / ${questions.length}</div>
+                <div style="font-size: 1.1em; color: #555; margin-bottom: 30px;">Reussite : ${Math.round(score / questions.length * 100)}%</div>
+                <div class="recap-container">${recapHtml}</div>
+            `;
+            
+            document.getElementById('prevBtn').disabled = false;
+            document.getElementById('nextBtn').textContent = 'Recommencer';
+            document.getElementById('nextBtn').disabled = false;
+            document.getElementById('nextBtn').onclick = function() { location.reload(); };
+            document.getElementById('prevBtn').onclick = function() {
+                currentQuestion = questions.length - 1;
+                displayQuestion();
+            };
+        }
+
+        displayQuestion();
+    </script>
+</body>
+</html>

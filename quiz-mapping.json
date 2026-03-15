@@ -217,5 +217,13 @@
     "path": "cours/gaq/quiz-gaq-cours1.html",
     "createdAt": "2026-03-01T14:30:00Z",
     "questionsCount": 10
+  },
+  "n8c2d7k5": {
+    "course": "LSC-CICD",
+    "lesson": 1,
+    "title": "Introduction aux langages de script et à Python",
+    "path": "cours/lsc-cicd/quiz-lsc-cicd-cours1.html",
+    "createdAt": "2026-03-15T00:00:00Z",
+    "questionsCount": 10
   }
 }
