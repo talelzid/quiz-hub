@@ -225,5 +225,13 @@
     "path": "cours/lsc-cicd/quiz-lsc-cicd-cours1.html",
     "createdAt": "2026-03-15T00:00:00Z",
     "questionsCount": 10
+  },
+  "p4h7m2q9": {
+    "course": "LSC-CICD",
+    "lesson": 2,
+    "title": "Bases de Python pour développeurs Java",
+    "path": "cours/lsc-cicd/quiz-lsc-cicd-cours2.html",
+    "createdAt": "2026-03-22T00:00:00Z",
+    "questionsCount": 10
   }
 }

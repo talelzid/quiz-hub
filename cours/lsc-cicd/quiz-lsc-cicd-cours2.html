@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz - Cours 2</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <div class="global-course-title">Langage de script et chaînes d'intégration continue</div>
+    <h1>Quiz : Bases de Python et syntaxe (Cours 2)</h1>
+    
+    <div class="progress-container">
+        <div class="progress-info">
+            <span id="question-counter">Question 1 / 10</span>
+            <div class="progress-stats">
+                <span class="stat-badge incorrect"><span class="stat-icon">✕</span><span id="incorrect-count">0</span></span>
+                <span class="stat-badge correct"><span class="stat-icon">✓</span><span id="correct-count">0</span></span>
+            </div>
+        </div>
+        <div class="progress-bar-wrapper" id="progressBar"></div>
+    </div>
+    
+    <div id="quiz-container" class="card"></div>
+    
+    <div id="feedback" class="feedback-container"></div>
+    
+    <div class="quiz-navigation">
+        <button id="prevBtn" onclick="previousQuestion()">← Précédent</button>
+        <button id="nextBtn" onclick="nextQuestion()">Suivant →</button>
+    </div>
+    
+    <div id="result"></div>
+
+    <script>
+        const questions = [
+            {
+                "q": "En Python, comment définit-on la fin d'un bloc de code (comme le corps d'une condition ou d'une boucle) ?",
+                "options": [
+                    { "text": "En utilisant une accolade fermante '}' comme en Java", "explain": "Faux. Python n'utilise pas d'accolades pour délimiter les blocs de code. C'est l'un des plus grands changements pour un développeur Java." },
+                    { "text": "En utilisant le mot-clé 'end'", "explain": "Faux. Le mot-clé 'end' est utilisé dans d'autres langages comme Ruby ou SQL, mais il n'existe pas en Python pour structurer les blocs." },
+                    { "text": "En revenant au niveau d'indentation précédent", "explain": "Correct. En Python, c'est l'alignement vertical (l'indentation) qui définit la structure. Un bloc se termine simplement quand on arrête de décaler le texte vers la droite." },
+                    { "text": "En ajoutant un point-virgule ';' à la fin de la dernière ligne", "explain": "Faux. Le point-virgule est optionnel en Python et ne sert jamais à fermer ou délimiter un bloc de code." }
+                ],
+                "correct": 2,
+                "correctExplain": "Contrairement au Java qui utilise des délimiteurs visuels ({}), Python utilise l'indentation obligatoire. La fin d'un bloc est marquée par le retour de la ligne suivante au niveau d'indentation du parent."
+            },
+            {
+                "q": "Quelle est la principale différence entre une liste Python et un tableau (array) classique en Java ?",
+                "options": [
+                    { "text": "La liste Python a une taille dynamique et peut contenir des types de données différents", "explain": "Correct. En Java, un tableau a une taille fixe et un type unique. En Python, une liste peut grandir indéfiniment et mélanger des entiers, des chaînes ou des dictionnaires." },
+                    { "text": "La liste Python commence à l'index 1 au lieu de 0", "explain": "Faux. Comme en Java, l'indexation en Python est 'zero-based', le premier élément est toujours à l'index 0." },
+                    { "text": "On ne peut pas modifier les éléments d'une liste après sa création", "explain": "Faux. Les listes sont 'mutables'. On peut modifier, ajouter ou supprimer des éléments à n'importe quel moment." },
+                    { "text": "Il faut importer une bibliothèque spéciale (import list) pour les utiliser", "explain": "Faux. Les listes sont un type natif de Python, disponibles immédiatement sans aucun import." }
+                ],
+                "correct": 0,
+                "correctExplain": "La flexibilité est la force de Python : les listes remplacent avantageusement les tableaux fixes et les ArrayList du Java par une structure unique, dynamique et hétérogène."
+            },
+            {
+                "q": "Quelle structure de données Python est l'équivalent direct du HashMap de Java ?",
+                "options": [
+                    { "text": "Le Tuple", "explain": "Faux. Un tuple est une liste immuable (non modifiable), il ne gère pas de système de clé/valeur." },
+                    { "text": "La Liste", "explain": "Faux. La liste est l'équivalent de l'ArrayList, gérée par des index numériques." },
+                    { "text": "Le Dictionnaire (dict)", "explain": "Correct. Le dictionnaire stocke des paires clé/valeur. C'est l'outil parfait pour structurer des données complexes comme un rapport de test." },
+                    { "text": "La Variable globale", "explain": "Faux. Une variable globale est un concept de portée (scope), pas une structure de collection de données." }
+                ],
+                "correct": 2,
+                "correctExplain": "Le dictionnaire ({}) est l'équivalent du HashMap. Il permet d'accéder à une valeur via une clé textuelle, ce qui rend le code beaucoup plus lisible en QA."
+            },
+            {
+                "q": "Soit le code : print('Code : ' + 404). Que se passe-t-il à l'exécution ?",
+                "options": [
+                    { "text": "Il affiche 'Code : 404'", "explain": "Faux. Contrairement au Java, Python ne transforme pas automatiquement un nombre en texte lors d'une addition." },
+                    { "text": "Le programme s'arrête avec une erreur de type (TypeError)", "explain": "Correct. Python refuse d'additionner un 'str' et un 'int'. Il faut utiliser explicitement str(404)." },
+                    { "text": "Il affiche 'Code : ' suivi d'un espace vide", "explain": "Faux. Python est un langage 'fortement typé' ; il préfère s'arrêter plutôt que de produire un résultat incertain." },
+                    { "text": "Il convertit la chaîne en nombre et tente une addition mathématique", "explain": "Faux. Python ne devine pas l'intention ; il exige une conversion explicite de la part du développeur." }
+                ],
+                "correct": 1,
+                "correctExplain": "C'est un choc pour les développeurs Java : la concaténation par '+' exige que tous les éléments soient des chaînes (str). Le casting explicite est obligatoire."
+            },
+            {
+                "q": "Dans une boucle 'for test in liste_tests:', que représente la variable 'test' ?",
+                "options": [
+                    { "text": "L'indice numérique (0, 1, 2...)", "explain": "Faux. Pour obtenir l'indice, il faudrait utiliser la fonction range() ou enumerate()." },
+                    { "text": "L'objet (ou la donnée) contenu dans la liste à chaque itération", "explain": "Correct. La boucle 'for' de Python agit comme un itérateur direct (similaire au For-Each du Java)." },
+                    { "text": "Le nombre total d'éléments dans la liste", "explain": "Faux. La taille totale de la liste est obtenue avec la fonction len()." },
+                    { "text": "Une copie de la liste entière à chaque passage", "explain": "Faux. La boucle ne traite qu'un seul élément à la fois pour optimiser la mémoire." }
+                ],
+                "correct": 1,
+                "correctExplain": "Le 'for' en Python est conçu pour être lisible : on itère directement sur les objets de la collection sans avoir à gérer des compteurs 'i++'."
+            },
+            {
+                "q": "Quelle est la particularité d'une fonction Python concernant son retour (return) ?",
+                "options": [
+                    { "text": "Elle doit obligatoirement retourner un seul objet unique", "explain": "Faux. C'est une contrainte du Java que Python ne possède pas." },
+                    { "text": "Elle peut retourner plusieurs valeurs séparées par des virgules", "explain": "Correct. Python permet le retour multiple, ce qui est idéal pour renvoyer par exemple un statut ET un message." },
+                    { "text": "Elle ne peut rien retourner (void) si on ne précise pas le type", "explain": "Faux. En Python, une fonction retourne toujours quelque chose (par défaut 'None' si aucun return n'est présent)." },
+                    { "text": "Le mot-clé 'return' est optionnel si la fonction fait moins de 3 lignes", "explain": "Faux. Le 'return' est nécessaire dès que vous voulez transmettre un résultat hors de la fonction." }
+                ],
+                "correct": 1,
+                "correctExplain": "Le retour multiple est une force de Python. On récupère les valeurs via le 'unpacking' (ex: statut, msg = ma_fonction())."
+            },
+            {
+                "q": "Comment modifier une variable définie en haut du script à l'intérieur d'une fonction ?",
+                "options": [
+                    { "text": "On la modifie directement, elle est accessible partout", "explain": "Faux. On peut la lire, mais si on essaie de la modifier, Python créera une variable locale par sécurité." },
+                    { "text": "Il faut utiliser le mot-clé 'global' au début de la fonction", "explain": "Correct. Le mot-clé 'global' indique à Python de ne pas créer une nouvelle variable mais d'utiliser l'originale." },
+                    { "text": "On doit passer la variable par référence avec le symbole '&'", "explain": "Faux. Le symbole '&' n'est pas utilisé pour les références de variables en Python comme en C++." },
+                    { "text": "C'est impossible, une variable globale est constante par définition", "explain": "Faux. On peut la modifier, mais Python impose une syntaxe explicite (global) pour éviter les erreurs accidentelles." }
+                ],
+                "correct": 1,
+                "correctExplain": "Sans le mot-clé 'global', toute assignation dans une fonction crée une variable locale. C'est une protection contre les effets de bord involontaires."
+            },
+            {
+                "q": "À quoi sert la fonction native help() ?",
+                "options": [
+                    { "text": "À corriger automatiquement les erreurs de syntaxe dans le code", "explain": "Faux. help() est un outil d'information, pas un outil de correction automatique." },
+                    { "text": "À afficher la documentation (Docstring) d'un module ou d'une fonction", "explain": "Correct. Elle permet de lire la documentation intégrée sans quitter l'interpréteur ou le terminal." },
+                    { "text": "À envoyer un message de support technique à la communauté Python", "explain": "Faux. C'est une fonction locale qui interroge la documentation interne du code." },
+                    { "text": "À lister toutes les variables globales du programme", "explain": "Faux. Pour lister les variables ou méthodes, on utilise plutôt la fonction dir()." }
+                ],
+                "correct": 1,
+                "correctExplain": "help() est l'outil d'auto-apprentissage par excellence. Il affiche le texte contenu entre les triples guillemets des fonctions."
+            },
+            {
+                "q": "Quelle est la syntaxe correcte pour accéder à 'FAIL' dans : result = {'id': 1, 'status': 'FAIL'} ?",
+                "options": [
+                    { "text": "result.status", "explain": "Faux. C'est une syntaxe d'objet. Pour un dictionnaire, on utilise généralement les crochets." },
+                    { "text": "result['status']", "explain": "Correct. On accède à la valeur en passant la clé sous forme de chaîne entre crochets." },
+                    { "text": "result(1)", "explain": "Faux. Les parenthèses sont utilisées pour appeler des fonctions, pas pour accéder à des données de collection." },
+                    { "text": "result{status}", "explain": "Faux. Cette syntaxe n'existe pas en Python pour l'accès aux données." }
+                ],
+                "correct": 1,
+                "correctExplain": "Les dictionnaires utilisent les crochets pour l'accès aux données, tout comme les listes, mais avec une clé (souvent un texte) au lieu d'un index."
+            },
+            {
+                "q": "Pourquoi utilise-t-on f'...' (f-strings) en Python ?",
+                "options": [
+                    { "text": "Pour formater des chaînes en insérant des variables entre accolades", "explain": "Correct. C'est la méthode la plus lisible et moderne pour construire des messages dynamiques." },
+                    { "text": "Pour indiquer que la chaîne de caractères est 'finale' (constante)", "explain": "Faux. Le 'f' signifie 'format', pas 'final'. Python ne gère pas les constantes de cette manière." },
+                    { "text": "Pour forcer la conversion de la chaîne en fichier (file)", "explain": "Faux. Cela n'a aucun lien avec la gestion des fichiers sur le disque." },
+                    { "text": "Pour traduire automatiquement le texte dans une autre langue", "explain": "Faux. Le formatage de chaîne n'inclut pas de moteur de traduction automatique." }
+                ],
+                "correct": 0,
+                "correctExplain": "Les f-strings (f'Texte {variable}') sont préférables à la concaténation car elles gèrent automatiquement la conversion en texte et sont plus lisibles."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let answers = new Array(questions.length).fill(null);
+        let answered = new Array(questions.length).fill(false);
+
+        function displayQuestion() {
+            const container = document.getElementById('quiz-container');
+            const item = questions[currentQuestion];
+            
+            let html = `<div class="question">${currentQuestion + 1}. ${item.q}</div>`;
+            const letters = ['A', 'B', 'C', 'D'];
+            item.options.forEach((opt, i) => {
+                let classes = '';
+                if (answers[currentQuestion] === i) {
+                    classes = 'selected ';
+                    if (i === item.correct) {
+                        classes += 'correct';
+                    } else {
+                        classes += 'incorrect';
+                    }
+                }
+                const disabledClass = answered[currentQuestion] ? 'disabled' : '';
+                html += `<div class="option ${classes} ${disabledClass}" onclick="${answered[currentQuestion] ? '' : `handleAnswerClick(${i})`}" style="${answered[currentQuestion] ? 'cursor: not-allowed;' : ''}"><span class="option-letter">${letters[i]}</span> ${opt.text}</div>`;
+            });
+            
+            container.innerHTML = html;
+            
+            if (answered[currentQuestion]) {
+                showFeedback();
+            } else {
+                document.getElementById('feedback').innerHTML = '';
+                document.getElementById('feedback').classList.remove('show');
+            }
+            
+            updateProgressBar();
+            updateNavigationButtons();
+            updateProgressInfo();
+        }
+
+        function handleAnswerClick(index) {
+            if (answered[currentQuestion]) return;
+            
+            answers[currentQuestion] = index;
+            answered[currentQuestion] = true;
+            
+            showFeedback();
+            updateProgressBar();
+            updateProgressInfo();
+            updateNavigationButtons();
+            displayQuestion();
+        }
+
+        function showFeedback() {
+            const feedbackDiv = document.getElementById('feedback');
+            const item = questions[currentQuestion];
+            const isCorrect = answers[currentQuestion] === item.correct;
+            const selectedOption = item.options[answers[currentQuestion]];
+            
+            feedbackDiv.className = 'feedback-container show ' + (isCorrect ? 'feedback-correct' : 'feedback-incorrect');
+            
+            let html = '';
+            
+            if (isCorrect) {
+                html += `
+                    <div class="feedback-header">Bonne réponse!</div>
+                    <div class="feedback-explanation">${item.correctExplain}</div>
+                `;
+            } else {
+                html += `
+                    <div class="feedback-header">Pas tout à fait</div>
+                    <div class="feedback-explanation">${selectedOption.explain}</div>
+                    <div class="correct-answer-box">
+                        <div class="correct-answer-label">✓ Bonne réponse:</div>
+                        <div>${item.options[item.correct].text}</div>
+                        <div style="margin-top: 8px; font-size: 0.9em;">${item.correctExplain}</div>
+                    </div>
+                `;
+            }
+            
+            feedbackDiv.innerHTML = html;
+        }
+
+        function updateProgressBar() {
+            const progressBar = document.getElementById('progressBar');
+            progressBar.innerHTML = '';
+            
+            for (let i = 0; i < questions.length; i++) {
+                const segment = document.createElement('div');
+                segment.className = 'progress-segment';
+                
+                if (!answered[i]) {
+                    segment.classList.add('unanswered');
+                } else if (answers[i] === questions[i].correct) {
+                    segment.classList.add('correct');
+                } else {
+                    segment.classList.add('incorrect');
+                }
+                
+                progressBar.appendChild(segment);
+            }
+        }
+
+        function updateNavigationButtons() {
+            const isAnswered = answered[currentQuestion];
+            document.getElementById('prevBtn').disabled = currentQuestion === 0 || !isAnswered;
+            document.getElementById('nextBtn').disabled = !isAnswered;
+            
+            if (currentQuestion === questions.length - 1) {
+                document.getElementById('nextBtn').textContent = 'Voir Résultat';
+            } else {
+                document.getElementById('nextBtn').textContent = 'Suivant →';
+            }
+        }
+
+        function updateProgressInfo() {
+            document.getElementById('question-counter').textContent = `Question ${currentQuestion + 1} / ${questions.length}`;
+            
+            let correctCount = 0;
+            let incorrectCount = 0;
+            
+            for (let i = 0; i < answers.length; i++) {
+                if (answered[i]) {
+                    if (answers[i] === questions[i].correct) {
+                        correctCount++;
+                    } else {
+                        incorrectCount++;
+                    }
+                }
+            }
+            
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('incorrect-count').textContent = incorrectCount;
+        }
+
+        function nextQuestion() {
+            if (currentQuestion === questions.length - 1) {
+                showFinalResults();
+                return;
+            }
+            
+            currentQuestion++;
+            displayQuestion();
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        function showFinalResults() {
+            let score = 0;
+            answers.forEach((answer, index) => {
+                if (answer === questions[index].correct) score++;
+            });
+            
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '<div class="question">Quiz terminé!</div>';
+            
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.className = 'feedback-container';
+            feedbackDiv.innerHTML = '';
+            
+            let recapHtml = '<div class="recap-title">Résumé de vos réponses</div>';
+            
+            questions.forEach((question, index) => {
+                const userAnswer = question.options[answers[index]];
+                const correctAnswer = question.options[question.correct];
+                const isCorrect = answers[index] === question.correct;
+                
+                recapHtml += `
+                    <div class="recap-card ${isCorrect ? 'correct' : 'incorrect'}">
+                        <div class="recap-number">Question ${index + 1} / ${questions.length}</div>
+                        <div class="recap-question">${question.q}</div>
+                        <div class="recap-answer-item user">
+                            <span class="recap-label">Votre réponse:</span>
+                            ${userAnswer.text}
+                            <span class="recap-result ${isCorrect ? 'correct' : 'incorrect'}">
+                                ${isCorrect ? '✓ Correct' : '✗ Incorrect'}
+                            </span>
+                        </div>
+                        ${!isCorrect ? `
+                            <div class="recap-answer-item correct-answer">
+                                <span class="recap-label">Bonne réponse:</span>
+                                ${correctAnswer.text}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            
+            document.getElementById('result').innerHTML = `
+                <div style="font-size: 2em; margin: 30px 0 20px;">Votre score : ${score} / ${questions.length}</div>
+                <div style="font-size: 1.1em; color: #555; margin-bottom: 30px;">Réussite : ${Math.round(score / questions.length * 100)}%</div>
+                <div class="recap-container">${recapHtml}</div>
+            `;
+            
+            document.getElementById('prevBtn').disabled = false;
+            document.getElementById('nextBtn').textContent = 'Recommencer';
+            document.getElementById('nextBtn').disabled = false;
+            document.getElementById('nextBtn').onclick = function() { location.reload(); };
+            document.getElementById('prevBtn').onclick = function() {
+                currentQuestion = questions.length - 1;
+                displayQuestion();
+            };
+        }
+
+        displayQuestion();
+    </script>
+</body>
+</html>
