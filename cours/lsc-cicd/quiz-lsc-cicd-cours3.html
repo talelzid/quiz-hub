@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz - Cours 3</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <div class="global-course-title">Langage de script et chaînes d'intégration continue</div>
+    <h1>Quiz : L'orienté objet avec Python (Cours 3)</h1>
+
+    <div class="progress-container">
+        <div class="progress-info">
+            <span id="question-counter">Question 1 / 10</span>
+            <div class="progress-stats">
+                <span class="stat-badge incorrect"><span class="stat-icon">✕</span><span id="incorrect-count">0</span></span>
+                <span class="stat-badge correct"><span class="stat-icon">✓</span><span id="correct-count">0</span></span>
+            </div>
+        </div>
+        <div class="progress-bar-wrapper" id="progressBar"></div>
+    </div>
+
+    <div id="quiz-container" class="card"></div>
+
+    <div id="feedback" class="feedback-container"></div>
+
+    <div class="quiz-navigation">
+        <button id="prevBtn" onclick="previousQuestion()">← Précédent</button>
+        <button id="nextBtn" onclick="nextQuestion()">Suivant →</button>
+    </div>
+
+    <div id="result"></div>
+
+    <script>
+        const questions = [
+            {
+                "q": "Quel mot-clé est utilisé pour déclarer une classe en Python et quelle est la convention de nommage recommandée ?",
+                "options": [
+                    { "text": "Le mot-clé 'new' et le nom en camelCase", "explain": "Faux. 'new' n'est pas utilisé pour déclarer une classe et la convention Python privilégie le PascalCase." },
+                    { "text": "Le mot-clé 'class' et le nom en PascalCase (ex: MaClasse)", "explain": "Correct. On utilise 'class' et la convention PEP 8 préconise le PascalCase pour distinguer les classes des fonctions." },
+                    { "text": "Le mot-clé 'def' et le nom en snake_case", "explain": "Faux. 'def' est réservé aux fonctions et méthodes, pas aux classes." },
+                    { "text": "Le mot-clé 'object' et le nom en MAJUSCULES", "explain": "Faux. 'object' est la classe parente par défaut, mais pas le mot-clé de déclaration." }
+                ],
+                "correct": 1,
+                "correctExplain": "En Python, on déclare une classe avec 'class NomDeLaClasse:'. Le PascalCase est la norme pour la lisibilité du code."
+            },
+            {
+                "q": "À quoi sert la méthode spéciale '__init__' dans une classe Python ?",
+                "options": [
+                    { "text": "À détruire l'objet quand il n'est plus utilisé", "explain": "Faux. C'est le rôle du ramasse-miettes (garbage collector) ou de la méthode __del__." },
+                    { "text": "À importer des bibliothèques externes dans la classe", "explain": "Faux. Les imports se font généralement en haut du fichier, pas dans une méthode de classe." },
+                    { "text": "À initialiser les attributs de l'instance lors de sa création", "explain": "Correct. C'est le constructeur de la classe, appelé automatiquement lors de l'instanciation." },
+                    { "text": "À transformer la classe en un dictionnaire JSON", "explain": "Faux. Bien qu'on puisse le faire, ce n'est pas le rôle natif de __init__." }
+                ],
+                "correct": 2,
+                "correctExplain": "Le constructeur '__init__' permet de définir l'état initial d'un objet (ses attributs) au moment où il est créé en mémoire."
+            },
+            {
+                "q": "Pourquoi le paramètre 'self' est-il obligatoire comme premier argument des méthodes d'instance ?",
+                "options": [
+                    { "text": "C'est un mot-clé réservé par le processeur pour optimiser le code", "explain": "Faux. 'self' est une convention de nommage, bien que son rôle soit structurel pour Python." },
+                    { "text": "Il représente l'instance spécifique de l'objet sur laquelle la méthode est appelée", "explain": "Correct. Il permet à la méthode d'accéder aux attributs et aux autres méthodes du même objet." },
+                    { "text": "Il sert à indiquer que la méthode est statique et partagée", "explain": "Faux. Au contraire, sa présence indique que c'est une méthode liée à une instance précise." },
+                    { "text": "Il permet de masquer le code aux autres développeurs", "explain": "Faux. 'self' n'a aucun rapport avec l'obscurcissement du code." }
+                ],
+                "correct": 1,
+                "correctExplain": "Contrairement au 'this' de Java qui est souvent implicite, Python impose d'écrire 'self' explicitement pour lier la méthode à l'objet en cours."
+            },
+            {
+                "q": "Quelle est la différence majeure entre un attribut de classe et un attribut d'instance ?",
+                "options": [
+                    { "text": "L'attribut de classe est privé, l'attribut d'instance est public", "explain": "Faux. La visibilité n'est pas définie par l'emplacement de l'attribut en Python." },
+                    { "text": "L'attribut de classe est partagé par tous les objets, l'attribut d'instance est unique à chaque objet", "explain": "Correct. Une modification sur l'attribut de classe impacte toutes les instances existantes." },
+                    { "text": "L'attribut d'instance est défini en dehors de la classe", "explain": "Faux. Tous les attributs sont définis dans le contexte de la classe." },
+                    { "text": "Il n'y a aucune différence, ce sont deux synonymes", "explain": "Faux. Leur portée et leur comportement en mémoire sont radicalement différents." }
+                ],
+                "correct": 1,
+                "correctExplain": "Un attribut de classe (défini sous 'class') est global à tous les objets de cette classe, tandis que l'attribut d'instance (via 'self') appartient exclusivement à un objet."
+            },
+            {
+                "q": "Comment déclare-t-on qu'une classe 'Chrome' hérite d'une classe 'Navigateur' en Python ?",
+                "options": [
+                    { "text": "class Chrome extends Navigateur:", "explain": "Faux. 'extends' est le mot-clé utilisé en Java ou JavaScript, pas en Python." },
+                    { "text": "class Chrome implements Navigateur:", "explain": "Faux. 'implements' est utilisé pour les interfaces en Java." },
+                    { "text": "class Chrome(Navigateur):", "explain": "Correct. L'héritage s'exprime en plaçant la classe parente entre parenthèses après le nom de la classe fille." },
+                    { "text": "class Navigateur > Chrome:", "explain": "Faux. Cette syntaxe n'existe dans aucun langage de programmation courant." }
+                ],
+                "correct": 2,
+                "correctExplain": "La syntaxe 'class Fille(Mere):' est le standard Python pour établir un lien d'héritage entre deux classes."
+            },
+            {
+                "q": "À quoi sert la fonction 'super()' dans le constructeur d'une classe fille ?",
+                "options": [
+                    { "text": "À arrêter l'exécution du code en cas d'erreur grave", "explain": "Faux. C'est le rôle des exceptions (raise)." },
+                    { "text": "À appeler les méthodes ou le constructeur de la classe parente", "explain": "Correct. Cela permet de réutiliser la logique d'initialisation du parent avant d'ajouter celle de la fille." },
+                    { "text": "À rendre la classe plus rapide lors de l'exécution", "explain": "Faux. 'super()' sert à la structure du code, pas à l'optimisation de performance brute." },
+                    { "text": "À copier tous les fichiers du projet dans l'objet", "explain": "Faux. C'est une confusion totale de concept." }
+                ],
+                "correct": 1,
+                "correctExplain": "super().__init__(...) est indispensable pour garantir que les attributs définis dans la classe mère sont correctement créés pour l'objet fils."
+            },
+            {
+                "q": "Qu'est-ce que la surcharge de méthode (Overriding) ?",
+                "options": [
+                    { "text": "C'est définir une méthode avec trop d'arguments pour Python", "explain": "Faux. Cela n'a rien à voir avec le nombre d'arguments." },
+                    { "text": "C'est supprimer une méthode de la classe mère pour qu'elle n'existe plus", "explain": "Faux. La méthode existe toujours dans la mère, elle est juste remplacée dans la fille." },
+                    { "text": "C'est redéfinir une méthode héritée pour en changer ou en compléter le comportement", "explain": "Correct. La classe fille propose sa propre version d'une action déjà existante chez le parent." },
+                    { "text": "C'est une erreur critique qui fait planter le script", "explain": "Faux. C'est une fonctionnalité puissante et normale de la POO." }
+                ],
+                "correct": 2,
+                "correctExplain": "La surcharge permet de spécialiser un comportement (ex: un Admin qui se connecte différemment d'un Utilisateur standard)."
+            },
+            {
+                "q": "Dans le cadre du Page Object Model (POM), que représente généralement une classe ?",
+                "options": [
+                    { "text": "Une base de données SQL", "explain": "Faux. Le POM concerne l'interface utilisateur, pas le stockage de données persistant." },
+                    { "text": "Une page web spécifique ou un composant de l'interface", "explain": "Correct. Chaque page (Login, Panier, Profil) devient un objet manipulable par le test." },
+                    { "text": "Un seul cas de test (Test Case)", "explain": "Faux. Bien qu'un test puisse être une classe, dans le POM, la classe modélise l'application testée." },
+                    { "text": "Le rapport de test final au format HTML", "explain": "Faux. Le rapport est un résultat, pas une représentation de la page web." }
+                ],
+                "correct": 1,
+                "correctExplain": "Le POM transforme l'interface graphique en objets logiques. Cela permet de séparer la logique de test de la structure de la page."
+            },
+            {
+                "q": "Quel est le principal avantage du POM pour un ingénieur QA ?",
+                "options": [
+                    { "text": "Réduire le temps de chargement du navigateur", "explain": "Faux. Le POM n'accélère pas le navigateur, il organise mieux le code." },
+                    { "text": "Écrire du code sans utiliser aucune variable", "explain": "Faux. On utilise au contraire beaucoup d'attributs pour stocker les sélecteurs." },
+                    { "text": "Faciliter la maintenance : si un sélecteur change, on ne le modifie qu'à un seul endroit", "explain": "Correct. C'est l'atout majeur : la centralisation des sélecteurs et des actions par page." },
+                    { "text": "Permettre au client de lire le code Python directement", "explain": "Faux. Bien que le code soit plus clair, le but premier reste la maintenabilité technique." }
+                ],
+                "correct": 2,
+                "correctExplain": "Sans POM, un changement d'ID sur un bouton oblige à modifier tous les scripts. Avec POM, on ne modifie qu'une seule ligne dans la classe de la page concernée."
+            },
+            {
+                "q": "Si une classe 'Admin' hérite de 'Utilisateur', et que les deux ont une méthode 'login()', laquelle sera exécutée pour un objet Admin ?",
+                "options": [
+                    { "text": "Celle de 'Utilisateur' car elle est prioritaire", "explain": "Faux. Python cherche d'abord la méthode dans la classe de l'objet lui-même." },
+                    { "text": "Celle de 'Admin', car elle surcharge celle du parent", "explain": "Correct. La définition la plus proche de l'instance (celle de la classe fille) l'emporte." },
+                    { "text": "Les deux s'exécutent en même temps", "explain": "Faux. À moins d'utiliser explicitement super(), seule la version de la fille s'exécute." },
+                    { "text": "Le programme plante car il y a un conflit de nom", "explain": "Faux. C'est le principe même de la surcharge, ce n'est pas un conflit." }
+                ],
+                "correct": 1,
+                "correctExplain": "C'est le mécanisme de résolution des méthodes (MRO). Python exécute la version définie dans la sous-classe si elle existe."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let answers = new Array(questions.length).fill(null);
+        let answered = new Array(questions.length).fill(false);
+
+        function displayQuestion() {
+            const container = document.getElementById('quiz-container');
+            const item = questions[currentQuestion];
+
+            let html = `<div class="question">${currentQuestion + 1}. ${item.q}</div>`;
+            const letters = ['A', 'B', 'C', 'D'];
+            item.options.forEach((opt, i) => {
+                let classes = '';
+                if (answers[currentQuestion] === i) {
+                    classes = 'selected ';
+                    if (i === item.correct) {
+                        classes += 'correct';
+                    } else {
+                        classes += 'incorrect';
+                    }
+                }
+                const disabledClass = answered[currentQuestion] ? 'disabled' : '';
+                html += `<div class="option ${classes} ${disabledClass}" onclick="${answered[currentQuestion] ? '' : `handleAnswerClick(${i})`}" style="${answered[currentQuestion] ? 'cursor: not-allowed;' : ''}"><span class="option-letter">${letters[i]}</span> ${opt.text}</div>`;
+            });
+
+            container.innerHTML = html;
+
+            if (answered[currentQuestion]) {
+                showFeedback();
+            } else {
+                document.getElementById('feedback').innerHTML = '';
+                document.getElementById('feedback').classList.remove('show');
+            }
+
+            updateProgressBar();
+            updateNavigationButtons();
+            updateProgressInfo();
+        }
+
+        function handleAnswerClick(index) {
+            if (answered[currentQuestion]) return;
+
+            answers[currentQuestion] = index;
+            answered[currentQuestion] = true;
+
+            showFeedback();
+            updateProgressBar();
+            updateProgressInfo();
+            updateNavigationButtons();
+            displayQuestion();
+        }
+
+        function showFeedback() {
+            const feedbackDiv = document.getElementById('feedback');
+            const item = questions[currentQuestion];
+            const isCorrect = answers[currentQuestion] === item.correct;
+            const selectedOption = item.options[answers[currentQuestion]];
+
+            feedbackDiv.className = 'feedback-container show ' + (isCorrect ? 'feedback-correct' : 'feedback-incorrect');
+
+            let html = '';
+
+            if (isCorrect) {
+                html += `
+                    <div class="feedback-header">Bonne réponse!</div>
+                    <div class="feedback-explanation">${item.correctExplain}</div>
+                `;
+            } else {
+                html += `
+                    <div class="feedback-header">Pas tout à fait</div>
+                    <div class="feedback-explanation">${selectedOption.explain}</div>
+                    <div class="correct-answer-box">
+                        <div class="correct-answer-label">✓ Bonne réponse:</div>
+                        <div>${item.options[item.correct].text}</div>
+                        <div style="margin-top: 8px; font-size: 0.9em;">${item.correctExplain}</div>
+                    </div>
+                `;
+            }
+
+            feedbackDiv.innerHTML = html;
+        }
+
+        function updateProgressBar() {
+            const progressBar = document.getElementById('progressBar');
+            progressBar.innerHTML = '';
+
+            for (let i = 0; i < questions.length; i++) {
+                const segment = document.createElement('div');
+                segment.className = 'progress-segment';
+
+                if (!answered[i]) {
+                    segment.classList.add('unanswered');
+                } else if (answers[i] === questions[i].correct) {
+                    segment.classList.add('correct');
+                } else {
+                    segment.classList.add('incorrect');
+                }
+
+                progressBar.appendChild(segment);
+            }
+        }
+
+        function updateNavigationButtons() {
+            const isAnswered = answered[currentQuestion];
+            document.getElementById('prevBtn').disabled = currentQuestion === 0 || !isAnswered;
+            document.getElementById('nextBtn').disabled = !isAnswered;
+
+            if (currentQuestion === questions.length - 1) {
+                document.getElementById('nextBtn').textContent = 'Voir Résultat';
+            } else {
+                document.getElementById('nextBtn').textContent = 'Suivant →';
+            }
+        }
+
+        function updateProgressInfo() {
+            document.getElementById('question-counter').textContent = `Question ${currentQuestion + 1} / ${questions.length}`;
+
+            let correctCount = 0;
+            let incorrectCount = 0;
+
+            for (let i = 0; i < answers.length; i++) {
+                if (answered[i]) {
+                    if (answers[i] === questions[i].correct) {
+                        correctCount++;
+                    } else {
+                        incorrectCount++;
+                    }
+                }
+            }
+
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('incorrect-count').textContent = incorrectCount;
+        }
+
+        function nextQuestion() {
+            if (currentQuestion === questions.length - 1) {
+                showFinalResults();
+                return;
+            }
+
+            currentQuestion++;
+            displayQuestion();
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        function showFinalResults() {
+            let score = 0;
+            answers.forEach((answer, index) => {
+                if (answer === questions[index].correct) score++;
+            });
+
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '<div class="question">Quiz terminé!</div>';
+
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.className = 'feedback-container';
+            feedbackDiv.innerHTML = '';
+
+            let recapHtml = '<div class="recap-title">Résumé de vos réponses</div>';
+
+            questions.forEach((question, index) => {
+                const userAnswer = question.options[answers[index]];
+                const correctAnswer = question.options[question.correct];
+                const isCorrect = answers[index] === question.correct;
+
+                recapHtml += `
+                    <div class="recap-card ${isCorrect ? 'correct' : 'incorrect'}">
+                        <div class="recap-number">Question ${index + 1} / ${questions.length}</div>
+                        <div class="recap-question">${question.q}</div>
+                        <div class="recap-answer-item user">
+                            <span class="recap-label">Votre réponse:</span>
+                            ${userAnswer.text}
+                            <span class="recap-result ${isCorrect ? 'correct' : 'incorrect'}">
+                                ${isCorrect ? '✓ Correct' : '✗ Incorrect'}
+                            </span>
+                        </div>
+                        ${!isCorrect ? `
+                            <div class="recap-answer-item correct-answer">
+                                <span class="recap-label">Bonne réponse:</span>
+                                ${correctAnswer.text}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+
+            document.getElementById('result').innerHTML = `
+                <div style="font-size: 2em; margin: 30px 0 20px;">Votre score : ${score} / ${questions.length}</div>
+                <div style="font-size: 1.1em; color: #555; margin-bottom: 30px;">Réussite : ${Math.round(score / questions.length * 100)}%</div>
+                <div class="recap-container">${recapHtml}</div>
+            `;
+
+            document.getElementById('prevBtn').disabled = false;
+            document.getElementById('nextBtn').textContent = 'Recommencer';
+            document.getElementById('nextBtn').disabled = false;
+            document.getElementById('nextBtn').onclick = function() { location.reload(); };
+            document.getElementById('prevBtn').onclick = function() {
+                currentQuestion = questions.length - 1;
+                displayQuestion();
+            };
+        }
+
+        displayQuestion();
+    </script>
+</body>
+</html>
