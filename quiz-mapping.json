@@ -241,5 +241,13 @@
     "path": "cours/lsc-cicd/quiz-lsc-cicd-cours3.html",
     "createdAt": "2026-03-28T00:00:00Z",
     "questionsCount": 10
+  },
+  "t8v2x5z1": {
+    "course": "LSC-CICD",
+    "lesson": 4,
+    "title": "Gestion des exceptions, fichiers et JSON",
+    "path": "cours/lsc-cicd/quiz-lsc-cicd-cours4.html",
+    "createdAt": "2026-04-03T00:00:00Z",
+    "questionsCount": 5
   }
 }

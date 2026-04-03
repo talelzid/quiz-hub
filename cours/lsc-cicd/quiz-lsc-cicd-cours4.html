@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz - Cours 4</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <div class="global-course-title">Langage de script et chaînes d'intégration continue</div>
+    <h1>Quiz : Gestion des exceptions, fichiers et JSON (Cours 4)</h1>
+
+    <div class="progress-container">
+        <div class="progress-info">
+            <span id="question-counter">Question 1 / 5</span>
+            <div class="progress-stats">
+                <span class="stat-badge incorrect"><span class="stat-icon">✕</span><span id="incorrect-count">0</span></span>
+                <span class="stat-badge correct"><span class="stat-icon">✓</span><span id="correct-count">0</span></span>
+            </div>
+        </div>
+        <div class="progress-bar-wrapper" id="progressBar"></div>
+    </div>
+
+    <div id="quiz-container" class="card"></div>
+
+    <div id="feedback" class="feedback-container"></div>
+
+    <div class="quiz-navigation">
+        <button id="prevBtn" onclick="previousQuestion()">← Précédent</button>
+        <button id="nextBtn" onclick="nextQuestion()">Suivant →</button>
+    </div>
+
+    <div id="result"></div>
+
+    <script>
+        const questions = [
+            {
+                "q": "Quel est le rôle principal du bloc 'try' dans un script d'automatisation Python ?",
+                "options": [
+                    { "text": "Forcer l'exécution du code même si les variables sont mal nommées", "explain": "Faux. Le bloc 'try' ne corrige pas les erreurs de syntaxe ou de nommage ; il sert à encadrer du code dont l'exécution pourrait échouer à cause de facteurs externes ou de données imprévues." },
+                    { "text": "Isoler un bloc de code susceptible de provoquer une erreur pour en capturer l'exception", "explain": "Correct. Le bloc 'try' permet d'encadrer les opérations 'à risque' (comme l'ouverture d'un fichier ou un clic sur un élément Web) afin de pouvoir intercepter une éventuelle erreur sans que le script ne s'arrête brutalement." },
+                    { "text": "Accélérer la vitesse d'exécution des boucles de test", "explain": "Faux. La gestion des exceptions n'a aucun impact positif sur la performance brute ; au contraire, elle ajoute une légère couche de vérification logique pour la robustesse." },
+                    { "text": "Déclarer des variables globales utilisables dans tout le projet", "explain": "Faux. La portée des variables dans un bloc 'try' reste locale à la fonction ou au module. La déclaration globale se fait avec le mot-clé 'global'." }
+                ],
+                "correct": 1,
+                "correctExplain": "Le bloc 'try' est la première étape de la gestion des erreurs. Il permet de tester un bloc de code et, en cas d'anomalie, de passer le relais au bloc 'except' au lieu de laisser Python générer un crash (Traceback) qui interromprait l'automate."
+            },
+            {
+                "q": "Dans quel cas le bloc 'else' d'une structure de contrôle d'exception est-il exécuté ?",
+                "options": [
+                    { "text": "Systématiquement après le bloc 'finally'", "explain": "Faux. Le bloc 'finally' est toujours le dernier à s'exécuter. Le bloc 'else' se situe avant." },
+                    { "text": "Uniquement si une exception de type ValueError est survenue", "explain": "Faux. Si une exception survient, c'est le bloc 'except' qui prend le relais, et le bloc 'else' est ignoré." },
+                    { "text": "Uniquement si aucune exception n'a été levée dans le bloc 'try'", "explain": "Correct. Le bloc 'else' est utile pour placer du code qui ne doit s'exécuter que si l'opération dans le 'try' a été un succès total (par exemple, traiter les données d'un fichier seulement s'il a été ouvert sans erreur)." },
+                    { "text": "Lorsque le fichier de log est plein", "explain": "Faux. Le bloc 'else' dépend uniquement de la réussite du bloc 'try', pas de l'état du système de fichiers ou des logs." }
+                ],
+                "correct": 2,
+                "correctExplain": "Le bloc 'else' permet de séparer le code qui peut échouer (dans le try) du code qui doit suivre en cas de succès. Cela rend le script plus lisible en évitant de surcharger le bloc 'try' avec trop de logique."
+            },
+            {
+                "q": "Pourquoi privilégie-t-on 'with open()' plutôt que 'open()' suivi de 'close()' pour gérer les fichiers ?",
+                "options": [
+                    { "text": "Parce que 'with' crypte automatiquement les données du fichier", "explain": "Faux. 'with' ne gère absolument pas la sécurité ou le cryptage des données, seulement la gestion de la ressource système." },
+                    { "text": "Parce que 'with' garantit la fermeture du fichier même si une erreur survient pendant la lecture", "explain": "Correct. C'est ce qu'on appelle un 'Context Manager'. Il assure que le fichier est libéré par le système d'exploitation dès que l'on sort du bloc, évitant ainsi les fuites de mémoire ou les fichiers corrompus en cas de crash." },
+                    { "text": "Parce que cela permet d'ouvrir plusieurs fichiers sur des serveurs différents", "explain": "Faux. 'with open()' fonctionne localement. Pour des serveurs distants, d'autres bibliothèques seraient nécessaires." },
+                    { "text": "Parce que le mode 'with' est le seul compatible avec le format JSON", "explain": "Faux. On peut manipuler du JSON avec un simple open/close, mais c'est beaucoup moins sécuritaire pour l'intégrité des données." }
+                ],
+                "correct": 1,
+                "correctExplain": "L'utilisation de 'with open()' est une 'best practice' en Python. Elle élimine le risque d'oublier de fermer un fichier (f.close()), ce qui est crucial dans des tests automatisés qui manipulent des centaines de rapports ou de fichiers de données."
+            },
+            {
+                "q": "Que se passe-t-il si vous ouvrez un fichier en mode 'w' (write) alors qu'il contient déjà du texte ?",
+                "options": [
+                    { "text": "Le nouveau texte est ajouté à la fin du fichier sans rien effacer", "explain": "Faux. C'est le comportement du mode 'a' (append). Le mode 'w' fonctionne différemment." },
+                    { "text": "Le contenu existant est intégralement supprimé et remplacé par le nouveau", "explain": "Correct. Le mode 'w' réinitialise le fichier. S'il n'existe pas, il le crée ; s'il existe, il l'écrase." },
+                    { "text": "Python lève une exception 'FileExistsError'", "explain": "Faux. 'w' n'échoue pas si le fichier existe déjà, il l'écrase simplement sans demander de confirmation." },
+                    { "text": "Le fichier passe en mode lecture seule", "explain": "Faux. Le mode lecture seule est 'r'. Le mode 'w' donne les pleins pouvoirs d'écriture." }
+                ],
+                "correct": 1,
+                "correctExplain": "En automatisation QA, le mode 'w' est souvent utilisé pour générer un nouveau rapport de test vierge. Pour tenir un journal de bord (log) sur plusieurs jours, on préférera le mode 'a' pour conserver l'historique."
+            },
+            {
+                "q": "Quelle est la principale différence entre json.load() et json.loads() ?",
+                "options": [
+                    { "text": "json.load() lit depuis un fichier, json.loads() lit depuis une chaîne de caractères (string)", "explain": "Correct. Le 's' dans 'loads' signifie 'string'. On utilise 'load' pour un fichier ouvert sur le disque et 'loads' pour traiter du texte JSON reçu, par exemple, via une API." },
+                    { "text": "json.load() est plus rapide que json.loads()", "explain": "Faux. La vitesse dépend de la taille des données, pas de la méthode choisie." },
+                    { "text": "json.loads() permet d'écrire des données, alors que json.load() ne fait que lire", "explain": "Faux. Les deux servent uniquement à la lecture (désérialisation). Pour l'écriture, on utilise 'dump' ou 'dumps'." },
+                    { "text": "json.load() est réservé aux dictionnaires et json.loads() aux listes", "explain": "Faux. Les deux peuvent transformer du JSON en dictionnaires ou en listes Python selon la structure d'origine." }
+                ],
+                "correct": 0,
+                "correctExplain": "Cette distinction est essentielle : 'load' prend un objet fichier en argument (issu de open), tandis que 'loads' prend directement du texte entre guillemets. En QA, 'load' est très utilisé pour charger des fichiers de configuration."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let answers = new Array(questions.length).fill(null);
+        let answered = new Array(questions.length).fill(false);
+
+        function displayQuestion() {
+            const container = document.getElementById('quiz-container');
+            const item = questions[currentQuestion];
+
+            let html = `<div class="question">${currentQuestion + 1}. ${item.q}</div>`;
+            const letters = ['A', 'B', 'C', 'D'];
+            item.options.forEach((opt, i) => {
+                let classes = '';
+                if (answers[currentQuestion] === i) {
+                    classes = 'selected ';
+                    if (i === item.correct) {
+                        classes += 'correct';
+                    } else {
+                        classes += 'incorrect';
+                    }
+                }
+                const disabledClass = answered[currentQuestion] ? 'disabled' : '';
+                html += `<div class="option ${classes} ${disabledClass}" onclick="${answered[currentQuestion] ? '' : `handleAnswerClick(${i})`}" style="${answered[currentQuestion] ? 'cursor: not-allowed;' : ''}"><span class="option-letter">${letters[i]}</span> ${opt.text}</div>`;
+            });
+
+            container.innerHTML = html;
+
+            if (answered[currentQuestion]) {
+                showFeedback();
+            } else {
+                document.getElementById('feedback').innerHTML = '';
+                document.getElementById('feedback').classList.remove('show');
+            }
+
+            updateProgressBar();
+            updateNavigationButtons();
+            updateProgressInfo();
+        }
+
+        function handleAnswerClick(index) {
+            if (answered[currentQuestion]) return;
+
+            answers[currentQuestion] = index;
+            answered[currentQuestion] = true;
+
+            showFeedback();
+            updateProgressBar();
+            updateProgressInfo();
+            updateNavigationButtons();
+            displayQuestion();
+        }
+
+        function showFeedback() {
+            const feedbackDiv = document.getElementById('feedback');
+            const item = questions[currentQuestion];
+            const isCorrect = answers[currentQuestion] === item.correct;
+            const selectedOption = item.options[answers[currentQuestion]];
+
+            feedbackDiv.className = 'feedback-container show ' + (isCorrect ? 'feedback-correct' : 'feedback-incorrect');
+
+            let html = '';
+
+            if (isCorrect) {
+                html += `
+                    <div class="feedback-header">Bonne réponse!</div>
+                    <div class="feedback-explanation">${item.correctExplain}</div>
+                `;
+            } else {
+                html += `
+                    <div class="feedback-header">Pas tout à fait</div>
+                    <div class="feedback-explanation">${selectedOption.explain}</div>
+                    <div class="correct-answer-box">
+                        <div class="correct-answer-label">✓ Bonne réponse:</div>
+                        <div>${item.options[item.correct].text}</div>
+                        <div style="margin-top: 8px; font-size: 0.9em;">${item.correctExplain}</div>
+                    </div>
+                `;
+            }
+
+            feedbackDiv.innerHTML = html;
+        }
+
+        function updateProgressBar() {
+            const progressBar = document.getElementById('progressBar');
+            progressBar.innerHTML = '';
+
+            for (let i = 0; i < questions.length; i++) {
+                const segment = document.createElement('div');
+                segment.className = 'progress-segment';
+
+                if (!answered[i]) {
+                    segment.classList.add('unanswered');
+                } else if (answers[i] === questions[i].correct) {
+                    segment.classList.add('correct');
+                } else {
+                    segment.classList.add('incorrect');
+                }
+
+                progressBar.appendChild(segment);
+            }
+        }
+
+        function updateNavigationButtons() {
+            const isAnswered = answered[currentQuestion];
+            document.getElementById('prevBtn').disabled = currentQuestion === 0 || !isAnswered;
+            document.getElementById('nextBtn').disabled = !isAnswered;
+
+            if (currentQuestion === questions.length - 1) {
+                document.getElementById('nextBtn').textContent = 'Voir Résultat';
+            } else {
+                document.getElementById('nextBtn').textContent = 'Suivant →';
+            }
+        }
+
+        function updateProgressInfo() {
+            document.getElementById('question-counter').textContent = `Question ${currentQuestion + 1} / ${questions.length}`;
+
+            let correctCount = 0;
+            let incorrectCount = 0;
+
+            for (let i = 0; i < answers.length; i++) {
+                if (answered[i]) {
+                    if (answers[i] === questions[i].correct) {
+                        correctCount++;
+                    } else {
+                        incorrectCount++;
+                    }
+                }
+            }
+
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('incorrect-count').textContent = incorrectCount;
+        }
+
+        function nextQuestion() {
+            if (currentQuestion === questions.length - 1) {
+                showFinalResults();
+                return;
+            }
+
+            currentQuestion++;
+            displayQuestion();
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        function showFinalResults() {
+            let score = 0;
+            answers.forEach((answer, index) => {
+                if (answer === questions[index].correct) score++;
+            });
+
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '<div class="question">Quiz terminé!</div>';
+
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.className = 'feedback-container';
+            feedbackDiv.innerHTML = '';
+
+            let recapHtml = '<div class="recap-title">Résumé de vos réponses</div>';
+
+            questions.forEach((question, index) => {
+                const userAnswer = question.options[answers[index]];
+                const correctAnswer = question.options[question.correct];
+                const isCorrect = answers[index] === question.correct;
+
+                recapHtml += `
+                    <div class="recap-card ${isCorrect ? 'correct' : 'incorrect'}">
+                        <div class="recap-number">Question ${index + 1} / ${questions.length}</div>
+                        <div class="recap-question">${question.q}</div>
+                        <div class="recap-answer-item user">
+                            <span class="recap-label">Votre réponse:</span>
+                            ${userAnswer.text}
+                            <span class="recap-result ${isCorrect ? 'correct' : 'incorrect'}">
+                                ${isCorrect ? '✓ Correct' : '✗ Incorrect'}
+                            </span>
+                        </div>
+                        ${!isCorrect ? `
+                            <div class="recap-answer-item correct-answer">
+                                <span class="recap-label">Bonne réponse:</span>
+                                ${correctAnswer.text}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+
+            document.getElementById('result').innerHTML = `
+                <div style="font-size: 2em; margin: 30px 0 20px;">Votre score : ${score} / ${questions.length}</div>
+                <div style="font-size: 1.1em; color: #555; margin-bottom: 30px;">Réussite : ${Math.round(score / questions.length * 100)}%</div>
+                <div class="recap-container">${recapHtml}</div>
+            `;
+
+            document.getElementById('prevBtn').disabled = false;
+            document.getElementById('nextBtn').textContent = 'Recommencer';
+            document.getElementById('nextBtn').disabled = false;
+            document.getElementById('nextBtn').onclick = function() { location.reload(); };
+            document.getElementById('prevBtn').onclick = function() {
+                currentQuestion = questions.length - 1;
+                displayQuestion();
+            };
+        }
+
+        displayQuestion();
+    </script>
+</body>
+</html>
