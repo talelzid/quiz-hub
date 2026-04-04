@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz - Cours 5</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <div class="global-course-title">Langage de script et chaînes d'intégration continue</div>
+    <h1>Quiz : Environnement Python et tests avec Pytest (Cours 5)</h1>
+
+    <div class="progress-container">
+        <div class="progress-info">
+            <span id="question-counter">Question 1 / 10</span>
+            <div class="progress-stats">
+                <span class="stat-badge incorrect"><span class="stat-icon">✕</span><span id="incorrect-count">0</span></span>
+                <span class="stat-badge correct"><span class="stat-icon">✓</span><span id="correct-count">0</span></span>
+            </div>
+        </div>
+        <div class="progress-bar-wrapper" id="progressBar"></div>
+    </div>
+
+    <div id="quiz-container" class="card"></div>
+
+    <div id="feedback" class="feedback-container"></div>
+
+    <div class="quiz-navigation">
+        <button id="prevBtn" onclick="previousQuestion()">← Précédent</button>
+        <button id="nextBtn" onclick="nextQuestion()">Suivant →</button>
+    </div>
+
+    <div id="result"></div>
+
+    <script>
+        const questions = [
+            {
+                "q": "Quelle est la raison principale d'utiliser un environnement virtuel (venv) pour un projet de test Python ?",
+                "options": [
+                    { "text": "Augmenter la vitesse d'exécution des tests unitaires", "explain": "Faux. Un environnement virtuel n'améliore pas les performances brutes du code Python." },
+                    { "text": "Isoler les dépendances du projet pour éviter les conflits de versions entre différents projets", "explain": "Correct. Le venv permet de créer une 'bulle' où l'on installe des versions spécifiques de bibliothèques (ex: Selenium 4.0) sans affecter les autres projets de la machine." },
+                    { "text": "Compiler le code Python en langage machine pour le protéger", "explain": "Faux. Python reste un langage interprété ; le venv ne change pas la nature du code, il gère uniquement les bibliothèques externes." },
+                    { "text": "Remplacer l'utilisation du fichier requirements.txt", "explain": "Faux. Le venv et le fichier requirements.txt sont complémentaires : l'un est le contenant, l'autre est la liste du contenu." }
+                ],
+                "correct": 1,
+                "correctExplain": "L'isolation est la clé de l'industrialisation. Elle garantit qu'un projet de test reste stable et reproductible, peu importe les mises à jour effectuées sur le système global."
+            },
+            {
+                "q": "À quel élément du monde Java/Maven peut-on comparer le fichier 'requirements.txt' de Python ?",
+                "options": [
+                    { "text": "Au fichier settings.xml", "explain": "Faux. settings.xml gère la configuration globale de Maven, pas les dépendances spécifiques d'un projet." },
+                    { "text": "Au Java Runtime Environment (JRE)", "explain": "Faux. Le JRE est l'équivalent de l'interpréteur Python lui-même, pas d'une liste de bibliothèques." },
+                    { "text": "Au fichier pom.xml", "explain": "Correct. Bien que moins verbeux, le requirements.txt remplit la fonction de 'contrat' listant toutes les dépendances nécessaires au projet." },
+                    { "text": "À une archive .JAR", "explain": "Faux. Un .JAR est un package compilé, alors que le requirements.txt est un simple fichier texte de configuration." }
+                ],
+                "correct": 2,
+                "correctExplain": "Le requirements.txt agit comme le manifeste du projet. Il permet à n'importe quel collaborateur de reconstruire l'environnement de test à l'identique avec une seule commande pip."
+            },
+            {
+                "q": "Quelle commande permet d'installer toutes les bibliothèques listées dans un fichier de configuration ?",
+                "options": [
+                    { "text": "pip list --all", "explain": "Faux. Cette commande affiche uniquement les paquets déjà installés sur la machine." },
+                    { "text": "python install requirements.txt", "explain": "Faux. La syntaxe est incorrecte ; il faut utiliser l'outil pip." },
+                    { "text": "pip install -r requirements.txt", "explain": "Correct. L'option -r (recursive) indique à pip de lire le fichier texte et d'installer chaque ligne successivement." },
+                    { "text": "pytest --install-deps", "explain": "Faux. Pytest est un moteur de test, il ne gère pas l'installation des paquets système." }
+                ],
+                "correct": 2,
+                "correctExplain": "C'est la commande standard pour l'industrialisation. Elle est souvent intégrée dans les pipelines de CI/CD (Jenkins, GitLab CI) pour préparer l'environnement avant les tests."
+            },
+            {
+                "q": "Comment Pytest identifie-t-il automatiquement les fichiers de tests dans un projet ?",
+                "options": [
+                    { "text": "En analysant les commentaires en début de fichier", "explain": "Faux. Pytest ne lit pas les commentaires pour décider d'exécuter ou non un script." },
+                    { "text": "Grâce à une liste de fichiers déclarée manuellement dans le fichier conftest.py", "explain": "Faux. Pytest utilise la 'Test Discovery' automatique basée sur le nommage." },
+                    { "text": "En cherchant les fichiers dont le nom commence par 'test_' ou finit par '_test.py'", "explain": "Correct. C'est la convention standard de Pytest pour séparer le code applicatif du code de test." },
+                    { "text": "Il exécute tous les fichiers .py présents dans le dossier racine", "explain": "Faux. Heureusement, sinon il tenterait d'exécuter les scripts de l'application comme s'il s'agissait de tests." }
+                ],
+                "correct": 2,
+                "correctExplain": "La convention de nommage (test_*.py) est cruciale. Elle permet d'organiser son projet de manière logique sans avoir à configurer manuellement chaque nouveau fichier de test."
+            },
+            {
+                "q": "Quel est l'avantage principal des 'Fixtures' par rapport à une simple fonction d'initialisation ?",
+                "options": [
+                    { "text": "Elles permettent de crypter les données sensibles", "explain": "Faux. Les fixtures gèrent le cycle de vie des données, pas leur sécurité ou leur cryptage." },
+                    { "text": "Elles sont injectées automatiquement par Pytest et peuvent avoir différentes portées (scope)", "explain": "Correct. Une fixture peut être définie une fois pour tout un module ou pour chaque test, évitant ainsi la répétition de code (DRY)." },
+                    { "text": "Elles remplacent l'utilisation des assertions", "explain": "Faux. Les fixtures préparent le terrain (Setup), mais vous avez toujours besoin d'assertions pour valider le résultat." },
+                    { "text": "Elles obligent le script à s'arrêter dès qu'une erreur survient", "explain": "Faux. C'est le rôle des exceptions ou du mode 'fail-fast', pas des fixtures." }
+                ],
+                "correct": 1,
+                "correctExplain": "Les fixtures permettent une gestion propre du 'Setup' et du 'Teardown'. On peut par exemple ouvrir une base de données au début du module et la fermer automatiquement à la fin."
+            },
+            {
+                "q": "Pourquoi la paramétrisation (@pytest.mark.parametrize) est-elle préférée à une boucle 'for' à l'intérieur d'un test ?",
+                "options": [
+                    { "text": "Parce qu'elle réduit le temps de calcul du processeur", "explain": "Faux. L'impact sur la performance CPU est négligeable." },
+                    { "text": "Parce qu'elle permet d'isoler chaque jeu de données : si un cas échoue, les autres continuent d'être testés", "explain": "Correct. Contrairement à une boucle 'for', Pytest traite chaque ligne de paramètres comme un test indépendant dans le rapport final." },
+                    { "text": "Parce qu'elle permet de masquer les erreurs aux développeurs", "explain": "Faux. Au contraire, elle offre une visibilité beaucoup plus précise sur l'origine exacte de l'échec." },
+                    { "text": "Parce qu'elle est compatible avec Java et C#", "explain": "Faux. C'est une fonctionnalité spécifique au framework Pytest (bien que des concepts similaires existent ailleurs)." }
+                ],
+                "correct": 1,
+                "correctExplain": "C'est le fondement du 'Data-Driven Testing'. Cela transforme un seul script en une véritable suite de tests robuste capable de valider des dizaines de scénarios en une exécution."
+            },
+            {
+                "q": "Quel est le rôle du fichier spécial 'conftest.py' ?",
+                "options": [
+                    { "text": "Stocker les mots de passe des bases de données", "explain": "Faux. Bien qu'il puisse contenir des configurations, il ne doit jamais servir à stocker des secrets en clair." },
+                    { "text": "Servir de réservoir central de fixtures partagées pour tout un dossier ou projet", "explain": "Correct. Les fixtures définies dans conftest.py sont accessibles à tous les fichiers de tests sans besoin d'importation explicite." },
+                    { "text": "Générer automatiquement le rapport HTML final", "explain": "Faux. C'est le plugin pytest-html qui s'en charge via la ligne de commande." },
+                    { "text": "Vérifier la syntaxe du code source de l'application", "explain": "Faux. C'est le rôle des outils de 'linting' (comme Pylint ou Flake8)." }
+                ],
+                "correct": 1,
+                "correctExplain": "Le conftest.py permet de centraliser la logique de test. C'est l'endroit idéal pour définir des fixtures globales comme l'URL de l'environnement de staging ou les tokens d'authentification."
+            },
+            {
+                "q": "Dans la commande 'pytest --html=report.html', à quoi sert la partie après le signe égal ?",
+                "options": [
+                    { "text": "C'est le nom de la fonction de test à exécuter en priorité", "explain": "Faux. Le nom des tests ne se définit pas de cette manière dans la ligne de commande." },
+                    { "text": "C'est le nom du fichier de sortie où sera généré le rapport visuel", "explain": "Correct. On indique ainsi à Pytest où enregistrer le résultat de l'exécution au format HTML." },
+                    { "text": "C'est le mot de passe pour accéder au tableau de bord", "explain": "Faux. Il n'y a pas de système d'authentification natif dans la génération de rapport HTML simple de Pytest." },
+                    { "text": "C'est l'URL du serveur distant où envoyer les résultats", "explain": "Faux. La commande génère un fichier local sur votre machine." }
+                ],
+                "correct": 1,
+                "correctExplain": "Le rapport HTML est l'outil de communication indispensable du QA. Il permet de partager les résultats de manière lisible avec les chefs de projet ou les développeurs."
+            },
+            {
+                "q": "Si une fixture a un scope='session', combien de fois sera-t-elle exécutée ?",
+                "options": [
+                    { "text": "Une fois par fonction de test", "explain": "Faux. C'est le comportement par défaut (scope='function')." },
+                    { "text": "Une seule fois pour toute la durée de l'exécution de la suite de tests", "explain": "Correct. C'est idéal pour des opérations lourdes comme le démarrage d'un navigateur ou la connexion à une API globale." },
+                    { "text": "Une fois par fichier (.py)", "explain": "Faux. Ce comportement correspond au scope='module'." },
+                    { "text": "Elle ne sera jamais exécutée, elle est purement informative", "explain": "Faux. Une fixture est faite pour être exécutée afin de fournir des données ou un état." }
+                ],
+                "correct": 1,
+                "correctExplain": "Le choix du 'scope' est une question d'optimisation. Utiliser le scope session permet de gagner énormément de temps sur des suites de tests comprenant des centaines de cas."
+            },
+            {
+                "q": "Quelle instruction Pytest permet de vérifier qu'une exception spécifique est bien levée par le code ?",
+                "options": [
+                    { "text": "pytest.expect(Error)", "explain": "Faux. Cette syntaxe n'existe pas dans Pytest." },
+                    { "text": "assert Exception == True", "explain": "Faux. On ne peut pas comparer une exception à un booléen de cette manière." },
+                    { "text": "with pytest.raises(NomDeLException):", "explain": "Correct. Ce gestionnaire de contexte permet de valider le comportement négatif de l'application (ex: vérifier qu'une erreur 404 est bien générée)." },
+                    { "text": "try: ... except: pass", "explain": "Faux. Bien que ce soit du Python valide, cela 'étouffe' l'erreur au lieu de vérifier qu'elle s'est bien produite pour le test." }
+                ],
+                "correct": 2,
+                "correctExplain": "Un bon testeur ne teste pas seulement les succès (Happy Path). Il doit aussi garantir que l'application réagit correctement et proprement face aux erreurs prévues."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let answers = new Array(questions.length).fill(null);
+        let answered = new Array(questions.length).fill(false);
+
+        function displayQuestion() {
+            const container = document.getElementById('quiz-container');
+            const item = questions[currentQuestion];
+
+            let html = `<div class="question">${currentQuestion + 1}. ${item.q}</div>`;
+            const letters = ['A', 'B', 'C', 'D'];
+            item.options.forEach((opt, i) => {
+                let classes = '';
+                if (answers[currentQuestion] === i) {
+                    classes = 'selected ';
+                    if (i === item.correct) {
+                        classes += 'correct';
+                    } else {
+                        classes += 'incorrect';
+                    }
+                }
+                const disabledClass = answered[currentQuestion] ? 'disabled' : '';
+                html += `<div class="option ${classes} ${disabledClass}" onclick="${answered[currentQuestion] ? '' : `handleAnswerClick(${i})`}" style="${answered[currentQuestion] ? 'cursor: not-allowed;' : ''}"><span class="option-letter">${letters[i]}</span> ${opt.text}</div>`;
+            });
+
+            container.innerHTML = html;
+
+            if (answered[currentQuestion]) {
+                showFeedback();
+            } else {
+                document.getElementById('feedback').innerHTML = '';
+                document.getElementById('feedback').classList.remove('show');
+            }
+
+            updateProgressBar();
+            updateNavigationButtons();
+            updateProgressInfo();
+        }
+
+        function handleAnswerClick(index) {
+            if (answered[currentQuestion]) return;
+
+            answers[currentQuestion] = index;
+            answered[currentQuestion] = true;
+
+            showFeedback();
+            updateProgressBar();
+            updateProgressInfo();
+            updateNavigationButtons();
+            displayQuestion();
+        }
+
+        function showFeedback() {
+            const feedbackDiv = document.getElementById('feedback');
+            const item = questions[currentQuestion];
+            const isCorrect = answers[currentQuestion] === item.correct;
+            const selectedOption = item.options[answers[currentQuestion]];
+
+            feedbackDiv.className = 'feedback-container show ' + (isCorrect ? 'feedback-correct' : 'feedback-incorrect');
+
+            let html = '';
+
+            if (isCorrect) {
+                html += `
+                    <div class="feedback-header">Bonne réponse!</div>
+                    <div class="feedback-explanation">${item.correctExplain}</div>
+                `;
+            } else {
+                html += `
+                    <div class="feedback-header">Pas tout à fait</div>
+                    <div class="feedback-explanation">${selectedOption.explain}</div>
+                    <div class="correct-answer-box">
+                        <div class="correct-answer-label">✓ Bonne réponse:</div>
+                        <div>${item.options[item.correct].text}</div>
+                        <div style="margin-top: 8px; font-size: 0.9em;">${item.correctExplain}</div>
+                    </div>
+                `;
+            }
+
+            feedbackDiv.innerHTML = html;
+        }
+
+        function updateProgressBar() {
+            const progressBar = document.getElementById('progressBar');
+            progressBar.innerHTML = '';
+
+            for (let i = 0; i < questions.length; i++) {
+                const segment = document.createElement('div');
+                segment.className = 'progress-segment';
+
+                if (!answered[i]) {
+                    segment.classList.add('unanswered');
+                } else if (answers[i] === questions[i].correct) {
+                    segment.classList.add('correct');
+                } else {
+                    segment.classList.add('incorrect');
+                }
+
+                progressBar.appendChild(segment);
+            }
+        }
+
+        function updateNavigationButtons() {
+            const isAnswered = answered[currentQuestion];
+            document.getElementById('prevBtn').disabled = currentQuestion === 0 || !isAnswered;
+            document.getElementById('nextBtn').disabled = !isAnswered;
+
+            if (currentQuestion === questions.length - 1) {
+                document.getElementById('nextBtn').textContent = 'Voir Résultat';
+            } else {
+                document.getElementById('nextBtn').textContent = 'Suivant →';
+            }
+        }
+
+        function updateProgressInfo() {
+            document.getElementById('question-counter').textContent = `Question ${currentQuestion + 1} / ${questions.length}`;
+
+            let correctCount = 0;
+            let incorrectCount = 0;
+
+            for (let i = 0; i < answers.length; i++) {
+                if (answered[i]) {
+                    if (answers[i] === questions[i].correct) {
+                        correctCount++;
+                    } else {
+                        incorrectCount++;
+                    }
+                }
+            }
+
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('incorrect-count').textContent = incorrectCount;
+        }
+
+        function nextQuestion() {
+            if (currentQuestion === questions.length - 1) {
+                showFinalResults();
+                return;
+            }
+
+            currentQuestion++;
+            displayQuestion();
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        function showFinalResults() {
+            let score = 0;
+            answers.forEach((answer, index) => {
+                if (answer === questions[index].correct) score++;
+            });
+
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '<div class="question">Quiz terminé!</div>';
+
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.className = 'feedback-container';
+            feedbackDiv.innerHTML = '';
+
+            let recapHtml = '<div class="recap-title">Résumé de vos réponses</div>';
+
+            questions.forEach((question, index) => {
+                const userAnswer = question.options[answers[index]];
+                const correctAnswer = question.options[question.correct];
+                const isCorrect = answers[index] === question.correct;
+
+                recapHtml += `
+                    <div class="recap-card ${isCorrect ? 'correct' : 'incorrect'}">
+                        <div class="recap-number">Question ${index + 1} / ${questions.length}</div>
+                        <div class="recap-question">${question.q}</div>
+                        <div class="recap-answer-item user">
+                            <span class="recap-label">Votre réponse:</span>
+                            ${userAnswer.text}
+                            <span class="recap-result ${isCorrect ? 'correct' : 'incorrect'}">
+                                ${isCorrect ? '✓ Correct' : '✗ Incorrect'}
+                            </span>
+                        </div>
+                        ${!isCorrect ? `
+                            <div class="recap-answer-item correct-answer">
+                                <span class="recap-label">Bonne réponse:</span>
+                                ${correctAnswer.text}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+
+            document.getElementById('result').innerHTML = `
+                <div style="font-size: 2em; margin: 30px 0 20px;">Votre score : ${score} / ${questions.length}</div>
+                <div style="font-size: 1.1em; color: #555; margin-bottom: 30px;">Réussite : ${Math.round(score / questions.length * 100)}%</div>
+                <div class="recap-container">${recapHtml}</div>
+            `;
+
+            document.getElementById('prevBtn').disabled = false;
+            document.getElementById('nextBtn').textContent = 'Recommencer';
+            document.getElementById('nextBtn').disabled = false;
+            document.getElementById('nextBtn').onclick = function() { location.reload(); };
+            document.getElementById('prevBtn').onclick = function() {
+                currentQuestion = questions.length - 1;
+                displayQuestion();
+            };
+        }
+
+        displayQuestion();
+    </script>
+</body>
+</html>

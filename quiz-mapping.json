@@ -249,5 +249,13 @@
     "path": "cours/lsc-cicd/quiz-lsc-cicd-cours4.html",
     "createdAt": "2026-04-03T00:00:00Z",
     "questionsCount": 5
+  },
+  "v5p8n2k4": {
+    "course": "LSC-CICD",
+    "lesson": 5,
+    "title": "Environnement Python et tests avec Pytest",
+    "path": "cours/lsc-cicd/quiz-lsc-cicd-cours5.html",
+    "createdAt": "2026-04-04T00:00:00Z",
+    "questionsCount": 10
   }
 }
