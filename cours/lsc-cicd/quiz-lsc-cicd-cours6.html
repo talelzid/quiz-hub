@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz - Cours 6</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <div class="global-course-title">Langage de script et chaînes d'intégration continue</div>
+    <h1>Quiz : Automatisation des tests avec Selenium (Cours 6)</h1>
+
+    <div class="progress-container">
+        <div class="progress-info">
+            <span id="question-counter">Question 1 / 10</span>
+            <div class="progress-stats">
+                <span class="stat-badge incorrect"><span class="stat-icon">✕</span><span id="incorrect-count">0</span></span>
+                <span class="stat-badge correct"><span class="stat-icon">✓</span><span id="correct-count">0</span></span>
+            </div>
+        </div>
+        <div class="progress-bar-wrapper" id="progressBar"></div>
+    </div>
+
+    <div id="quiz-container" class="card"></div>
+
+    <div id="feedback" class="feedback-container"></div>
+
+    <div class="quiz-navigation">
+        <button id="prevBtn" onclick="previousQuestion()">← Précédent</button>
+        <button id="nextBtn" onclick="nextQuestion()">Suivant →</button>
+    </div>
+
+    <div id="result"></div>
+
+    <script>
+        const questions = [
+            {
+                "q": "Quel est le rôle du 'WebDriver' dans l'architecture Selenium ?",
+                "options": [
+                    { "text": "Compiler le code Python en langage binaire", "explain": "Faux. Python est un langage interprété, le WebDriver n'intervient pas dans la compilation." },
+                    { "text": "Servir de pont entre le script Python et le navigateur spécifique", "explain": "Correct. Le WebDriver traduit les commandes Selenium en instructions compréhensibles par le moteur du navigateur (Chrome, Firefox, etc.)." },
+                    { "text": "Stocker les captures d'écran des tests échoués", "explain": "Faux. Le stockage des fichiers est géré par le script Python ou le framework de test, pas par le driver lui-même." },
+                    { "text": "Remplacer le besoin d'installer un navigateur sur la machine", "explain": "Faux. Selenium a besoin qu'un vrai navigateur soit installé ; le WebDriver ne fait que le piloter." }
+                ],
+                "correct": 1,
+                "correctExplain": "Le WebDriver est l'exécutable intermédiaire indispensable. Sans lui, Python ne possède aucun moyen de communiquer avec l'interface du navigateur."
+            },
+            {
+                "q": "Pourquoi privilégie-t-on le mot-clé 'yield' au lieu de 'return' dans une fixture de driver ?",
+                "options": [
+                    { "text": "Pour que le test s'exécute plus rapidement", "explain": "Faux. 'yield' n'a pas d'impact sur la vitesse de calcul pure." },
+                    { "text": "Pour permettre l'exécution du code de nettoyage (Teardown) après le test", "explain": "Correct. 'yield' met la fixture en pause, laisse le test s'exécuter, puis reprend pour fermer le navigateur proprement." },
+                    { "text": "Parce que Selenium ne reconnaît pas le mot-clé 'return'", "explain": "Faux. C'est une fonctionnalité de Pytest pour la gestion du cycle de vie, indépendante de Selenium." },
+                    { "text": "Pour crypter les identifiants de connexion", "explain": "Faux. Le 'yield' gère le flux d'exécution, pas la sécurité des données." }
+                ],
+                "correct": 1,
+                "correctExplain": "L'utilisation de 'yield' garantit que le navigateur sera fermé (browser.quit()) même si le test échoue, évitant ainsi de saturer la mémoire RAM du serveur de test."
+            },
+            {
+                "q": "Quelle stratégie de localisation (By) est considérée comme la plus stable en QA ?",
+                "options": [
+                    { "text": "By.TAG_NAME", "explain": "Faux. Les balises (div, p, h1) sont trop nombreuses et génériques pour garantir un ciblage précis." },
+                    { "text": "By.XPATH (Absolu)", "explain": "Faux. Le XPath absolu casse à la moindre modification de la structure HTML de la page." },
+                    { "text": "By.ID", "explain": "Correct. L'ID est théoriquement unique dans une page HTML, ce qui en fait l'identifiant le plus fiable pour l'automatisation." },
+                    { "text": "By.CLASS_NAME", "explain": "Faux. Une classe CSS est souvent partagée par plusieurs éléments (ex: tous les boutons d'une liste)." }
+                ],
+                "correct": 2,
+                "correctExplain": "En automatisation, l'ordre de priorité est généralement : ID > Name > CSS Selector > XPath. L'ID est l'ancre la plus solide face aux changements graphiques."
+            },
+            {
+                "q": "Que fait la méthode 'send_keys()' sur un élément Web ?",
+                "options": [
+                    { "text": "Elle envoie une capture d'écran par courriel", "explain": "Faux. Pour les captures, on utilise 'save_screenshot'." },
+                    { "text": "Elle simule la saisie de texte au clavier dans un champ", "explain": "Correct. Elle permet de remplir des formulaires ou de simuler des touches spéciales comme Entrée." },
+                    { "text": "Elle modifie la couleur de l'élément à l'écran", "explain": "Faux. Selenium interagit avec les éléments mais ne modifie pas le code CSS source." },
+                    { "text": "Elle déplace le curseur de la souris sur l'élément", "explain": "Faux. Pour cela, on utilise la classe 'ActionChains'." }
+                ],
+                "correct": 1,
+                "correctExplain": "'send_keys' est l'action de base pour interagir avec les inputs. Elle peut aussi être utilisée pour envoyer des combinaisons de touches (Keys.CONTROL + 'a')."
+            },
+            {
+                "q": "Quelle classe Selenium facilite la manipulation des menus déroulants <select> ?",
+                "options": [
+                    { "text": "DropdownHandler", "explain": "Faux. Cette classe n'existe pas dans la bibliothèque standard Selenium." },
+                    { "text": "ListManager", "explain": "Faux. Terme générique incorrect." },
+                    { "text": "Select", "explain": "Correct. La classe 'Select' offre des méthodes dédiées comme select_by_visible_text() pour interagir proprement avec les listes HTML." },
+                    { "text": "ClickOptions", "explain": "Faux. Ce n'est pas une classe Selenium." }
+                ],
+                "correct": 2,
+                "correctExplain": "La classe Select permet d'éviter de devoir cliquer sur la liste puis de rechercher l'option manuellement. Elle rend le code plus lisible et robuste."
+            },
+            {
+                "q": "Pourquoi l'utilisation de 'time.sleep()' est-elle déconseillée en automatisation professionnelle ?",
+                "options": [
+                    { "text": "Elle provoque la déconnexion immédiate du navigateur", "explain": "Faux. Elle met simplement le script en pause." },
+                    { "text": "Elle est 'aveugle' : elle attend inutilement même si l'élément est déjà là", "explain": "Correct. C'est une attente statique qui ralentit inutilement les suites de tests et manque de flexibilité." },
+                    { "text": "Elle ne fonctionne que sur le système Windows", "explain": "Faux. 'time.sleep()' est une fonction native de Python qui fonctionne partout." },
+                    { "text": "Elle nécessite une licence payante de Selenium", "explain": "Faux. Selenium est totalement gratuit." }
+                ],
+                "correct": 1,
+                "correctExplain": "On préfère les 'Explicit Waits' qui sont dynamiques : elles s'arrêtent dès que la condition est remplie, optimisant ainsi le temps d'exécution total."
+            },
+            {
+                "q": "Dans une attente explicite (WebDriverWait), que signifie 'EC.element_to_be_clickable' ?",
+                "options": [
+                    { "text": "Vérifier que l'élément possède un lien hypertexte", "explain": "Faux. Un élément peut être cliquable sans être un lien (ex: bouton, div)." },
+                    { "text": "Attendre que l'élément soit visible ET activé (pas grisé)", "explain": "Correct. C'est la condition idéale avant de tenter une action de clic pour éviter les erreurs d'interaction." },
+                    { "text": "Cliquer automatiquement sur l'élément dès qu'il apparaît", "explain": "Faux. WebDriverWait attend seulement que la condition soit vraie, il ne réalise pas l'action finale." },
+                    { "text": "Vérifier que la souris est positionnée au-dessus de l'élément", "explain": "Faux. Cela vérifie l'état de l'élément dans le DOM et son rendu, pas la position de la souris." }
+                ],
+                "correct": 1,
+                "correctExplain": "Cette condition combine deux vérifications : la présence/visibilité et l'état 'Enabled'. C'est la sécurité ultime contre les erreurs de timing."
+            },
+            {
+                "q": "Comment accepte-t-on une alerte de confirmation (pop-up JavaScript) avec Selenium ?",
+                "options": [
+                    { "text": "driver.find_element(By.ID, 'ok').click()", "explain": "Faux. Une alerte navigateur n'est pas un élément HTML, on ne peut pas la trouver avec un sélecteur classique." },
+                    { "text": "driver.switch_to.alert.accept()", "explain": "Correct. Il faut d'abord basculer le focus du driver sur l'alerte pour pouvoir cliquer sur 'OK' ou 'Confirmer'." },
+                    { "text": "driver.close_popup()", "explain": "Faux. Cette méthode n'existe pas." },
+                    { "text": "driver.send_keys(Keys.ENTER)", "explain": "Faux. Cela enverrait la touche à la page web en arrière-plan, pas à l'alerte système." }
+                ],
+                "correct": 1,
+                "correctExplain": "Les alertes JS sont gérées par le système. Selenium doit 'quitter' le contexte de la page web momentanément pour interagir avec elles via 'switch_to.alert'."
+            },
+            {
+                "q": "Quelle méthode permet de vérifier si une case à cocher est actuellement cochée ?",
+                "options": [
+                    { "text": "element.is_checked()", "explain": "Faux. Le terme correct en Selenium est 'is_selected'." },
+                    { "text": "element.status == 'checked'", "explain": "Faux. Il faut utiliser une méthode dédiée pour interroger l'état de l'élément." },
+                    { "text": "element.is_selected()", "explain": "Correct. Cette méthode retourne True si la case (ou le bouton radio) est sélectionné, False sinon." },
+                    { "text": "element.get_value()", "explain": "Faux. 'get_value' n'est pas une méthode standard ; get_attribute('value') retournerait la valeur définie, pas son état coché." }
+                ],
+                "correct": 2,
+                "correctExplain": ".is_selected() est indispensable pour valider les formulaires dans vos assertions (assert checkbox.is_selected())."
+            },
+            {
+                "q": "Quelle commande terminal permet de générer un rapport visuel après avoir exécuté des tests Selenium ?",
+                "options": [
+                    { "text": "pytest --view-report", "explain": "Faux. L'option correcte dépend du plugin installé, souvent 'pytest-html'." },
+                    { "text": "pytest --html=rapport.html", "explain": "Correct. À condition que le plugin 'pytest-html' soit listé dans le requirements.txt et installé." },
+                    { "text": "selenium-report generate", "explain": "Faux. Selenium seul ne génère pas de rapports, c'est le rôle du framework de test (Pytest)." },
+                    { "text": "python log_to_html.py", "explain": "Faux. Bien que possible via un script personnalisé, Pytest offre des solutions intégrées plus simples." }
+                ],
+                "correct": 1,
+                "correctExplain": "L'industrialisation demande des preuves d'exécution. Le rapport HTML est le livrable standard que le QA fournit à son équipe."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let answers = new Array(questions.length).fill(null);
+        let answered = new Array(questions.length).fill(false);
+
+        function displayQuestion() {
+            const container = document.getElementById('quiz-container');
+            const item = questions[currentQuestion];
+
+            let html = `<div class="question">${currentQuestion + 1}. ${item.q}</div>`;
+            const letters = ['A', 'B', 'C', 'D'];
+            item.options.forEach((opt, i) => {
+                let classes = '';
+                if (answers[currentQuestion] === i) {
+                    classes = 'selected ';
+                    if (i === item.correct) {
+                        classes += 'correct';
+                    } else {
+                        classes += 'incorrect';
+                    }
+                }
+                const disabledClass = answered[currentQuestion] ? 'disabled' : '';
+                html += `<div class="option ${classes} ${disabledClass}" onclick="${answered[currentQuestion] ? '' : `handleAnswerClick(${i})`}" style="${answered[currentQuestion] ? 'cursor: not-allowed;' : ''}"><span class="option-letter">${letters[i]}</span> ${opt.text}</div>`;
+            });
+
+            container.innerHTML = html;
+
+            if (answered[currentQuestion]) {
+                showFeedback();
+            } else {
+                document.getElementById('feedback').innerHTML = '';
+                document.getElementById('feedback').classList.remove('show');
+            }
+
+            updateProgressBar();
+            updateNavigationButtons();
+            updateProgressInfo();
+        }
+
+        function handleAnswerClick(index) {
+            if (answered[currentQuestion]) return;
+
+            answers[currentQuestion] = index;
+            answered[currentQuestion] = true;
+
+            showFeedback();
+            updateProgressBar();
+            updateProgressInfo();
+            updateNavigationButtons();
+            displayQuestion();
+        }
+
+        function showFeedback() {
+            const feedbackDiv = document.getElementById('feedback');
+            const item = questions[currentQuestion];
+            const isCorrect = answers[currentQuestion] === item.correct;
+            const selectedOption = item.options[answers[currentQuestion]];
+
+            feedbackDiv.className = 'feedback-container show ' + (isCorrect ? 'feedback-correct' : 'feedback-incorrect');
+
+            let html = '';
+
+            if (isCorrect) {
+                html += `
+                    <div class="feedback-header">Bonne réponse!</div>
+                    <div class="feedback-explanation">${item.correctExplain}</div>
+                `;
+            } else {
+                html += `
+                    <div class="feedback-header">Pas tout à fait</div>
+                    <div class="feedback-explanation">${selectedOption.explain}</div>
+                    <div class="correct-answer-box">
+                        <div class="correct-answer-label">✓ Bonne réponse:</div>
+                        <div>${item.options[item.correct].text}</div>
+                        <div style="margin-top: 8px; font-size: 0.9em;">${item.correctExplain}</div>
+                    </div>
+                `;
+            }
+
+            feedbackDiv.innerHTML = html;
+        }
+
+        function updateProgressBar() {
+            const progressBar = document.getElementById('progressBar');
+            progressBar.innerHTML = '';
+
+            for (let i = 0; i < questions.length; i++) {
+                const segment = document.createElement('div');
+                segment.className = 'progress-segment';
+
+                if (!answered[i]) {
+                    segment.classList.add('unanswered');
+                } else if (answers[i] === questions[i].correct) {
+                    segment.classList.add('correct');
+                } else {
+                    segment.classList.add('incorrect');
+                }
+
+                progressBar.appendChild(segment);
+            }
+        }
+
+        function updateNavigationButtons() {
+            const isAnswered = answered[currentQuestion];
+            document.getElementById('prevBtn').disabled = currentQuestion === 0 || !isAnswered;
+            document.getElementById('nextBtn').disabled = !isAnswered;
+
+            if (currentQuestion === questions.length - 1) {
+                document.getElementById('nextBtn').textContent = 'Voir Résultat';
+            } else {
+                document.getElementById('nextBtn').textContent = 'Suivant →';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -257,5 +257,13 @@
     "path": "cours/lsc-cicd/quiz-lsc-cicd-cours5.html",
     "createdAt": "2026-04-04T00:00:00Z",
     "questionsCount": 10
+  },
+  "selenium-lsc-cicd-6": {
+    "course": "LSC-CICD",
+    "lesson": 6,
+    "title": "Automatisation des tests avec Selenium",
+    "path": "cours/lsc-cicd/quiz-lsc-cicd-cours6.html",
+    "createdAt": "2026-04-23T00:00:00Z",
+    "questionsCount": 10
   }
 }
