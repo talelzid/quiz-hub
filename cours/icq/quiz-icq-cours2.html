@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz - Historique de la qualit? logicielle</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <div class="global-course-title">Initiation aux concepts qualit?</div>
+    <h1>Quiz : Historique de la qualit? logicielle (Cours 2)</h1>
+    
+    <div class="progress-container">
+        <div class="progress-info">
+            <span id="question-counter">Question 1 / 10</span>
+            <div class="progress-stats">
+                <span class="stat-badge incorrect"><span class="stat-icon">✕</span><span id="incorrect-count">0</span></span>
+                <span class="stat-badge correct"><span class="stat-icon">✓</span><span id="correct-count">0</span></span>
+            </div>
+        </div>
+        <div class="progress-bar-wrapper" id="progressBar"></div>
+    </div>
+    
+    <div id="quiz-container" class="card"></div>
+    
+    <div id="feedback" class="feedback-container"></div>
+    
+    <div class="quiz-navigation">
+        <button id="prevBtn" onclick="previousQuestion()">← Précédent</button>
+        <button id="nextBtn" onclick="nextQuestion()">Suivant →</button>
+    </div>
+    
+    <div id="result"></div>
+
+    <script>
+        const questions = [
+          {
+                    "q": "Qui a inventé la carte de contrôle statistique, en 1924, aux laboratoires Bell ?",
+                    "options": [
+                              {
+                                        "text": "W. Edwards Deming",
+                                        "explain": "Faux. Deming a diffusé l'amélioration continue et le cycle PDCA, notamment au Japon à partir de 1950, mais il n'a pas inventé la carte de contrôle."
+                              },
+                              {
+                                        "text": "Joseph Juran",
+                                        "explain": "Faux. Juran est connu pour l'aptitude à l'usage, sa trilogie (planifier, contrôler, améliorer) et l'application du principe de Pareto à la qualité."
+                              },
+                              {
+                                        "text": "Walter Shewhart",
+                                        "explain": "Correct. Shewhart invente la carte de contrôle statistique en 1924 aux laboratoires Bell. Il formule aussi le cycle d'amélioration que Deming diffusera."
+                              },
+                              {
+                                        "text": "Philip Crosby",
+                                        "explain": "Faux. Crosby est connu pour l'objectif « zéro défaut » et pour son livre Quality Is Free (1979) sur le coût de la non-qualité."
+                              }
+                    ],
+                    "correct": 2,
+                    "correctExplain": "La qualité est née dans l'industrie bien avant le logiciel. Walter Shewhart invente la carte de contrôle statistique en 1924 aux laboratoires Bell : on surveille un échantillon pour contrôler le procédé de fabrication. Il formule aussi le cycle planifier-faire-vérifier-agir. Deming diffuse ensuite ce cycle et l'amélioration continue au Japon, Juran définit la qualité comme l'aptitude à l'usage, Ishikawa crée le diagramme causes-effets et Crosby popularise le « zéro défaut »."
+          },
+          {
+                    "q": "Quel événement de 1968 marque la reconnaissance publique de la crise du logiciel ?",
+                    "options": [
+                              {
+                                        "text": "La conférence de l'OTAN sur le génie logiciel, à Garmisch",
+                                        "explain": "Correct. Du 7 au 11 octobre 1968, des experts d'Europe et d'Amérique du Nord se réunissent à Garmisch, en Allemagne. Le titre de la conférence, « génie logiciel », appelle à construire le logiciel avec la rigueur de l'ingénierie."
+                              },
+                              {
+                                        "text": "La publication du Manifeste agile",
+                                        "explain": "Faux. Le Manifeste agile date de 2001. Il répond, entre autres, aux limites des méthodes lourdes nées après la crise."
+                              },
+                              {
+                                        "text": "La découverte du premier bogue sur le Mark II",
+                                        "explain": "Faux. L'anecdote du papillon de nuit coincé dans un relais du Mark II date de 1947, bien avant la crise."
+                              },
+                              {
+                                        "text": "La première édition de la norme ISO 9001",
+                                        "explain": "Faux. ISO 9001 paraît en 1987. Elle porte sur le management de la qualité de toute organisation, pas spécifiquement sur la crise du logiciel."
+                              }
+                    ],
+                    "correct": 0,
+                    "correctExplain": "En 1968, l'OTAN organise à Garmisch une conférence intitulée « Software Engineering ». Les participants reconnaissent les difficultés du domaine : délais dépassés, coûts imprévisibles, qualité déficiente et maintenance coûteuse. Le nom « génie logiciel » est volontairement provocateur : il suggère que le logiciel doit être construit avec la rigueur des disciplines d'ingénierie. Dijkstra popularisera ensuite l'expression « crise du logiciel »."
+          },
+          {
+                    "q": "Lequel de ces énoncés n'est PAS un symptôme de la crise du logiciel ?",
+                    "options": [
+                              {
+                                        "text": "Les projets livrent en retard, parfois de plusieurs années",
+                                        "explain": "Faux. Les délais dépassés sont l'un des quatre symptômes présentés au cours."
+                              },
+                              {
+                                        "text": "La maintenance des logiciels est difficile et coûteuse",
+                                        "explain": "Faux. Un code difficile à comprendre et peu documenté rend la maintenance coûteuse : c'est un symptôme de la crise."
+                              },
+                              {
+                                        "text": "Les logiciels sont peu fiables et mal adaptés aux besoins",
+                                        "explain": "Faux. La qualité déficiente fait partie des symptômes de la crise."
+                              },
+                              {
+                                        "text": "Le coût du logiciel baisse plus vite que celui du matériel",
+                                        "explain": "Correct. C'est l'inverse : à l'époque, le coût du matériel baisse alors que celui du logiciel grimpe et devient imprévisible."
+                              }
+                    ],
+                    "correct": 3,
+                    "correctExplain": "Le cours présente quatre symptômes de la crise du logiciel : des délais dépassés, des coûts imprévisibles et en hausse constante (alors que le coût du matériel baisse), une qualité déficiente et inadaptée aux besoins, et une maintenance difficile et coûteuse. La cause : des ordinateurs de plus en plus puissants, à qui l'on confie des systèmes de plus en plus gros et critiques, alors que les méthodes de travail restent artisanales."
+          },
+          {
+                    "q": "Quelle réponse à la crise du logiciel a fait de chaque livrable un point de contrôle de la qualité ?",
+                    "options": [
+                              {
+                                        "text": "Remplacer les programmeurs par des testeurs indépendants",
+                                        "explain": "Faux. Les testeurs indépendants apparaissent, mais ils ne remplacent pas les programmeurs. Cette réponse ne crée pas de points de contrôle tout au long du projet."
+                              },
+                              {
+                                        "text": "Découper le processus en phases, avec des livrables intermédiaires et des critères de passage",
+                                        "explain": "Correct. En découpant le développement en phases qui produisent chacune un livrable, et en ne passant à la phase suivante que si les critères sont atteints, on crée des occasions de détecter les défauts avant la fin."
+                              },
+                              {
+                                        "text": "Livrer le logiciel le plus vite possible, puis corriger en production",
+                                        "explain": "Faux. C'est l'inverse de la réponse à la crise : on cherchait justement à mieux maîtriser le développement avant la livraison."
+                              },
+                              {
+                                        "text": "Augmenter le nombre de personnes sur les projets en retard",
+                                        "explain": "Faux. Brooks a montré dès 1975 qu'ajouter des personnes à un projet en retard le retarde davantage."
+                              }
+                    ],
+                    "correct": 1,
+                    "correctExplain": "La réponse à la crise consiste à structurer le développement : découper le processus en phases, produire des livrables intermédiaires, fixer des critères de passage entre les phases, encadrer la gestion de projet et investir davantage dans les phases en amont (exigences, conception). Chaque livrable devient ainsi un point de contrôle où l'on peut détecter des défauts. Ces pratiques sont à l'origine des démarches qualité."
+          },
+          {
+                    "q": "Selon Glenford Myers (1979), tester, c'est :",
+                    "options": [
+                              {
+                                        "text": "Montrer que le programme fonctionne comme prévu",
+                                        "explain": "Faux. C'est la vision « démonstration » (1957-1978) que Myers remet justement en question : si on cherche à prouver que ça marche, on trouve moins de défauts."
+                              },
+                              {
+                                        "text": "Exécuter un programme dans l'intention d'y trouver des erreurs",
+                                        "explain": "Correct. C'est la définition de Myers. Elle marque le passage à la vision « destruction » : un bon cas de test est celui qui a de fortes chances de révéler une erreur."
+                              },
+                              {
+                                        "text": "Corriger les erreurs du programme jusqu'à ce qu'il compile",
+                                        "explain": "Faux. Cette description correspond au débogage, la vision des débuts de l'informatique, où tester et corriger étaient confondus."
+                              },
+                              {
+                                        "text": "Prouver mathématiquement l'absence de défauts",
+                                        "explain": "Faux. Comme le rappelle Dijkstra, tester permet de montrer la présence de bogues, jamais de démontrer leur absence."
+                              }
+                    ],
+                    "correct": 1,
+                    "correctExplain": "En 1979, dans The Art of Software Testing, Glenford Myers définit le test comme l'exécution d'un programme dans l'intention d'y trouver des erreurs. Ce changement de vision a des conséquences : un bon cas de test a de fortes chances de révéler une erreur, un test réussi est un test qui trouve un défaut, et il est difficile de tester son propre programme, car on cherche inconsciemment à prouver qu'il marche. D'où l'intérêt de testeurs indépendants."
+          },
+          {
+                    "q": "Selon Gelperin et Hetzel (1988), dans quel ordre se sont succédé les visions du test ?",
+                    "options": [
+                              {
+                                        "text": "Débogage, démonstration, destruction, évaluation, prévention",
+                                        "explain": "Correct. On passe de la confusion entre test et débogage (jusqu'en 1956) à la démonstration (1957-1978), à la destruction (1979-1982), à l'évaluation tout au long du cycle de vie (1983-1987), puis à la prévention (dès 1988)."
+                              },
+                              {
+                                        "text": "Prévention, évaluation, destruction, démonstration, débogage",
+                                        "explain": "Faux. C'est l'ordre inverse. La prévention est la vision la plus récente, pas la première."
+                              },
+                              {
+                                        "text": "Démonstration, débogage, évaluation, prévention, destruction",
+                                        "explain": "Faux. Le débogage est la toute première vision, et la destruction (Myers, 1979) précède l'évaluation et la prévention."
+                              },
+                              {
+                                        "text": "Débogage, destruction, démonstration, prévention, évaluation",
+                                        "explain": "Faux. La démonstration (montrer que ça marche) précède la destruction (chercher les erreurs), et la prévention est la dernière vision."
+                              }
+                    ],
+                    "correct": 0,
+                    "correctExplain": "Gelperin et Hetzel décrivent cinq visions successives du test. Jusqu'en 1956, tester et déboguer sont une seule activité. De 1957 à 1978, on teste pour démontrer que le logiciel satisfait ses exigences. De 1979 à 1982, on teste pour trouver le plus d'erreurs possible (Myers). De 1983 à 1987, on évalue le produit tout au long du cycle de vie. Depuis 1988, on vise aussi à prévenir les défauts. Chaque vision s'ajoute à la précédente plutôt que de la remplacer. Le cours propose une sixième vision depuis 2000 : la qualité intégrée et continue."
+          },
+          {
+                    "q": "Quel apport principal de l'approche orientée objet à la qualité logicielle le cours retient-il ?",
+                    "options": [
+                              {
+                                        "text": "Elle supprime le besoin de tester les programmes",
+                                        "explain": "Faux. Aucune approche de programmation ne supprime le besoin de tester. L'objet facilite plutôt certains tests."
+                              },
+                              {
+                                        "text": "Elle remplace les normes de codage par des patrons de conception",
+                                        "explain": "Faux. Les patrons de conception sont une bonne pratique de plus ; ils ne remplacent pas les normes de codage."
+                              },
+                              {
+                                        "text": "Elle découpe le logiciel en unités encapsulées et réutilisables, plus faciles à tester séparément et à maintenir",
+                                        "explain": "Correct. L'encapsulation et la modularité donnent à chaque classe une responsabilité claire. Les unités peuvent être testées isolément (tests unitaires) et le logiciel est plus facile à maintenir."
+                              },
+                              {
+                                        "text": "Elle élimine les risques liés à la réutilisation de code",
+                                        "explain": "Faux. Le cours montre l'inverse : réutiliser sans revalider les hypothèses est un risque, comme l'a montré Ariane 5."
+                              }
+                    ],
+                    "correct": 2,
+                    "correctExplain": "L'approche orientée objet (Simula 67, Smalltalk, C++, Java, UML) apporte l'encapsulation, la modularité et la réutilisation de composants éprouvés. Les classes forment des unités isolables, donc testables séparément, ce qui favorise les tests unitaires et la maintenabilité. Elle amène aussi de nouveaux risques : héritage et dépendances complexes, réutilisation sans revalider les hypothèses (Ariane 5), et le besoin de nouvelles mesures comme le couplage et la cohésion."
+          },
+          {
+                    "q": "Une équipe agile tient une rétrospective à la fin de chaque sprint : elle fixe une amélioration, l'essaie au sprint suivant, mesure l'effet puis décide de la garder ou non. Quelle idée héritée de l'industrie applique-t-elle ?",
+                    "options": [
+                              {
+                                        "text": "Le principe de Pareto",
+                                        "explain": "Faux. Le principe de Pareto (environ 80 % des problèmes viennent de 20 % des causes) sert plutôt à concentrer les efforts de test sur les modules les plus fautifs."
+                              },
+                              {
+                                        "text": "L'inspection des pièces finies",
+                                        "explain": "Faux. L'inspection consiste à trier les produits finis. Elle se retrouve dans les revues de livrables, pas dans une démarche d'amélioration du processus."
+                              },
+                              {
+                                        "text": "Le contrôle statistique par échantillonnage",
+                                        "explain": "Faux. Le contrôle statistique sert à surveiller un procédé à partir d'échantillons. Il a donné naissance aux mesures et aux métriques."
+                              },
+                              {
+                                        "text": "Le cycle d'amélioration continue planifier-faire-vérifier-agir (PDCA)",
+                                        "explain": "Correct. Fixer une amélioration (planifier), l'essayer (faire), mesurer l'effet (vérifier) puis la généraliser ou l'abandonner (agir) : c'est la roue de Deming appliquée à chaque sprint."
+                              }
+                    ],
+                    "correct": 3,
+                    "correctExplain": "La roue de Deming, ou cycle PDCA, formulée par Shewhart et diffusée par Deming, comprend quatre étapes : planifier (fixer un objectif et prévoir les actions), faire (réaliser à petite échelle), vérifier (mesurer et comparer à l'objectif) et agir (généraliser ce qui marche, corriger le reste). La rétrospective agile reprend exactement ce cycle à l'échelle d'un sprint. Le cours montre d'autres héritages de l'industrie : l'inspection est devenue les revues, le contrôle statistique est devenu les métriques, le principe de Pareto a donné la concentration des défauts."
+          },
+          {
+                    "q": "En 2026, une entreprise déploie sa plateforme en ligne une fois par trimestre. Les tests se font seulement à la fin, pendant une campagne manuelle de trois semaines, et de nombreux défauts d'exigences sont découverts à ce moment. À la lumière de l'histoire de la qualité, quelle recommandation est la plus cohérente ?",
+                    "options": [
+                              {
+                                        "text": "Allonger la campagne de tests de fin de projet à six semaines",
+                                        "explain": "Faux. Cela ne fait que prolonger une approche de la vision « démonstration » des années 1960-1970 : les défauts d'exigences seraient toujours découverts tard, là où ils coûtent le plus cher."
+                              },
+                              {
+                                        "text": "Supprimer les tests manuels et laisser les utilisateurs signaler les défauts en production",
+                                        "explain": "Faux. Les défauts trouvés par les clients sont des défaillances externes, la catégorie la plus coûteuse du coût de la qualité. Le « shift-right » complète les tests, il ne les remplace pas."
+                              },
+                              {
+                                        "text": "Revoir les exigences dès leur rédaction, automatiser les tests et les exécuter à chaque modification du code",
+                                        "explain": "Correct. Cette recommandation applique le fil conducteur de l'histoire : détecter plus tôt (revues des exigences, shift-left) et plus souvent (intégration continue, tests automatisés, DevOps)."
+                              },
+                              {
+                                        "text": "Revenir à un modèle strictement séquentiel, sans retour possible entre les phases",
+                                        "explain": "Faux. Un modèle strictement séquentiel concentre lui aussi les tests à la fin. Même Royce, en 1970, recommandait des retours en arrière entre les phases."
+                              }
+                    ],
+                    "correct": 2,
+                    "correctExplain": "Cette question demande de relier plusieurs époques. L'entreprise teste comme dans la vision « démonstration » : à la fin, pour montrer que ça marche. Or l'histoire montre deux tendances. D'abord, détecter plus tôt : les inspections de Fagan (1976), l'économie de Boehm (1981) et le shift-left (2001) montrent que les défauts d'exigences doivent être trouvés dès leur rédaction. Ensuite, détecter plus souvent : l'intégration continue (2000), les tests automatisés (JUnit, Selenium) et DevOps (2009) exécutent les tests à chaque modification. La recommandation cohérente combine les deux : revoir les exigences tôt, automatiser les tests et les intégrer au pipeline."
+          },
+          {
+                    "q": "Un collègue affirme : « Le Manifeste agile de 2001 a rejeté tout ce qui avait été fait depuis la crise de 1968 : la documentation, les processus et les plans ne servent plus à rien. » Quelle réponse est la plus juste ?",
+                    "options": [
+                              {
+                                        "text": "Il a raison : les agilistes ont aboli la documentation et les processus",
+                                        "explain": "Faux. Le Manifeste précise que les éléments de droite (processus, documentation, contrats, plans) ont de la valeur, même si ceux de gauche en ont davantage."
+                              },
+                              {
+                                        "text": "Il a tort : l'agilité garde l'objectif de qualité, mais raccourcit la boucle de rétroaction ; le Manifeste reconnaît la valeur des processus, de la documentation et des plans",
+                                        "explain": "Correct. L'agilité ne rejette pas les acquis : elle privilégie les individus, le logiciel opérationnel, la collaboration et l'adaptation, tout en reconnaissant la valeur du reste. Le test devient continu et partagé par l'équipe."
+                              },
+                              {
+                                        "text": "Il a tort : le Manifeste agile ne concerne que la gestion de projet et n'a aucun lien avec la qualité",
+                                        "explain": "Faux. L'agilité a profondément changé la qualité : tests à chaque sprint, tests automatisés, implication du client, définition de « terminé » qui inclut le test."
+                              },
+                              {
+                                        "text": "Il a raison : depuis 2001, les normes et les modèles de maturité ont disparu",
+                                        "explain": "Faux. Les normes continuent d'évoluer après 2001 : ISTQB (2002), ISO/IEC 25010 (2011), ISO/IEC/IEEE 29119 (2013), CTFL v4.0 (2023), entre autres."
+                              }
+                    ],
+                    "correct": 1,
+                    "correctExplain": "Le Manifeste agile énonce quatre valeurs : les individus et leurs interactions plus que les processus et les outils, des logiciels opérationnels plus qu'une documentation exhaustive, la collaboration avec les clients plus que la négociation contractuelle, l'adaptation au changement plus que le suivi d'un plan. Il précise que les éléments de droite ont de la valeur. L'agilité ne rejette donc pas les acquis de 1968 (phases, livrables, critères) ; elle raccourcit la boucle : on planifie, construit et teste à chaque sprint. Et la structuration de la profession continue après 2001, avec l'ISTQB et de nouvelles normes."
+          }
+];
+        let currentQuestion = 0;
+        let answers = new Array(questions.length).fill(null);
+        let answered = new Array(questions.length).fill(false);
+
+        function displayQuestion() {
+            const container = document.getElementById('quiz-container');
+            const item = questions[currentQuestion];
+            
+            let html = `<div class="question">${currentQuestion + 1}. ${item.q}</div>`;
+            const letters = ['A', 'B', 'C', 'D'];
+            item.options.forEach((opt, i) => {
+                let classes = '';
+                if (answers[currentQuestion] === i) {
+                    classes = 'selected ';
+                    if (i === item.correct) {
+                        classes += 'correct';
+                    } else {
+                        classes += 'incorrect';
+                    }
+                }
+                const disabledClass = answered[currentQuestion] ? 'disabled' : '';
+                html += `<div class="option ${classes} ${disabledClass}" onclick="${answered[currentQuestion] ? '' : `handleAnswerClick(${i})`}" style="${answered[currentQuestion] ? 'cursor: not-allowed;' : ''}"><span class="option-letter">${letters[i]}</span> ${opt.text}</div>`;
+            });
+            
+            container.innerHTML = html;
+            
+            if (answered[currentQuestion]) {
+                showFeedback();
+            } else {
+                document.getElementById('feedback').innerHTML = '';
+                document.getElementById('feedback').classList.remove('show');
+            }
+            
+            updateProgressBar();
+            updateNavigationButtons();
+            updateProgressInfo();
+        }
+
+        function handleAnswerClick(index) {
+            if (answered[currentQuestion]) return;
+            
+            answers[currentQuestion] = index;
+            answered[currentQuestion] = true;
+            
+            showFeedback();
+            updateProgressBar();
+            updateProgressInfo();
+            updateNavigationButtons();
+            displayQuestion();
+        }
+
+        function showFeedback() {
+            const feedbackDiv = document.getElementById('feedback');
+            const item = questions[currentQuestion];
+            const isCorrect = answers[currentQuestion] === item.correct;
+            const selectedOption = item.options[answers[currentQuestion]];
+            
+            feedbackDiv.className = 'feedback-container show ' + (isCorrect ? 'feedback-correct' : 'feedback-incorrect');
+            
+            let html = '';
+            
+            if (isCorrect) {
+                html += `
+                    <div class="feedback-header">Bonne réponse!</div>
+                    <div class="feedback-explanation">${item.correctExplain}</div>
+                `;
+            } else {
+                html += `
+                    <div class="feedback-header">Pas tout à fait</div>
+                    <div class="feedback-explanation">${selectedOption.explain}</div>
+                    <div class="correct-answer-box">
+                        <div class="correct-answer-label">✓ Bonne réponse:</div>
+                        <div>${item.options[item.correct].text}</div>
+                        <div style="margin-top: 8px; font-size: 0.9em;">${item.correctExplain}</div>
+                    </div>
+                `;
+            }
+            
+            feedbackDiv.innerHTML = html;
+        }
+
+        function updateProgressBar() {
+            const progressBar = document.getElementById('progressBar');
+            progressBar.innerHTML = '';
+            
+            for (let i = 0; i < questions.length; i++) {
+                const segment = document.createElement('div');
+                segment.className = 'progress-segment';
+                
+                if (!answered[i]) {
+                    segment.classList.add('unanswered');
+                } else if (answers[i] === questions[i].correct) {
+                    segment.classList.add('correct');
+                } else {
+                    segment.classList.add('incorrect');
+                }
+                
+                progressBar.appendChild(segment);
+            }
+        }
+
+        function updateNavigationButtons() {
+            const isAnswered = answered[currentQuestion];
+            document.getElementById('prevBtn').disabled = currentQuestion === 0 || !isAnswered;
+            document.getElementById('nextBtn').disabled = !isAnswered;
+            
+            if (currentQuestion === questions.length - 1) {
+                document.getElementById('nextBtn').textContent = 'Voir Résultat';
+            } else {
+                document.getElementById('nextBtn').textContent = 'Suivant →';
+            }
+        }
+
+        function updateProgressInfo() {
+            document.getElementById('question-counter').textContent = `Question ${currentQuestion + 1} / ${questions.length}`;
+            
+            let correctCount = 0;
+            let incorrectCount = 0;
+            
+            for (let i = 0; i < answers.length; i++) {
+                if (answered[i]) {
+                    if (answers[i] === questions[i].correct) {
+                        correctCount++;
+                    } else {
+                        incorrectCount++;
+                    }
+                }
+            }
+            
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('incorrect-count').textContent = incorrectCount;
+        }
+
+        function nextQuestion() {
+            if (currentQuestion === questions.length - 1) {
+                showFinalResults();
+                return;
+            }
+            
+            currentQuestion++;
+            displayQuestion();
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        function showFinalResults() {
+            let score = 0;
+            answers.forEach((answer, index) => {
+                if (answer === questions[index].correct) score++;
+            });
+            
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '<div class="question">Quiz terminé!</div>';
+            
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.className = 'feedback-container';
+            feedbackDiv.innerHTML = '';
+            
+            let recapHtml = '<div class="recap-title">Résumé de vos réponses</div>';
+            
+            questions.forEach((question, index) => {
+                const userAnswer = question.options[answers[index]];
+                const correctAnswer = question.options[question.correct];
+                const isCorrect = answers[index] === question.correct;
+                
+                recapHtml += `
+                    <div class="recap-card ${isCorrect ? 'correct' : 'incorrect'}">
+                        <div class="recap-number">Question ${index + 1} / ${questions.length}</div>
+                        <div class="recap-question">${question.q}</div>
+                        <div class="recap-answer-item user">
+                            <span class="recap-label">Votre réponse:</span>
+                            ${userAnswer.text}
+                            <span class="recap-result ${isCorrect ? 'correct' : 'incorrect'}">
+                                ${isCorrect ? '✓ Correct' : '✗ Incorrect'}
+                            </span>
+                        </div>
+                        ${!isCorrect ? `
+                            <div class="recap-answer-item correct-answer">
+                                <span class="recap-label">Bonne réponse:</span>
+                                ${correctAnswer.text}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            
+            document.getElementById('result').innerHTML = `
+                <div style="font-size: 2em; margin: 30px 0 20px;">Votre score : ${score} / ${questions.length}</div>
+                <div style="font-size: 1.1em; color: #555; margin-bottom: 30px;">Réussite : ${Math.round(score / questions.length * 100)}%</div>
+                <div class="recap-container">${recapHtml}</div>
+            `;
+            
+            document.getElementById('prevBtn').disabled = false;
+            document.getElementById('nextBtn').textContent = 'Recommencer';
+            document.getElementById('nextBtn').disabled = false;
+            document.getElementById('nextBtn').onclick = function() { location.reload(); };
+            document.getElementById('prevBtn').onclick = function() {
+                currentQuestion = questions.length - 1;
+                displayQuestion();
+            };
+        }
+
+        displayQuestion();
+    </script>
+</body>
+</html>

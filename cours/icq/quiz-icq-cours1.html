@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz - Fondements de la qualit? logicielle</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <div class="global-course-title">Initiation aux concepts qualit?</div>
+    <h1>Quiz : Fondements de la qualit? logicielle (Cours 1)</h1>
+    
+    <div class="progress-container">
+        <div class="progress-info">
+            <span id="question-counter">Question 1 / 10</span>
+            <div class="progress-stats">
+                <span class="stat-badge incorrect"><span class="stat-icon">✕</span><span id="incorrect-count">0</span></span>
+                <span class="stat-badge correct"><span class="stat-icon">✓</span><span id="correct-count">0</span></span>
+            </div>
+        </div>
+        <div class="progress-bar-wrapper" id="progressBar"></div>
+    </div>
+    
+    <div id="quiz-container" class="card"></div>
+    
+    <div id="feedback" class="feedback-container"></div>
+    
+    <div class="quiz-navigation">
+        <button id="prevBtn" onclick="previousQuestion()">← Précédent</button>
+        <button id="nextBtn" onclick="nextQuestion()">Suivant →</button>
+    </div>
+    
+    <div id="result"></div>
+
+    <script>
+        const questions = [
+          {
+                    "q": "Lequel de ces énoncés décrit une défaillance ?",
+                    "options": [
+                              {
+                                        "text": "Le programmeur comprend mal une règle d'affaires",
+                                        "explain": "Faux. Une action humaine qui produit un résultat incorrect est une erreur (ou méprise). Elle est à l'origine du problème, mais ce n'est pas ce qu'on observe à l'exécution."
+                              },
+                              {
+                                        "text": "Une condition du code est mal écrite",
+                                        "explain": "Faux. Une imperfection dans un livrable, ici le code, est un défaut (aussi appelé faute ou bogue). Il ne devient visible que si le code fautif est exécuté."
+                              },
+                              {
+                                        "text": "La spécification oublie un cas particulier",
+                                        "explain": "Faux. Une omission dans la spécification est aussi un défaut : les défauts ne se trouvent pas seulement dans le code."
+                              },
+                              {
+                                        "text": "Le logiciel affiche un total différent du total attendu",
+                                        "explain": "Correct. Une défaillance est un écart observable entre le comportement attendu et le comportement réel du logiciel."
+                              }
+                    ],
+                    "correct": 3,
+                    "correctExplain": "Le cours présente une chaîne de causalité. Une erreur (ou méprise) est une action humaine qui produit un résultat incorrect. Elle introduit un défaut (faute, bogue), c'est-à-dire une imperfection dans un livrable : code, spécification ou document. Si ce défaut est exécuté dans les bonnes conditions, il provoque une défaillance : un écart observable entre le comportement attendu et le comportement réel. Seule la défaillance se constate en utilisant le logiciel."
+          },
+          {
+                    "q": "Selon la norme ISO/IEC 25010, la qualité d'un produit logiciel est :",
+                    "options": [
+                              {
+                                        "text": "L'absence totale de bogues",
+                                        "explain": "Faux. C'est l'intuition de départ vue au cours. Un logiciel sans bogue peut pourtant être lent, difficile à utiliser, vulnérable ou conforme à la mauvaise exigence."
+                              },
+                              {
+                                        "text": "Le degré auquel il satisfait les besoins exprimés et implicites de ses parties prenantes",
+                                        "explain": "Correct. C'est la définition d'ISO/IEC 25010. Elle comprend une référence (les besoins), un juge (les parties prenantes) et un degré : la qualité n'est pas tout ou rien."
+                              },
+                              {
+                                        "text": "La conformité du code aux normes de programmation de l'équipe",
+                                        "explain": "Faux. Le respect des normes de codage contribue à la qualité, mais il ne porte que sur un livrable, le code, et ignore les besoins des utilisateurs."
+                              },
+                              {
+                                        "text": "Le respect du budget et de l'échéancier du projet",
+                                        "explain": "Faux. Le budget et l'échéancier relèvent de la gestion de projet. Un projet livré à temps peut produire un logiciel de mauvaise qualité."
+                              }
+                    ],
+                    "correct": 1,
+                    "correctExplain": "Le cours compare plusieurs définitions de la qualité. Crosby parle de conformité aux exigences, Juran d'aptitude à l'usage, ISO 9000 d'aptitude d'un ensemble de caractéristiques à satisfaire des exigences. ISO/IEC 25010 définit la qualité comme le degré auquel un produit satisfait les besoins exprimés et implicites de ses parties prenantes. Ces définitions ont trois points communs : une référence (exigences ou besoins), un juge (client, utilisateur, parties prenantes) et un degré, car la qualité se mesure."
+          },
+          {
+                    "q": "Pour l'application StationPlus, l'exigence « La confirmation de paiement s'affiche en moins de 2 secondes » est :",
+                    "options": [
+                              {
+                                        "text": "Une exigence fonctionnelle",
+                                        "explain": "Faux. Une exigence fonctionnelle décrit ce que le système doit faire, par exemple « l'usager peut prolonger sa session à distance ». Ici, on décrit à quelle vitesse il doit le faire."
+                              },
+                              {
+                                        "text": "Une contrainte",
+                                        "explain": "Faux. Une contrainte est une restriction imposée à la solution ou au projet, comme un fournisseur de paiement imposé ou une date de livraison. Le temps de réponse est une propriété attendue du système."
+                              },
+                              {
+                                        "text": "Une exigence non fonctionnelle",
+                                        "explain": "Correct. L'exigence décrit une propriété attendue du système, ici la performance. Les exigences non fonctionnelles couvrent aussi la sécurité, l'utilisabilité, la fiabilité, etc."
+                              },
+                              {
+                                        "text": "Ce n'est pas une exigence, car elle ne décrit aucune fonctionnalité",
+                                        "explain": "Faux. Une exigence ne décrit pas forcément une fonctionnalité. Les exigences non fonctionnelles et les contraintes sont aussi des exigences, et elles servent de référence pour juger la qualité."
+                              }
+                    ],
+                    "correct": 2,
+                    "correctExplain": "Le cours classe les exigences en trois catégories. Une exigence fonctionnelle décrit ce que le système doit faire. Une exigence non fonctionnelle décrit une propriété attendue : performance, sécurité, utilisabilité, fiabilité, etc. Une contrainte est une restriction imposée à la solution ou au projet, par exemple une loi, un fournisseur imposé ou une échéance. Un temps de réponse maximal est une exigence non fonctionnelle de performance."
+          },
+          {
+                    "q": "Un défaut se trouve dans une fonction de calcul depuis trois ans, mais aucune défaillance n'a jamais été observée. Quelle explication est la plus juste ?",
+                    "options": [
+                              {
+                                        "text": "C'est impossible : un défaut provoque toujours une défaillance",
+                                        "explain": "Faux. Le cours présente justement la nuance inverse : un défaut ne provoque pas toujours une défaillance."
+                              },
+                              {
+                                        "text": "Le code fautif n'a jamais été exécuté dans les conditions qui révèlent le défaut",
+                                        "explain": "Correct. Pour qu'un défaut produise une défaillance, il faut exécuter le code fautif avec les données ou les conditions qui le déclenchent. Un défaut peut rester endormi pendant des années."
+                              },
+                              {
+                                        "text": "Ce n'est pas un défaut, puisque personne ne s'en est plaint",
+                                        "explain": "Faux. Un défaut est une imperfection dans un livrable, qu'elle ait été remarquée ou non. L'absence de plainte ne prouve pas l'absence de défaut."
+                              },
+                              {
+                                        "text": "Le défaut s'est corrigé de lui-même avec les mises à jour du système d'exploitation",
+                                        "explain": "Faux. Un défaut dans le code reste présent tant que personne ne le corrige. Un changement d'environnement peut même le révéler, et non le faire disparaître."
+                              }
+                    ],
+                    "correct": 1,
+                    "correctExplain": "Le cours présente trois nuances importantes. Un défaut ne provoque pas toujours une défaillance : il faut exécuter le code fautif, dans les bonnes conditions, et un défaut peut rester endormi pendant des années. Une défaillance n'a pas toujours un défaut logiciel pour cause : le matériel, le réseau, la configuration ou des données corrompues peuvent aussi être en cause. Enfin, le testeur rapporte d'abord une anomalie, c'est-à-dire un écart observé ; c'est l'analyse qui dira s'il s'agit d'un défaut."
+          },
+          {
+                    "q": "« L'équipe a vérifié que les 120 exigences du cahier des charges sont satisfaites. » Quel point de vue sur la qualité, selon Garvin, cette phrase illustre-t-elle ?",
+                    "options": [
+                              {
+                                        "text": "Le point de vue transcendant",
+                                        "explain": "Faux. Le point de vue transcendant considère qu'on reconnaît la qualité sans pouvoir la définir, par exemple « cette application est vraiment bien faite »."
+                              },
+                              {
+                                        "text": "Le point de vue utilisateur",
+                                        "explain": "Faux. Le point de vue utilisateur juge la qualité selon la réponse aux besoins de la personne qui utilise le logiciel. Ici, la référence est le cahier des charges, pas l'expérience de l'usager."
+                              },
+                              {
+                                        "text": "Le point de vue valeur",
+                                        "explain": "Faux. Le point de vue valeur cherche le meilleur compromis entre la qualité, le coût et les délais."
+                              },
+                              {
+                                        "text": "Le point de vue fabrication",
+                                        "explain": "Correct. Le point de vue fabrication juge la qualité par la conformité aux spécifications. Vérifier que les exigences du cahier des charges sont satisfaites en est l'exemple type."
+                              }
+                    ],
+                    "correct": 3,
+                    "correctExplain": "Garvin (1984) distingue cinq points de vue sur la qualité. Transcendant : on la reconnaît sans pouvoir la définir. Utilisateur : elle répond à mes besoins. Fabrication : elle est conforme aux spécifications. Produit : elle se décrit par des caractéristiques mesurables. Valeur : elle offre le meilleur compromis au juste prix. Le cours souligne que le testeur passe souvent du point de vue fabrication (conformité aux spécifications) au point de vue utilisateur (réponse aux besoins réels)."
+          },
+          {
+                    "q": "Dans le modèle du coût de la qualité, dans quelle catégorie classez-vous l'exécution des tests d'acceptation ?",
+                    "options": [
+                              {
+                                        "text": "Évaluation",
+                                        "explain": "Correct. Les tests servent à détecter les défauts avant la livraison. Les coûts d'évaluation comprennent aussi les revues, les inspections, les audits et les outils de test."
+                              },
+                              {
+                                        "text": "Prévention",
+                                        "explain": "Faux. La prévention vise à éviter que les défauts apparaissent : formation, normes de codage, plan qualité, amélioration des processus. Les tests, eux, cherchent des défauts déjà présents."
+                              },
+                              {
+                                        "text": "Défaillances internes",
+                                        "explain": "Faux. Les défaillances internes sont les coûts engendrés par les défauts trouvés avant la livraison : corrections, nouveaux tests, retards. Exécuter les tests est une activité d'évaluation, pas une conséquence d'un défaut."
+                              },
+                              {
+                                        "text": "Défaillances externes",
+                                        "explain": "Faux. Les défaillances externes sont les coûts des défauts trouvés par les clients après la livraison : correctifs urgents, soutien, pénalités, perte de clients."
+                              }
+                    ],
+                    "correct": 0,
+                    "correctExplain": "Le cours présente quatre catégories de coûts. Les coûts d'obtention de la qualité comprennent la prévention (éviter les défauts : formation, normes, plan qualité) et l'évaluation (détecter les défauts avant la livraison : tests, revues, inspections, audits). Les coûts de la non-qualité comprennent les défaillances internes (défauts trouvés avant la livraison : corrections, nouveaux tests, retards) et les défaillances externes (défauts trouvés par les clients : correctifs, soutien, pénalités, réputation). Les tests d'acceptation sont une activité d'évaluation."
+          },
+          {
+                    "q": "Selon le cours, pourquoi la spécification des exigences est-elle une source importante d'erreurs ?",
+                    "options": [
+                              {
+                                        "text": "Parce que les analystes sont moins compétents que les programmeurs",
+                                        "explain": "Faux. Le cours n'attribue pas les erreurs à la compétence des analystes, mais à la nature même de l'activité."
+                              },
+                              {
+                                        "text": "Parce qu'elle repose sur des échanges humains et sur un travail d'interprétation et de reformulation des besoins",
+                                        "explain": "Correct. Les besoins sont recueillis en réunions et en entrevues, puis interprétés et reformulés en spécifications. À chaque passage, l'écart avec le besoin réel peut grandir."
+                              },
+                              {
+                                        "text": "Parce que les exigences sont rédigées après le codage",
+                                        "explain": "Faux. Les exigences sont spécifiées au début du projet, pendant l'analyse. C'est justement pour cela qu'un défaut d'exigence se propage à tous les livrables suivants."
+                              },
+                              {
+                                        "text": "Parce que les normes interdisent de modifier une exigence une fois rédigée",
+                                        "explain": "Faux. Aucune norme n'interdit de modifier une exigence. Le cours rappelle au contraire que les besoins changent souvent en cours de projet."
+                              }
+                    ],
+                    "correct": 1,
+                    "correctExplain": "La spécification des exigences repose en grande partie sur des interactions humaines : réunions, entrevues, choix des participants. Elle demande ensuite un travail d'interprétation et de reformulation des besoins en spécifications. S'y ajoutent les besoins implicites, jamais exprimés, et les besoins qui changent en cours de projet. Entre ce que le client a exprimé, ce que l'analyste a compris, ce qui a été spécifié et ce qui a été codé, l'écart peut grandir. C'est pourquoi la spécification des exigences influence considérablement la qualité du produit final."
+          },
+          {
+                    "q": "Laquelle de ces actions porte sur la qualité du processus plutôt que sur la qualité du produit ?",
+                    "options": [
+                              {
+                                        "text": "Exécuter les tests de régression sur la nouvelle version",
+                                        "explain": "Faux. Les tests évaluent ce qui est livré : ils portent sur la qualité du produit."
+                              },
+                              {
+                                        "text": "Mesurer le temps de réponse de l'application en production",
+                                        "explain": "Faux. Le temps de réponse est une caractéristique mesurable du logiciel livré : c'est une mesure du produit."
+                              },
+                              {
+                                        "text": "Réaliser un audit pour vérifier que l'équipe applique sa démarche de revue des exigences à chaque projet",
+                                        "explain": "Correct. L'audit porte sur la façon de produire le logiciel. Il vérifie que l'équipe travaille de manière à produire un bon logiciel, de façon répétable."
+                              },
+                              {
+                                        "text": "Compter les défauts trouvés par les clients le mois dernier",
+                                        "explain": "Faux. Le nombre de défauts en production renseigne d'abord sur la qualité du produit livré, même s'il peut ensuite servir à améliorer le processus."
+                              }
+                    ],
+                    "correct": 2,
+                    "correctExplain": "Le cours distingue deux objets de la qualité. La qualité du produit porte sur ce qui est livré (logiciel, documents) ; on l'évalue par des tests, des revues et des mesures du produit, et elle répond à la question « le logiciel est-il bon ? ». La qualité du processus porte sur la façon de produire le logiciel ; on l'évalue par des audits, des mesures du processus et des modèles de maturité, et elle répond à la question « travaillons-nous de façon à produire un bon logiciel, de façon répétable ? ». Un bon processus augmente la probabilité d'un bon produit, sans la garantir. Cette distinction fonde le contrôle qualité et l'assurance qualité, vus au cours 8."
+          },
+          {
+                    "q": "Scénario : une entreprise commande une application de réservation de salles de réunion. En entrevue, le client précise que les salles doivent pouvoir être réservées par tranches de 15 minutes. L'analyste note « tranches de 30 minutes » dans la spécification. Le développeur code exactement ce que dit la spécification, et tous les tests prévus réussissent. Trois mois après la mise en production, les employés se plaignent de ne pas pouvoir réserver une salle pour une réunion de 15 minutes. Où se trouve le défaut, et à quelle étape du cycle de vie a-t-il été introduit ?",
+                    "options": [
+                              {
+                                        "text": "Dans le code, à l'étape de réalisation",
+                                        "explain": "Faux. Le développeur a codé exactement ce que dit la spécification. Le code est conforme : le défaut est en amont."
+                              },
+                              {
+                                        "text": "Dans les cas de test, à l'étape de validation",
+                                        "explain": "Faux. Les tests ont réussi parce qu'ils vérifiaient la spécification. Ils n'ont pas détecté le défaut, mais ils ne l'ont pas introduit."
+                              },
+                              {
+                                        "text": "Dans la spécification, à l'étape d'analyse des exigences",
+                                        "explain": "Correct. L'analyste a transcrit le besoin de façon incorrecte (erreur). Le défaut est la mention « tranches de 30 minutes » dans la spécification. La défaillance est l'impossibilité, constatée par les employés, de réserver une salle pour 15 minutes."
+                              },
+                              {
+                                        "text": "Il n'y a pas de défaut, puisque tous les tests prévus ont réussi",
+                                        "explain": "Faux. Réussir les tests prouve seulement que le logiciel est conforme à ce que les tests vérifient. Le cours rappelle qu'un logiciel peut être parfaitement conforme… à la mauvaise exigence."
+                              }
+                    ],
+                    "correct": 2,
+                    "correctExplain": "Appliquons la chaîne erreur → défaut → défaillance. L'erreur est humaine : l'analyste a mal transcrit le besoin exprimé en entrevue (15 minutes devenues 30). Le défaut est l'imperfection laissée dans un livrable : la spécification indique « tranches de 30 minutes ». La défaillance est l'écart observé en production : les employés ne peuvent pas réserver 15 minutes. Le défaut a été introduit pendant l'analyse et la spécification des exigences, puis s'est propagé au code et aux tests. Les tests ont réussi parce qu'ils vérifiaient la conformité à la spécification, et non au besoin réel du client : c'est la différence entre vérification et validation, étudiée au cours 4."
+          },
+          {
+                    "q": "Scénario : une entreprise commande une application de réservation de salles de réunion. En entrevue, le client précise que les salles doivent pouvoir être réservées par tranches de 15 minutes. L'analyste note « tranches de 30 minutes » dans la spécification. Le développeur code exactement ce que dit la spécification, et tous les tests prévus réussissent. Trois mois après la mise en production, les employés se plaignent de ne pas pouvoir réserver une salle pour une réunion de 15 minutes. Laquelle de ces dépenses aurait été la moins coûteuse pour éviter le problème, et dans quelle catégorie du coût de la qualité se situe-t-elle ?",
+                    "options": [
+                              {
+                                        "text": "Corriger la spécification et le code, puis refaire les tests après les plaintes : défaillance interne",
+                                        "explain": "Faux. Cette correction a lieu après la mise en production, à la suite des plaintes des usagers : c'est une défaillance externe, la catégorie la plus coûteuse. Elle oblige à reprendre la spécification, le code et les tests."
+                              },
+                              {
+                                        "text": "Revoir la spécification avec le client avant le développement : évaluation",
+                                        "explain": "Correct. Une revue de la spécification avec le client aurait détecté l'écart avant tout codage, au moment où le corriger ne coûtait presque rien. Une revue sert à détecter les défauts dans un livrable : c'est un coût d'évaluation."
+                              },
+                              {
+                                        "text": "Ajouter du personnel de soutien pour répondre aux employés mécontents : prévention",
+                                        "explain": "Faux. Le soutien aux usagers mécontents est une conséquence d'un défaut trouvé après la livraison : c'est une défaillance externe. Il ne prévient rien et ne corrige pas le défaut."
+                              },
+                              {
+                                        "text": "Ajouter des tests automatisés sur le code existant : défaillance interne",
+                                        "explain": "Faux. Ajouter des tests est une activité d'évaluation. Surtout, des tests fondés sur la même spécification fautive n'auraient pas détecté le problème : ils auraient réussi eux aussi."
+                              }
+                    ],
+                    "correct": 1,
+                    "correctExplain": "Ce scénario combine deux notions du cours : le coût de la qualité et le moment où un défaut est détecté. Le défaut est né dans la spécification. Le détecter à cette étape, par une revue avec le client, aurait coûté très peu : c'est un coût d'évaluation. Une fois le logiciel en production, le même défaut entraîne des coûts de défaillance externe : correction de la spécification et du code, nouveaux tests, soutien aux usagers, perte de confiance. La formation des analystes aux techniques d'entrevue (prévention) aurait aussi aidé, en réduisant le risque d'erreur à la source. Le cours en tire la leçon : investir en prévention et en évaluation, le plus tôt possible, coûte moins cher que la non-qualité."
+          }
+];
+        let currentQuestion = 0;
+        let answers = new Array(questions.length).fill(null);
+        let answered = new Array(questions.length).fill(false);
+
+        function displayQuestion() {
+            const container = document.getElementById('quiz-container');
+            const item = questions[currentQuestion];
+            
+            let html = `<div class="question">${currentQuestion + 1}. ${item.q}</div>`;
+            const letters = ['A', 'B', 'C', 'D'];
+            item.options.forEach((opt, i) => {
+                let classes = '';
+                if (answers[currentQuestion] === i) {
+                    classes = 'selected ';
+                    if (i === item.correct) {
+                        classes += 'correct';
+                    } else {
+                        classes += 'incorrect';
+                    }
+                }
+                const disabledClass = answered[currentQuestion] ? 'disabled' : '';
+                html += `<div class="option ${classes} ${disabledClass}" onclick="${answered[currentQuestion] ? '' : `handleAnswerClick(${i})`}" style="${answered[currentQuestion] ? 'cursor: not-allowed;' : ''}"><span class="option-letter">${letters[i]}</span> ${opt.text}</div>`;
+            });
+            
+            container.innerHTML = html;
+            
+            if (answered[currentQuestion]) {
+                showFeedback();
+            } else {
+                document.getElementById('feedback').innerHTML = '';
+                document.getElementById('feedback').classList.remove('show');
+            }
+            
+            updateProgressBar();
+            updateNavigationButtons();
+            updateProgressInfo();
+        }
+
+        function handleAnswerClick(index) {
+            if (answered[currentQuestion]) return;
+            
+            answers[currentQuestion] = index;
+            answered[currentQuestion] = true;
+            
+            showFeedback();
+            updateProgressBar();
+            updateProgressInfo();
+            updateNavigationButtons();
+            displayQuestion();
+        }
+
+        function showFeedback() {
+            const feedbackDiv = document.getElementById('feedback');
+            const item = questions[currentQuestion];
+            const isCorrect = answers[currentQuestion] === item.correct;
+            const selectedOption = item.options[answers[currentQuestion]];
+            
+            feedbackDiv.className = 'feedback-container show ' + (isCorrect ? 'feedback-correct' : 'feedback-incorrect');
+            
+            let html = '';
+            
+            if (isCorrect) {
+                html += `
+                    <div class="feedback-header">Bonne réponse!</div>
+                    <div class="feedback-explanation">${item.correctExplain}</div>
+                `;
+            } else {
+                html += `
+                    <div class="feedback-header">Pas tout à fait</div>
+                    <div class="feedback-explanation">${selectedOption.explain}</div>
+                    <div class="correct-answer-box">
+                        <div class="correct-answer-label">✓ Bonne réponse:</div>
+                        <div>${item.options[item.correct].text}</div>
+                        <div style="margin-top: 8px; font-size: 0.9em;">${item.correctExplain}</div>
+                    </div>
+                `;
+            }
+            
+            feedbackDiv.innerHTML = html;
+        }
+
+        function updateProgressBar() {
+            const progressBar = document.getElementById('progressBar');
+            progressBar.innerHTML = '';
+            
+            for (let i = 0; i < questions.length; i++) {
+                const segment = document.createElement('div');
+                segment.className = 'progress-segment';
+                
+                if (!answered[i]) {
+                    segment.classList.add('unanswered');
+                } else if (answers[i] === questions[i].correct) {
+                    segment.classList.add('correct');
+                } else {
+                    segment.classList.add('incorrect');
+                }
+                
+                progressBar.appendChild(segment);
+            }
+        }
+
+        function updateNavigationButtons() {
+            const isAnswered = answered[currentQuestion];
+            document.getElementById('prevBtn').disabled = currentQuestion === 0 || !isAnswered;
+            document.getElementById('nextBtn').disabled = !isAnswered;
+            
+            if (currentQuestion === questions.length - 1) {
+                document.getElementById('nextBtn').textContent = 'Voir Résultat';
+            } else {
+                document.getElementById('nextBtn').textContent = 'Suivant →';
+            }
+        }
+
+        function updateProgressInfo() {
+            document.getElementById('question-counter').textContent = `Question ${currentQuestion + 1} / ${questions.length}`;
+            
+            let correctCount = 0;
+            let incorrectCount = 0;
+            
+            for (let i = 0; i < answers.length; i++) {
+                if (answered[i]) {
+                    if (answers[i] === questions[i].correct) {
+                        correctCount++;
+                    } else {
+                        incorrectCount++;
+                    }
+                }
+            }
+            
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('incorrect-count').textContent = incorrectCount;
+        }
+
+        function nextQuestion() {
+            if (currentQuestion === questions.length - 1) {
+                showFinalResults();
+                return;
+            }
+            
+            currentQuestion++;
+            displayQuestion();
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        function showFinalResults() {
+            let score = 0;
+            answers.forEach((answer, index) => {
+                if (answer === questions[index].correct) score++;
+            });
+            
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '<div class="question">Quiz terminé!</div>';
+            
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.className = 'feedback-container';
+            feedbackDiv.innerHTML = '';
+            
+            let recapHtml = '<div class="recap-title">Résumé de vos réponses</div>';
+            
+            questions.forEach((question, index) => {
+                const userAnswer = question.options[answers[index]];
+                const correctAnswer = question.options[question.correct];
+                const isCorrect = answers[index] === question.correct;
+                
+                recapHtml += `
+                    <div class="recap-card ${isCorrect ? 'correct' : 'incorrect'}">
+                        <div class="recap-number">Question ${index + 1} / ${questions.length}</div>
+                        <div class="recap-question">${question.q}</div>
+                        <div class="recap-answer-item user">
+                            <span class="recap-label">Votre réponse:</span>
+                            ${userAnswer.text}
+                            <span class="recap-result ${isCorrect ? 'correct' : 'incorrect'}">
+                                ${isCorrect ? '✓ Correct' : '✗ Incorrect'}
+                            </span>
+                        </div>
+                        ${!isCorrect ? `
+                            <div class="recap-answer-item correct-answer">
+                                <span class="recap-label">Bonne réponse:</span>
+                                ${correctAnswer.text}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            
+            document.getElementById('result').innerHTML = `
+                <div style="font-size: 2em; margin: 30px 0 20px;">Votre score : ${score} / ${questions.length}</div>
+                <div style="font-size: 1.1em; color: #555; margin-bottom: 30px;">Réussite : ${Math.round(score / questions.length * 100)}%</div>
+                <div class="recap-container">${recapHtml}</div>
+            `;
+            
+            document.getElementById('prevBtn').disabled = false;
+            document.getElementById('nextBtn').textContent = 'Recommencer';
+            document.getElementById('nextBtn').disabled = false;
+            document.getElementById('nextBtn').onclick = function() { location.reload(); };
+            document.getElementById('prevBtn').onclick = function() {
+                currentQuestion = questions.length - 1;
+                displayQuestion();
+            };
+        }
+
+        displayQuestion();
+    </script>
+</body>
+</html>

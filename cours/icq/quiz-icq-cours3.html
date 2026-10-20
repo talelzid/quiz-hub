@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz - Mod?les de qualit? logicielle</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <div class="global-course-title">Initiation aux concepts qualit?</div>
+    <h1>Quiz : Mod?les de qualit? logicielle (Cours 3)</h1>
+    
+    <div class="progress-container">
+        <div class="progress-info">
+            <span id="question-counter">Question 1 / 10</span>
+            <div class="progress-stats">
+                <span class="stat-badge incorrect"><span class="stat-icon">✕</span><span id="incorrect-count">0</span></span>
+                <span class="stat-badge correct"><span class="stat-icon">✓</span><span id="correct-count">0</span></span>
+            </div>
+        </div>
+        <div class="progress-bar-wrapper" id="progressBar"></div>
+    </div>
+    
+    <div id="quiz-container" class="card"></div>
+    
+    <div id="feedback" class="feedback-container"></div>
+    
+    <div class="quiz-navigation">
+        <button id="prevBtn" onclick="previousQuestion()">← Précédent</button>
+        <button id="nextBtn" onclick="nextQuestion()">Suivant →</button>
+    </div>
+    
+    <div id="result"></div>
+
+    <script>
+        const questions = [
+          {
+                    "q": "Pourquoi utilise-t-on un modèle de qualité ?",
+                    "options": [
+                              {
+                                        "text": "Pour décomposer la qualité, trop large pour être mesurée directement, en éléments plus précis et mesurables",
+                                        "explain": "Correct. Le modèle décompose la qualité en facteurs, puis en critères, puis en attributs observables qu'on peut mesurer."
+                              },
+                              {
+                                        "text": "Pour obtenir automatiquement une note de qualité sur 100",
+                                        "explain": "Faux. Un modèle de qualité ne calcule rien par lui-même. Il organise ce qu'on doit spécifier, mesurer et évaluer."
+                              },
+                              {
+                                        "text": "Pour imposer un langage de programmation à l'équipe",
+                                        "explain": "Faux. Un modèle de qualité est indépendant du langage. Il décrit des propriétés attendues du produit."
+                              },
+                              {
+                                        "text": "Pour remplacer les tests par une évaluation théorique du logiciel",
+                                        "explain": "Faux. Le modèle ne remplace pas les tests : il aide plutôt à décider quels types de tests faire, selon les caractéristiques importantes."
+                              }
+                    ],
+                    "correct": 0,
+                    "correctExplain": "On ne peut pas mesurer « la qualité » d'un seul coup. Un modèle la décompose : la qualité se divise en facteurs (ce que l'utilisateur attend), les facteurs en critères (ce sur quoi le concepteur agit), les critères en attributs observables, puis en mesures chiffrées. Le modèle sert à spécifier des exigences de qualité complètes, à choisir les types de tests, à évaluer ou comparer des produits et à partager un vocabulaire commun."
+          },
+          {
+                    "q": "Combien de caractéristiques compte le modèle de qualité du produit d'ISO/IEC 25010:2023 ?",
+                    "options": [
+                              {
+                                        "text": "6",
+                                        "explain": "Faux. Six, c'est le nombre de caractéristiques d'ISO 9126."
+                              },
+                              {
+                                        "text": "8",
+                                        "explain": "Faux. Huit, c'est le nombre de caractéristiques d'ISO/IEC 25010:2011."
+                              },
+                              {
+                                        "text": "9",
+                                        "explain": "Correct. La version 2023 compte 9 caractéristiques et 40 sous-caractéristiques. La sûreté est la nouvelle caractéristique."
+                              },
+                              {
+                                        "text": "11",
+                                        "explain": "Faux. Onze, c'est le nombre de facteurs du modèle de McCall (1977)."
+                              }
+                    ],
+                    "correct": 2,
+                    "correctExplain": "L'évolution est la suivante : McCall (1977) propose 11 facteurs ; ISO 9126 (1991) retient 6 caractéristiques ; ISO/IEC 25010:2011 en compte 8, avec 31 sous-caractéristiques ; ISO/IEC 25010:2023 en compte 9, avec 40 sous-caractéristiques. Les 9 caractéristiques sont : adéquation fonctionnelle, efficacité de performance, compatibilité, capacité d'interaction, fiabilité, sécurité, maintenabilité, flexibilité et sûreté."
+          },
+          {
+                    "q": "Quelle affirmation décrit correctement la différence entre un facteur et un critère ?",
+                    "options": [
+                              {
+                                        "text": "Le facteur est mesuré directement ; le critère ne peut pas l'être",
+                                        "explain": "Faux. C'est plutôt l'inverse : le facteur est trop général pour être mesuré directement. On l'évalue à travers ses critères, puis leurs attributs."
+                              },
+                              {
+                                        "text": "Le facteur représente le point de vue de l'utilisateur ; le critère, celui du concepteur, qui peut agir dessus",
+                                        "explain": "Correct. Le facteur (ex. maintenabilité) est une qualité que l'utilisateur apprécie et qui est reliée à un coût. Le critère (ex. testabilité) est un attribut du logiciel sur lequel le concepteur agit pour améliorer le facteur."
+                              },
+                              {
+                                        "text": "Un critère appartient toujours à un seul facteur",
+                                        "explain": "Faux. Un même critère peut servir plusieurs facteurs : chez McCall, la modularité contribue à la maintenabilité, à la testabilité, à la flexibilité et à la réutilisabilité."
+                              },
+                              {
+                                        "text": "Facteur et critère sont deux mots pour la même chose",
+                                        "explain": "Faux. Ce sont deux niveaux différents du modèle : le facteur se décompose en critères."
+                              }
+                    ],
+                    "correct": 1,
+                    "correctExplain": "Le facteur exprime le point de vue de l'utilisateur : c'est une qualité qu'il peut apprécier, reliée à un coût à travers les activités qu'elle engendre. Le critère exprime le point de vue du concepteur : c'est un attribut du logiciel qui permet d'évaluer le facteur et sur lequel on peut agir directement. Un facteur se décompose en plusieurs critères, et un critère peut servir plusieurs facteurs. Dans ISO/IEC 25010, le facteur s'appelle « caractéristique » et le critère « sous-caractéristique »."
+          },
+          {
+                    "q": "Quel changement ISO/IEC 25010:2023 apporte-t-il par rapport à l'édition 2011 ?",
+                    "options": [
+                              {
+                                        "text": "La maintenabilité disparaît du modèle",
+                                        "explain": "Faux. La maintenabilité est toujours présente, avec ses cinq sous-caractéristiques : modularité, réutilisabilité, analysabilité, modifiabilité et testabilité."
+                              },
+                              {
+                                        "text": "Le modèle de qualité en usage est intégré au modèle de qualité du produit",
+                                        "explain": "Faux. C'est l'inverse : le modèle de qualité en usage sort d'ISO 25010 et devient une norme distincte, ISO/IEC 25019:2023."
+                              },
+                              {
+                                        "text": "La sécurité devient une sous-caractéristique de la fiabilité",
+                                        "explain": "Faux. Depuis 2011, la sécurité est une caractéristique à part entière, et elle le reste en 2023, avec une nouvelle sous-caractéristique : la résistance."
+                              },
+                              {
+                                        "text": "L'utilisabilité est remplacée par la capacité d'interaction, et la sûreté est ajoutée",
+                                        "explain": "Correct. L'utilisabilité devient la capacité d'interaction, la portabilité devient la flexibilité, et la sûreté apparaît comme nouvelle caractéristique."
+                              }
+                    ],
+                    "correct": 3,
+                    "correctExplain": "Les principaux changements de 2023 : ajout de la sûreté, avec cinq sous-caractéristiques ; utilisabilité remplacée par capacité d'interaction et portabilité par flexibilité ; ajout de l'inclusivité, de l'auto-descriptivité, de la résistance et de la mise à l'échelle ; esthétique de l'interface remplacée par engagement de l'utilisateur et maturité par absence de défauts ; accessibilité divisée en inclusivité et assistance à l'utilisateur. Le modèle de qualité en usage passe dans ISO/IEC 25019:2023."
+          },
+          {
+                    "q": "Dans ISO/IEC 25010:2023, à quelle caractéristique appartient la testabilité ?",
+                    "options": [
+                              {
+                                        "text": "Adéquation fonctionnelle",
+                                        "explain": "Faux. L'adéquation fonctionnelle regroupe la complétude, l'exactitude et la pertinence fonctionnelles : elle porte sur ce que fait le logiciel."
+                              },
+                              {
+                                        "text": "Fiabilité",
+                                        "explain": "Faux. La fiabilité regroupe l'absence de défauts, la disponibilité, la tolérance aux pannes et la récupérabilité."
+                              },
+                              {
+                                        "text": "Maintenabilité",
+                                        "explain": "Correct. La testabilité est une sous-caractéristique de la maintenabilité, avec la modularité, la réutilisabilité, l'analysabilité et la modifiabilité. Un logiciel facile à tester est plus facile à faire évoluer sans risque."
+                              },
+                              {
+                                        "text": "Capacité d'interaction",
+                                        "explain": "Faux. La capacité d'interaction porte sur la relation entre l'usager et le produit : apprentissage, opérabilité, inclusivité, etc."
+                              }
+                    ],
+                    "correct": 2,
+                    "correctExplain": "La maintenabilité est le degré auquel un produit peut être modifié efficacement par ceux qui le maintiennent. Elle comprend cinq sous-caractéristiques : modularité, réutilisabilité, analysabilité, modifiabilité et testabilité. La testabilité, c'est la facilité à définir des critères de test et à exécuter les tests. Dans le modèle de McCall, la testabilité était un facteur à part entière."
+          },
+          {
+                    "q": "« Un usager voit l'historique de paiement d'un autre usager. » Quelle sous-caractéristique est en cause ?",
+                    "options": [
+                              {
+                                        "text": "La confidentialité",
+                                        "explain": "Correct. La confidentialité garantit que seules les personnes autorisées accèdent aux données. Voir l'historique d'un autre usager est une atteinte à la confidentialité."
+                              },
+                              {
+                                        "text": "L'authenticité",
+                                        "explain": "Faux. L'authenticité porte sur la preuve de l'identité d'un usager ou d'une ressource. L'usager est bien identifié ici : c'est son accès aux données des autres qui pose problème."
+                              },
+                              {
+                                        "text": "La disponibilité",
+                                        "explain": "Faux. La disponibilité relève de la fiabilité : le service est accessible quand on en a besoin. Le problème décrit n'a rien à voir avec une interruption."
+                              },
+                              {
+                                        "text": "L'intégrité",
+                                        "explain": "Faux. L'intégrité empêche la modification non autorisée des données. Ici, les données ne sont pas modifiées : elles sont vues par la mauvaise personne."
+                              }
+                    ],
+                    "correct": 0,
+                    "correctExplain": "La sécurité, dans ISO/IEC 25010:2023, comprend six sous-caractéristiques : confidentialité (seules les personnes autorisées accèdent aux données), intégrité (pas de modification non autorisée), non-répudiation (preuve qu'une action a eu lieu), imputabilité (retracer une action jusqu'à son auteur), authenticité (preuve de l'identité) et résistance (maintenir le service pendant une attaque). Un usager qui voit les données d'un autre usager révèle un défaut de confidentialité."
+          },
+          {
+                    "q": "Dans la chaîne facteur → critère → composante → attribut, quel élément est un attribut ?",
+                    "options": [
+                              {
+                                        "text": "La maintenabilité",
+                                        "explain": "Faux. La maintenabilité est un facteur (une caractéristique dans ISO 25010). Elle est trop générale pour être observée directement."
+                              },
+                              {
+                                        "text": "La modifiabilité",
+                                        "explain": "Faux. La modifiabilité est un critère (une sous-caractéristique) de la maintenabilité."
+                              },
+                              {
+                                        "text": "Le code source",
+                                        "explain": "Faux. Le code source est une composante du logiciel : l'élément sur lequel porte le critère. On observe ensuite des attributs de ce code."
+                              },
+                              {
+                                        "text": "Le taux de commentaires du code",
+                                        "explain": "Correct. Le taux de commentaires est une propriété concrète et observable du code source. On peut la mesurer, par exemple 22 %."
+                              }
+                    ],
+                    "correct": 3,
+                    "correctExplain": "La chaîne relie le modèle au logiciel réel. Le facteur indique la qualité visée (maintenabilité). Le critère indique par quoi on l'évalue (modifiabilité). La composante désigne l'élément du logiciel concerné (code source, documents d'analyse, interface graphique). L'attribut est la propriété observable de cette composante (taux de commentaires, respect des normes de codage). La mesure est la valeur chiffrée de l'attribut, vue au cours 10."
+          },
+          {
+                    "q": "Dans le texte d'une norme ISO, que signifie le verbe « il convient de » (should) ?",
+                    "options": [
+                              {
+                                        "text": "Une exigence obligatoire pour se déclarer conforme",
+                                        "explain": "Faux. L'exigence obligatoire s'exprime par « doit » (shall)."
+                              },
+                              {
+                                        "text": "Une recommandation : la pratique est conseillée, mais on peut s'en écarter en le justifiant",
+                                        "explain": "Correct. « Il convient de » exprime une recommandation. Elle n'est pas obligatoire, mais s'en écarter demande une bonne raison."
+                              },
+                              {
+                                        "text": "Une possibilité permise par la norme",
+                                        "explain": "Faux. La possibilité permise s'exprime par « peut » (may)."
+                              },
+                              {
+                                        "text": "Une note historique sans portée pratique",
+                                        "explain": "Faux. « Il convient de » a une portée pratique : c'est une recommandation de la norme."
+                              }
+                    ],
+                    "correct": 1,
+                    "correctExplain": "Les normes ISO utilisent un vocabulaire précis : « doit » (shall) exprime une exigence obligatoire, « il convient de » (should) une recommandation, « peut » (may) une possibilité permise. Pour lire une norme efficacement, on regarde aussi son domaine d'application (ce qu'elle couvre), ses termes et définitions (le vocabulaire officiel) et ses annexes, normatives ou informatives."
+          },
+          {
+                    "q": "L'équipe StationPlus veut s'assurer que l'application supporte les soirs de festival, où l'achalandage est multiplié par 10. Quelle chaîne est la plus juste ?",
+                    "options": [
+                              {
+                                        "text": "Sécurité → Confidentialité → Base de données → Nombre de mots de passe",
+                                        "explain": "Faux. La confidentialité protège l'accès aux données. Elle ne répond pas au besoin de supporter une forte hausse de la charge."
+                              },
+                              {
+                                        "text": "Capacité d'interaction → Opérabilité → Interface graphique → Taille des boutons",
+                                        "explain": "Faux. Cette chaîne porte sur la facilité d'utilisation, pas sur la capacité du système à absorber une charge 10 fois plus grande."
+                              },
+                              {
+                                        "text": "Flexibilité → Mise à l'échelle → Serveurs et service de paiement → Nombre de paiements traités par seconde sous charge",
+                                        "explain": "Correct. La mise à l'échelle, nouvelle sous-caractéristique de la flexibilité en 2023, porte sur la capacité à gérer une charge qui augmente. Le nombre de paiements par seconde, observé sous charge, est un attribut mesurable."
+                              },
+                              {
+                                        "text": "Maintenabilité → Modularité → Code source → Nombre de classes",
+                                        "explain": "Faux. La modularité facilite les modifications, mais le nombre de classes ne dit rien de la capacité à absorber un achalandage multiplié par 10."
+                              }
+                    ],
+                    "correct": 2,
+                    "correctExplain": "Pour construire une chaîne, on part du besoin : supporter 10 fois plus d'usagers. Dans ISO/IEC 25010:2023, la sous-caractéristique « mise à l'échelle » (scalability) de la flexibilité vise exactement cela : gérer une charge qui augmente ou diminue. On aurait aussi pu justifier « capacité », sous l'efficacité de performance. Les composantes concernées sont les serveurs et le service de paiement, et un attribut observable est le nombre de paiements traités par seconde sous charge. Une exigence vérifiable en découle : par exemple, « 5 000 paiements par minute sans dépasser 2 secondes de confirmation »."
+          },
+          {
+                    "q": "Quelle exigence de qualité est la mieux formulée pour StationPlus ?",
+                    "options": [
+                              {
+                                        "text": "« L'application doit être facile à utiliser pour tout le monde. »",
+                                        "explain": "Faux. « Facile » et « tout le monde » ne sont ni chiffrés ni vérifiables : impossible de concevoir un test qui dirait si l'exigence est respectée."
+                              },
+                              {
+                                        "text": "« L'application doit être la plus rapide du marché. »",
+                                        "explain": "Faux. On ne précise ni quelle fonction, ni quel seuil, ni dans quelles conditions. Cette exigence ne peut pas être vérifiée par un test."
+                              },
+                              {
+                                        "text": "« L'interface doit être moderne et agréable. »",
+                                        "explain": "Faux. « Moderne » et « agréable » sont des appréciations subjectives. L'engagement de l'utilisateur peut se mesurer, mais il faut définir comment, par exemple par un sondage avec un seuil."
+                              },
+                              {
+                                        "text": "« 9 nouveaux usagers sur 10 réussissent un premier paiement sans aide en moins de 3 minutes, lors d'un test avec 20 participants. »",
+                                        "explain": "Correct. On sait quoi (un premier paiement sans aide), combien (9 sur 10, moins de 3 minutes), dans quelles conditions (nouveaux usagers) et comment le vérifier (un test avec 20 participants). Elle porte sur la facilité d'apprentissage."
+                              }
+                    ],
+                    "correct": 3,
+                    "correctExplain": "Une exigence de qualité vérifiable précise quatre choses : quoi (la fonction ou l'élément visé), combien (un seuil chiffré), dans quelles conditions (charge, profil d'usager, environnement) et comment la vérifier (le test ou la mesure qui le prouvera). Elle relie une sous-caractéristique du modèle, ici la facilité d'apprentissage de la capacité d'interaction, à un attribut mesurable. Les formulations vagues comme « facile », « rapide » ou « moderne » ne permettent pas de concevoir un test."
+          }
+];
+        let currentQuestion = 0;
+        let answers = new Array(questions.length).fill(null);
+        let answered = new Array(questions.length).fill(false);
+
+        function displayQuestion() {
+            const container = document.getElementById('quiz-container');
+            const item = questions[currentQuestion];
+            
+            let html = `<div class="question">${currentQuestion + 1}. ${item.q}</div>`;
+            const letters = ['A', 'B', 'C', 'D'];
+            item.options.forEach((opt, i) => {
+                let classes = '';
+                if (answers[currentQuestion] === i) {
+                    classes = 'selected ';
+                    if (i === item.correct) {
+                        classes += 'correct';
+                    } else {
+                        classes += 'incorrect';
+                    }
+                }
+                const disabledClass = answered[currentQuestion] ? 'disabled' : '';
+                html += `<div class="option ${classes} ${disabledClass}" onclick="${answered[currentQuestion] ? '' : `handleAnswerClick(${i})`}" style="${answered[currentQuestion] ? 'cursor: not-allowed;' : ''}"><span class="option-letter">${letters[i]}</span> ${opt.text}</div>`;
+            });
+            
+            container.innerHTML = html;
+            
+            if (answered[currentQuestion]) {
+                showFeedback();
+            } else {
+                document.getElementById('feedback').innerHTML = '';
+                document.getElementById('feedback').classList.remove('show');
+            }
+            
+            updateProgressBar();
+            updateNavigationButtons();
+            updateProgressInfo();
+        }
+
+        function handleAnswerClick(index) {
+            if (answered[currentQuestion]) return;
+            
+            answers[currentQuestion] = index;
+            answered[currentQuestion] = true;
+            
+            showFeedback();
+            updateProgressBar();
+            updateProgressInfo();
+            updateNavigationButtons();
+            displayQuestion();
+        }
+
+        function showFeedback() {
+            const feedbackDiv = document.getElementById('feedback');
+            const item = questions[currentQuestion];
+            const isCorrect = answers[currentQuestion] === item.correct;
+            const selectedOption = item.options[answers[currentQuestion]];
+            
+            feedbackDiv.className = 'feedback-container show ' + (isCorrect ? 'feedback-correct' : 'feedback-incorrect');
+            
+            let html = '';
+            
+            if (isCorrect) {
+                html += `
+                    <div class="feedback-header">Bonne réponse!</div>
+                    <div class="feedback-explanation">${item.correctExplain}</div>
+                `;
+            } else {
+                html += `
+                    <div class="feedback-header">Pas tout à fait</div>
+                    <div class="feedback-explanation">${selectedOption.explain}</div>
+                    <div class="correct-answer-box">
+                        <div class="correct-answer-label">✓ Bonne réponse:</div>
+                        <div>${item.options[item.correct].text}</div>
+                        <div style="margin-top: 8px; font-size: 0.9em;">${item.correctExplain}</div>
+                    </div>
+                `;
+            }
+            
+            feedbackDiv.innerHTML = html;
+        }
+
+        function updateProgressBar() {
+            const progressBar = document.getElementById('progressBar');
+            progressBar.innerHTML = '';
+            
+            for (let i = 0; i < questions.length; i++) {
+                const segment = document.createElement('div');
+                segment.className = 'progress-segment';
+                
+                if (!answered[i]) {
+                    segment.classList.add('unanswered');
+                } else if (answers[i] === questions[i].correct) {
+                    segment.classList.add('correct');
+                } else {
+                    segment.classList.add('incorrect');
+                }
+                
+                progressBar.appendChild(segment);
+            }
+        }
+
+        function updateNavigationButtons() {
+            const isAnswered = answered[currentQuestion];
+            document.getElementById('prevBtn').disabled = currentQuestion === 0 || !isAnswered;
+            document.getElementById('nextBtn').disabled = !isAnswered;
+            
+            if (currentQuestion === questions.length - 1) {
+                document.getElementById('nextBtn').textContent = 'Voir Résultat';
+            } else {
+                document.getElementById('nextBtn').textContent = 'Suivant →';
+            }
+        }
+
+        function updateProgressInfo() {
+            document.getElementById('question-counter').textContent = `Question ${currentQuestion + 1} / ${questions.length}`;
+            
+            let correctCount = 0;
+            let incorrectCount = 0;
+            
+            for (let i = 0; i < answers.length; i++) {
+                if (answered[i]) {
+                    if (answers[i] === questions[i].correct) {
+                        correctCount++;
+                    } else {
+                        incorrectCount++;
+                    }
+                }
+            }
+            
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('incorrect-count').textContent = incorrectCount;
+        }
+
+        function nextQuestion() {
+            if (currentQuestion === questions.length - 1) {
+                showFinalResults();
+                return;
+            }
+            
+            currentQuestion++;
+            displayQuestion();
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        function showFinalResults() {
+            let score = 0;
+            answers.forEach((answer, index) => {
+                if (answer === questions[index].correct) score++;
+            });
+            
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '<div class="question">Quiz terminé!</div>';
+            
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.className = 'feedback-container';
+            feedbackDiv.innerHTML = '';
+            
+            let recapHtml = '<div class="recap-title">Résumé de vos réponses</div>';
+            
+            questions.forEach((question, index) => {
+                const userAnswer = question.options[answers[index]];
+                const correctAnswer = question.options[question.correct];
+                const isCorrect = answers[index] === question.correct;
+                
+                recapHtml += `
+                    <div class="recap-card ${isCorrect ? 'correct' : 'incorrect'}">
+                        <div class="recap-number">Question ${index + 1} / ${questions.length}</div>
+                        <div class="recap-question">${question.q}</div>
+                        <div class="recap-answer-item user">
+                            <span class="recap-label">Votre réponse:</span>
+                            ${userAnswer.text}
+                            <span class="recap-result ${isCorrect ? 'correct' : 'incorrect'}">
+                                ${isCorrect ? '✓ Correct' : '✗ Incorrect'}
+                            </span>
+                        </div>
+                        ${!isCorrect ? `
+                            <div class="recap-answer-item correct-answer">
+                                <span class="recap-label">Bonne réponse:</span>
+                                ${correctAnswer.text}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            
+            document.getElementById('result').innerHTML = `
+                <div style="font-size: 2em; margin: 30px 0 20px;">Votre score : ${score} / ${questions.length}</div>
+                <div style="font-size: 1.1em; color: #555; margin-bottom: 30px;">Réussite : ${Math.round(score / questions.length * 100)}%</div>
+                <div class="recap-container">${recapHtml}</div>
+            `;
+            
+            document.getElementById('prevBtn').disabled = false;
+            document.getElementById('nextBtn').textContent = 'Recommencer';
+            document.getElementById('nextBtn').disabled = false;
+            document.getElementById('nextBtn').onclick = function() { location.reload(); };
+            document.getElementById('prevBtn').onclick = function() {
+                currentQuestion = questions.length - 1;
+                displayQuestion();
+            };
+        }
+
+        displayQuestion();
+    </script>
+</body>
+</html>

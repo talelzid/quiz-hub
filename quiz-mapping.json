@@ -265,5 +265,33 @@
     "path": "cours/lsc-cicd/quiz-lsc-cicd-cours6.html",
     "createdAt": "2026-04-23T00:00:00Z",
     "questionsCount": 10
+  },
+  "q9v2m6x4": {
+    "course": "ICQ",
+    "lesson": 1,
+    "title": "Fondements de la qualité logicielle",
+    "path": "cours/icq/quiz-icq-cours1.html",
+    "questionsCount": 10
+  },
+  "x3k7p1w8": {
+    "course": "ICQ",
+    "lesson": 2,
+    "title": "Historique de la qualité logicielle",
+    "path": "cours/icq/quiz-icq-cours2.html",
+    "questionsCount": 10
+  },
+  "c8r4t9n2": {
+    "course": "ICQ",
+    "lesson": 3,
+    "title": "Modèles de qualité logicielle",
+    "path": "cours/icq/quiz-icq-cours3.html",
+    "questionsCount": 10
+  },
+  "z5m1h7q3": {
+    "course": "ICQ",
+    "lesson": 4,
+    "title": "Principes fondamentaux du test",
+    "path": "cours/icq/quiz-icq-cours4.html",
+    "questionsCount": 10
   }
 }

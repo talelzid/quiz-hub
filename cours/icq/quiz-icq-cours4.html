@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz - Principes fondamentaux du test</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <div class="global-course-title">Initiation aux concepts qualit?</div>
+    <h1>Quiz : Principes fondamentaux du test (Cours 4)</h1>
+    
+    <div class="progress-container">
+        <div class="progress-info">
+            <span id="question-counter">Question 1 / 10</span>
+            <div class="progress-stats">
+                <span class="stat-badge incorrect"><span class="stat-icon">✕</span><span id="incorrect-count">0</span></span>
+                <span class="stat-badge correct"><span class="stat-icon">✓</span><span id="correct-count">0</span></span>
+            </div>
+        </div>
+        <div class="progress-bar-wrapper" id="progressBar"></div>
+    </div>
+    
+    <div id="quiz-container" class="card"></div>
+    
+    <div id="feedback" class="feedback-container"></div>
+    
+    <div class="quiz-navigation">
+        <button id="prevBtn" onclick="previousQuestion()">← Précédent</button>
+        <button id="nextBtn" onclick="nextQuestion()">Suivant →</button>
+    </div>
+    
+    <div id="result"></div>
+
+    <script>
+        const questions = [
+          {
+                    "q": "Selon le premier principe du test, que prouve un test qui réussit ?",
+                    "options": [
+                              {
+                                        "text": "Qu'aucun défaut n'a été trouvé dans ce qui a été testé, avec les données utilisées",
+                                        "explain": "Correct. Un test réussi réduit le risque, mais ne prouve pas l'absence de défauts. Il dit seulement qu'on n'a rien trouvé là où l'on a cherché."
+                              },
+                              {
+                                        "text": "Que le logiciel répond au besoin des usagers",
+                                        "explain": "Faux. C'est l'objet de la validation, et le principe 7 rappelle qu'un logiciel sans défaut connu peut quand même ne pas répondre au besoin."
+                              },
+                              {
+                                        "text": "Que le code a été écrit correctement par le développeur",
+                                        "explain": "Faux. Un test réussi ne dit rien de la façon dont le code a été écrit, seulement de son comportement dans les cas testés."
+                              },
+                              {
+                                        "text": "Que le logiciel ne contient aucun défaut",
+                                        "explain": "Faux. C'est exactement ce que le principe 1 interdit d'affirmer : le test montre la présence de défauts, jamais leur absence."
+                              }
+                    ],
+                    "correct": 0,
+                    "correctExplain": "Principe 1 : le test montre la présence, et non l'absence, de défauts. Un test qui échoue prouve qu'il existe un défaut. Un test qui réussit prouve seulement qu'on n'a pas trouvé de défaut dans les situations testées. C'est pourquoi un rapport de test honnête parle d'« aucun défaut connu » et précise la couverture atteinte. Dijkstra le résumait ainsi en 1969 : tester peut montrer la présence de bogues, jamais leur absence."
+          },
+          {
+                    "q": "Quels deux principes ont été renommés dans le syllabus ISTQB CTFL v4.0 ?",
+                    "options": [
+                              {
+                                        "text": "« Le test exhaustif est impossible » et « regroupement des défauts »",
+                                        "explain": "Faux. Ces deux principes gardent essentiellement leur nom, même si « concentration des défauts » se dit aussi « regroupement »."
+                              },
+                              {
+                                        "text": "Aucun : les 7 principes sont identiques depuis 2005",
+                                        "explain": "Faux. La version 4.0 de 2023 a renommé deux principes et nuancé l'usure des tests pour la non-régression automatisée."
+                              },
+                              {
+                                        "text": "Le paradoxe des pesticides, devenu « usure des tests », et « l'absence d'erreurs est une erreur », devenu « l'illusion de l'absence de défaut »",
+                                        "explain": "Correct. Les idées restent les mêmes ; les noms sont plus clairs. Les anciens noms se rencontrent encore souvent."
+                              },
+                              {
+                                        "text": "« Tester tôt » et « le test dépend du contexte »",
+                                        "explain": "Faux. « Tester très tôt » est devenu « tester tôt économise du temps et de l'argent », une précision plutôt qu'un changement de nom, et le principe du contexte n'a pas changé."
+                              }
+                    ],
+                    "correct": 2,
+                    "correctExplain": "Dans la version 4.0 (2023), le « paradoxe des pesticides » devient l'« usure des tests », et « l'absence d'erreurs est une erreur » (ou « illusion d'absence d'erreurs ») devient « l'illusion de l'absence de défaut ». Les 7 principes sont : 1. le test montre la présence, et non l'absence, de défauts ; 2. le test exhaustif est impossible ; 3. tester tôt économise du temps et de l'argent ; 4. regroupement des défauts ; 5. usure des tests ; 6. le test dépend du contexte ; 7. l'illusion de l'absence de défaut."
+          },
+          {
+                    "q": "Une seule fonction accepte 300 zones, 1 440 heures de début et 8 durées. Que conclure ?",
+                    "options": [
+                              {
+                                        "text": "On peut se contenter de 10 combinaisons choisies au hasard",
+                                        "explain": "Faux. Le hasard ne garantit pas de couvrir les cas à risque. On choisit les cas de façon réfléchie, selon les risques et des techniques de test."
+                              },
+                              {
+                                        "text": "Le test exhaustif est impossible : on choisit les combinaisons selon les risques et avec des techniques de test",
+                                        "explain": "Correct. C'est le principe 2. On cible par exemple les changements de tarif, les durées minimale et maximale, les zones particulières."
+                              },
+                              {
+                                        "text": "Cette fonction est trop complexe et ne doit pas être testée",
+                                        "explain": "Faux. C'est l'inverse : une fonction complexe est plus risquée et mérite un effort de test ciblé."
+                              },
+                              {
+                                        "text": "Il faut automatiser les 3 456 000 combinaisons : une machine peut tout tester",
+                                        "explain": "Faux. Même à un test par seconde, il faudrait 40 jours pour cette seule fonction. Et le logiciel en compte des centaines."
+                              }
+                    ],
+                    "correct": 1,
+                    "correctExplain": "300 × 1 440 × 8 = 3 456 000 combinaisons. À un test par seconde, jour et nuit, il faudrait 40 jours pour une seule fonction. Le test exhaustif est donc impossible, sauf pour des cas triviaux. On compense par la priorisation selon les risques, par des techniques qui choisissent quelques cas représentatifs (vues dans le cours Élaboration des tests) et par des critères de couverture qui disent ce qu'on a testé."
+          },
+          {
+                    "q": "Pourquoi tester tôt économise-t-il du temps et de l'argent ?",
+                    "options": [
+                              {
+                                        "text": "Parce qu'on peut alors réduire les tests en fin de projet",
+                                        "explain": "Faux. Tester tôt ne remplace pas les tests ultérieurs : il évite que des défauts évitables les surchargent."
+                              },
+                              {
+                                        "text": "Parce que le code écrit tôt contient moins de défauts",
+                                        "explain": "Faux. Le principe porte sur le moment où l'on détecte les défauts, pas sur la qualité du code écrit tôt."
+                              },
+                              {
+                                        "text": "Parce que les testeurs coûtent moins cher en début de projet",
+                                        "explain": "Faux. Le coût du testeur ne change pas ; c'est le coût de correction du défaut qui augmente avec le temps."
+                              },
+                              {
+                                        "text": "Parce qu'un défaut trouvé dans une exigence se corrige avant de se propager dans la conception, le code et les tests",
+                                        "explain": "Correct. Corriger une phrase dans une exigence coûte peu ; corriger le même défaut en production demande un correctif, des tests et parfois des compensations."
+                              }
+                    ],
+                    "correct": 3,
+                    "correctExplain": "Principe 3 : un défaut découvert tôt ne se propage pas. D'après les ordres de grandeur de Boehm, un défaut corrigé à l'étape des exigences coûte environ 1, contre 10 au codage et 100 ou plus en production. Tester tôt ne veut pas seulement dire exécuter du code plus tôt : relire les exigences et les critères d'acceptation, faire des revues et concevoir les tests à partir des spécifications, c'est déjà tester. C'est l'approche « shift-left »."
+          },
+          {
+                    "q": "Que signifie le principe du regroupement des défauts ?",
+                    "options": [
+                              {
+                                        "text": "Que les défauts apparaissent toujours en groupes de trois ou plus",
+                                        "explain": "Faux. Le principe ne parle pas de groupes de taille fixe, mais de la répartition des défauts entre les modules."
+                              },
+                              {
+                                        "text": "Qu'il faut regrouper les anomalies dans un seul rapport",
+                                        "explain": "Faux. Chaque anomalie fait l'objet de son propre rapport. Le principe porte sur l'endroit où se trouvent les défauts."
+                              },
+                              {
+                                        "text": "Qu'un petit nombre de modules contient la majorité des défauts",
+                                        "explain": "Correct. C'est une application du principe de Pareto : environ 80 % des défauts dans 20 % des modules, souvent les plus complexes, les plus récents ou les plus intégrés."
+                              },
+                              {
+                                        "text": "Que les défauts se corrigent plus facilement quand on les traite tous ensemble",
+                                        "explain": "Faux. Le principe ne concerne pas la correction, mais la répartition des défauts dans le logiciel."
+                              }
+                    ],
+                    "correct": 2,
+                    "correctExplain": "Principe 4 : quelques modules concentrent la plupart des défauts, une illustration du principe de Pareto. Les causes fréquentes sont la complexité, le code nouveau ou modifié et les intégrations avec des systèmes externes. On s'en sert pour concentrer l'effort de test sur les zones à risque, tout en gardant des tests de base partout, car les regroupements peuvent se déplacer d'une version à l'autre."
+          },
+          {
+                    "q": "Depuis quatre versions, la même suite de régression ne trouve plus aucun défaut. Quelle lecture est juste ?",
+                    "options": [
+                              {
+                                        "text": "Les tests s'usent : il faut les revoir, en ajouter de nouveaux et varier les données, tout en gardant la régression",
+                                        "explain": "Correct. C'est le principe 5. On met à jour, on ajoute des cas pour les nouvelles fonctions, on varie les données et on fait du test exploratoire."
+                              },
+                              {
+                                        "text": "Le logiciel est maintenant sans défaut",
+                                        "explain": "Faux. C'est la confusion contre laquelle mettent en garde les principes 1 et 5 : une suite qui ne trouve plus rien ne prouve pas l'absence de défauts."
+                              },
+                              {
+                                        "text": "La suite est inutile : il faut la supprimer",
+                                        "explain": "Faux. La version 4.0 le précise : en non-régression automatisée, une suite qui passe confirme que les changements n'ont rien cassé. On la garde."
+                              },
+                              {
+                                        "text": "Il faut rejouer la suite deux fois plus souvent",
+                                        "explain": "Faux. Répéter davantage les mêmes tests ne leur fera pas trouver de nouveaux défauts : ils passent toujours par les mêmes chemins."
+                              }
+                    ],
+                    "correct": 0,
+                    "correctExplain": "Principe 5 : usure des tests, autrefois appelé paradoxe des pesticides. Des tests répétés sans changement finissent par ne plus trouver de nouveaux défauts, comme un pesticide auquel les insectes résistent. Il faut revoir les cas de test, en écrire de nouveaux, varier les données et explorer. La nuance de la version 4.0 : pour la non-régression automatisée, ne rien trouver est un résultat utile, car cela confirme que rien n'a été cassé."
+          },
+          {
+                    "q": "Pourquoi teste-t-on une pompe à insuline autrement qu'un jeu mobile gratuit ?",
+                    "options": [
+                              {
+                                        "text": "Parce qu'un jeu mobile n'a pas besoin d'être testé",
+                                        "explain": "Faux. Un jeu mobile se teste aussi, mais avec d'autres priorités : utilisabilité, compatibilité des appareils, tests exploratoires."
+                              },
+                              {
+                                        "text": "Parce que les testeurs de jeux vidéo ne sont pas des professionnels",
+                                        "explain": "Faux. Le test de jeux est un métier à part entière. La différence vient du contexte, pas des personnes."
+                              },
+                              {
+                                        "text": "Parce qu'un logiciel médical est toujours écrit dans un langage plus difficile",
+                                        "explain": "Faux. Le langage n'est pas en cause : c'est la gravité des conséquences d'une défaillance qui change."
+                              },
+                              {
+                                        "text": "Parce que le test dépend du contexte : les risques, la réglementation et les conséquences d'une défaillance diffèrent",
+                                        "explain": "Correct. Une défaillance de la pompe peut blesser un patient, et le logiciel est soumis à des normes comme IEC 62304. Le jeu, lui, vise surtout l'expérience de jeu."
+                              }
+                    ],
+                    "correct": 3,
+                    "correctExplain": "Principe 6 : le test dépend du contexte. Il n'existe pas d'approche universelle. Le domaine et ses risques, la réglementation, le cycle de vie, les délais, le budget, l'équipe et la technologie déterminent la stratégie de test : l'effort, le formalisme, les types de tests et le degré d'indépendance. C'est ce que la stratégie de test, rédigée à la planification, traduit en choix concrets."
+          },
+          {
+                    "q": "Le pilote de StationPlus se termine sans aucune anomalie ouverte, mais 6 usagers sur 10 retournent aux bornes : il faut 7 écrans pour payer. Quel principe s'applique ?",
+                    "options": [
+                              {
+                                        "text": "Regroupement des défauts",
+                                        "explain": "Faux. Il n'y a pas de défaut au sens de la spécification. Le problème vient du besoin mal compris."
+                              },
+                              {
+                                        "text": "L'illusion de l'absence de défaut",
+                                        "explain": "Correct. Corriger tous les défauts ne sert à rien si le logiciel ne répond pas au besoin. Il fallait aussi valider : tests d'utilisabilité, d'acceptation, revue des exigences avec la Ville."
+                              },
+                              {
+                                        "text": "Le test exhaustif est impossible",
+                                        "explain": "Faux. Le problème n'est pas qu'on ait oublié de tester des combinaisons : le logiciel fonctionne comme spécifié, mais il ne convient pas aux usagers."
+                              },
+                              {
+                                        "text": "Usure des tests",
+                                        "explain": "Faux. Rien n'indique que les tests se sont usés. Ils ont bien vérifié la conformité ; c'est la validation qui a manqué."
+                              }
+                    ],
+                    "correct": 1,
+                    "correctExplain": "Principe 7 : l'illusion de l'absence de défaut. Vérifier, c'est s'assurer que le produit est conforme à sa spécification ; valider, c'est s'assurer qu'il répond au besoin réel. StationPlus a été bien vérifiée, mais mal validée. Pour s'en protéger : impliquer les usagers dans des tests d'acceptation et d'utilisabilité, revoir les exigences avec le client et montrer des maquettes tôt. Les principes 3 et 7 se répondent : tester tôt les exigences, c'est aussi vérifier qu'elles décrivent le bon besoin."
+          },
+          {
+                    "q": "Le chef de projet demande de répartir les 3 jours de tests de régression également sur les 7 modules. 69 % des anomalies passées viennent du paiement et de la synchronisation. Que proposez-vous ?",
+                    "options": [
+                              {
+                                        "text": "Accepter : une répartition égale est plus juste pour toute l'équipe",
+                                        "explain": "Faux. La répartition de l'effort de test ne se fait pas par équité entre modules, mais selon les risques."
+                              },
+                              {
+                                        "text": "Ne tester que le paiement et la synchronisation",
+                                        "explain": "Faux. Abandonner les autres modules est risqué : les regroupements se déplacent, et une régression peut apparaître ailleurs."
+                              },
+                              {
+                                        "text": "Concentrer l'effort sur le paiement et la synchronisation, tout en gardant des tests de base sur les autres modules",
+                                        "explain": "Correct. On applique le regroupement des défauts sans tomber dans l'excès : effort principal sur les zones à risque, filet de sécurité partout."
+                              },
+                              {
+                                        "text": "Tester d'abord les modules sans anomalie, puisqu'ils ont été négligés jusqu'ici",
+                                        "explain": "Faux. Un module sans anomalie connue n'est pas forcément négligé ; l'historique indique au contraire où les défauts se trouvent le plus souvent."
+                              }
+                    ],
+                    "correct": 2,
+                    "correctExplain": "Le principe 4 justifie de concentrer l'effort là où les défauts se regroupent : 96 anomalies sur 140 viennent de 2 modules sur 7. Mais le principe 1 rappelle que l'absence d'anomalie connue ailleurs ne prouve rien, et le principe 5 que les zones à risque bougent. La bonne réponse combine les deux : effort principal sur les modules à risque, tests de base sur tous les autres. C'est le raisonnement de la priorisation par les risques, à la planification (cours 5)."
+          },
+          {
+                    "q": "La veille d'une démo, vous découvrez que le reçu de StationPlus affiche la plaque d'un autre usager. Le module est celui d'Inès. Quel message envoyez-vous dans le canal de l'équipe ?",
+                    "options": [
+                              {
+                                        "text": "Un message privé au gestionnaire pour qu'il décide quoi faire d'Inès",
+                                        "explain": "Faux. Le problème est technique et touche toute l'équipe ; contourner l'équipe et viser une personne nuit à la collaboration sans faire avancer la correction."
+                              },
+                              {
+                                        "text": "« Inès, ton module de reçus est encore cassé : on ne peut pas faire la démo comme ça. »",
+                                        "explain": "Faux. Le message vise la personne (« ton module », « encore ») plutôt que le fait. Il provoque une réaction défensive et ne donne aucune information pour reproduire le problème."
+                              },
+                              {
+                                        "text": "Rien pour l'instant : vous attendez après la démo pour ne pas stresser l'équipe",
+                                        "explain": "Faux. Afficher la plaque d'un autre usager expose des renseignements personnels : c'est une anomalie grave à signaler tout de suite, surtout avant une démo publique."
+                              },
+                              {
+                                        "text": "« ANO-402, critique : sur le build 231, le reçu de la session 8812 affiche la plaque d'un autre compte (étapes jointes, 3 fois sur 3). Je propose qu'on regarde ensemble ce matin pour décider de la démo. »",
+                                        "explain": "Correct. Le message rapporte des faits précis et reproductibles, indique la gravité, ne désigne personne et propose de collaborer pour décider."
+                              }
+                    ],
+                    "correct": 3,
+                    "correctExplain": "Le testeur est souvent porteur de mauvaises nouvelles, et un défaut peut être reçu comme une critique personnelle. Pour qu'une anomalie soit comprise et corrigée vite, on rapporte des faits (quoi, où, comment le reproduire), on indique la gravité, on ne désigne pas de coupable et on garde le but commun : la qualité du produit. Ici, la gravité est élevée (renseignements personnels, Loi 25) : il faut signaler sans attendre, et proposer de décider ensemble du sort de la démo."
+          }
+];
+        let currentQuestion = 0;
+        let answers = new Array(questions.length).fill(null);
+        let answered = new Array(questions.length).fill(false);
+
+        function displayQuestion() {
+            const container = document.getElementById('quiz-container');
+            const item = questions[currentQuestion];
+            
+            let html = `<div class="question">${currentQuestion + 1}. ${item.q}</div>`;
+            const letters = ['A', 'B', 'C', 'D'];
+            item.options.forEach((opt, i) => {
+                let classes = '';
+                if (answers[currentQuestion] === i) {
+                    classes = 'selected ';
+                    if (i === item.correct) {
+                        classes += 'correct';
+                    } else {
+                        classes += 'incorrect';
+                    }
+                }
+                const disabledClass = answered[currentQuestion] ? 'disabled' : '';
+                html += `<div class="option ${classes} ${disabledClass}" onclick="${answered[currentQuestion] ? '' : `handleAnswerClick(${i})`}" style="${answered[currentQuestion] ? 'cursor: not-allowed;' : ''}"><span class="option-letter">${letters[i]}</span> ${opt.text}</div>`;
+            });
+            
+            container.innerHTML = html;
+            
+            if (answered[currentQuestion]) {
+                showFeedback();
+            } else {
+                document.getElementById('feedback').innerHTML = '';
+                document.getElementById('feedback').classList.remove('show');
+            }
+            
+            updateProgressBar();
+            updateNavigationButtons();
+            updateProgressInfo();
+        }
+
+        function handleAnswerClick(index) {
+            if (answered[currentQuestion]) return;
+            
+            answers[currentQuestion] = index;
+            answered[currentQuestion] = true;
+            
+            showFeedback();
+            updateProgressBar();
+            updateProgressInfo();
+            updateNavigationButtons();
+            displayQuestion();
+        }
+
+        function showFeedback() {
+            const feedbackDiv = document.getElementById('feedback');
+            const item = questions[currentQuestion];
+            const isCorrect = answers[currentQuestion] === item.correct;
+            const selectedOption = item.options[answers[currentQuestion]];
+            
+            feedbackDiv.className = 'feedback-container show ' + (isCorrect ? 'feedback-correct' : 'feedback-incorrect');
+            
+            let html = '';
+            
+            if (isCorrect) {
+                html += `
+                    <div class="feedback-header">Bonne réponse!</div>
+                    <div class="feedback-explanation">${item.correctExplain}</div>
+                `;
+            } else {
+                html += `
+                    <div class="feedback-header">Pas tout à fait</div>
+                    <div class="feedback-explanation">${selectedOption.explain}</div>
+                    <div class="correct-answer-box">
+                        <div class="correct-answer-label">✓ Bonne réponse:</div>
+                        <div>${item.options[item.correct].text}</div>
+                        <div style="margin-top: 8px; font-size: 0.9em;">${item.correctExplain}</div>
+                    </div>
+                `;
+            }
+            
+            feedbackDiv.innerHTML = html;
+        }
+
+        function updateProgressBar() {
+            const progressBar = document.getElementById('progressBar');
+            progressBar.innerHTML = '';
+            
+            for (let i = 0; i < questions.length; i++) {
+                const segment = document.createElement('div');
+                segment.className = 'progress-segment';
+                
+                if (!answered[i]) {
+                    segment.classList.add('unanswered');
+                } else if (answers[i] === questions[i].correct) {
+                    segment.classList.add('correct');
+                } else {
+                    segment.classList.add('incorrect');
+                }
+                
+                progressBar.appendChild(segment);
+            }
+        }
+
+        function updateNavigationButtons() {
+            const isAnswered = answered[currentQuestion];
+            document.getElementById('prevBtn').disabled = currentQuestion === 0 || !isAnswered;
+            document.getElementById('nextBtn').disabled = !isAnswered;
+            
+            if (currentQuestion === questions.length - 1) {
+                document.getElementById('nextBtn').textContent = 'Voir Résultat';
+            } else {
+                document.getElementById('nextBtn').textContent = 'Suivant →';
+            }
+        }
+
+        function updateProgressInfo() {
+            document.getElementById('question-counter').textContent = `Question ${currentQuestion + 1} / ${questions.length}`;
+            
+            let correctCount = 0;
+            let incorrectCount = 0;
+            
+            for (let i = 0; i < answers.length; i++) {
+                if (answered[i]) {
+                    if (answers[i] === questions[i].correct) {
+                        correctCount++;
+                    } else {
+                        incorrectCount++;
+                    }
+                }
+            }
+            
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('incorrect-count').textContent = incorrectCount;
+        }
+
+        function nextQuestion() {
+            if (currentQuestion === questions.length - 1) {
+                showFinalResults();
+                return;
+            }
+            
+            currentQuestion++;
+            displayQuestion();
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        function showFinalResults() {
+            let score = 0;
+            answers.forEach((answer, index) => {
+                if (answer === questions[index].correct) score++;
+            });
+            
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '<div class="question">Quiz terminé!</div>';
+            
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.className = 'feedback-container';
+            feedbackDiv.innerHTML = '';
+            
+            let recapHtml = '<div class="recap-title">Résumé de vos réponses</div>';
+            
+            questions.forEach((question, index) => {
+                const userAnswer = question.options[answers[index]];
+                const correctAnswer = question.options[question.correct];
+                const isCorrect = answers[index] === question.correct;
+                
+                recapHtml += `
+                    <div class="recap-card ${isCorrect ? 'correct' : 'incorrect'}">
+                        <div class="recap-number">Question ${index + 1} / ${questions.length}</div>
+                        <div class="recap-question">${question.q}</div>
+                        <div class="recap-answer-item user">
+                            <span class="recap-label">Votre réponse:</span>
+                            ${userAnswer.text}
+                            <span class="recap-result ${isCorrect ? 'correct' : 'incorrect'}">
+                                ${isCorrect ? '✓ Correct' : '✗ Incorrect'}
+                            </span>
+                        </div>
+                        ${!isCorrect ? `
+                            <div class="recap-answer-item correct-answer">
+                                <span class="recap-label">Bonne réponse:</span>
+                                ${correctAnswer.text}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            
+            document.getElementById('result').innerHTML = `
+                <div style="font-size: 2em; margin: 30px 0 20px;">Votre score : ${score} / ${questions.length}</div>
+                <div style="font-size: 1.1em; color: #555; margin-bottom: 30px;">Réussite : ${Math.round(score / questions.length * 100)}%</div>
+                <div class="recap-container">${recapHtml}</div>
+            `;
+            
+            document.getElementById('prevBtn').disabled = false;
+            document.getElementById('nextBtn').textContent = 'Recommencer';
+            document.getElementById('nextBtn').disabled = false;
+            document.getElementById('nextBtn').onclick = function() { location.reload(); };
+            document.getElementById('prevBtn').onclick = function() {
+                currentQuestion = questions.length - 1;
+                displayQuestion();
+            };
+        }
+
+        displayQuestion();
+    </script>
+</body>
+</html>
