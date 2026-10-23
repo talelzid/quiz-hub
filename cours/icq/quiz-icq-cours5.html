@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Quiz - Le processus de test</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <div class="global-course-title">Initiation aux concepts qualité</div>
+    <h1>Quiz : Le processus de test (Cours 5)</h1>
+    
+    <div class="progress-container">
+        <div class="progress-info">
+            <span id="question-counter">Question 1 / 10</span>
+            <div class="progress-stats">
+                <span class="stat-badge incorrect"><span class="stat-icon">✕</span><span id="incorrect-count">0</span></span>
+                <span class="stat-badge correct"><span class="stat-icon">✓</span><span id="correct-count">0</span></span>
+            </div>
+        </div>
+        <div class="progress-bar-wrapper" id="progressBar"></div>
+    </div>
+    
+    <div id="quiz-container" class="card"></div>
+    
+    <div id="feedback" class="feedback-container"></div>
+    
+    <div class="quiz-navigation">
+        <button id="prevBtn" onclick="previousQuestion()">← Précédent</button>
+        <button id="nextBtn" onclick="nextQuestion()">Suivant →</button>
+    </div>
+    
+    <div id="result"></div>
+
+    <script>
+        const questions =             [
+              {
+                "q": "Quelle est la première étape du processus de test vu en cours ?",
+                "options": [
+                  {
+                    "text": "La planification des tests",
+                    "explain": "La bonne r?ponse est ? L'analyse des exigences ?. Le processus commence par l'analyse des exigences : on ne peut ni planifier ni concevoir des tests sans avoir compris ce que le système doit faire. C'est aussi l'application du principe « tester tôt »."
+                  },
+                  {
+                    "text": "L'analyse des exigences",
+                    "explain": ""
+                  },
+                  {
+                    "text": "La préparation de l'environnement de test",
+                    "explain": "La bonne r?ponse est ? L'analyse des exigences ?. Le processus commence par l'analyse des exigences : on ne peut ni planifier ni concevoir des tests sans avoir compris ce que le système doit faire. C'est aussi l'application du principe « tester tôt »."
+                  },
+                  {
+                    "text": "L'exécution des tests",
+                    "explain": "La bonne r?ponse est ? L'analyse des exigences ?. Le processus commence par l'analyse des exigences : on ne peut ni planifier ni concevoir des tests sans avoir compris ce que le système doit faire. C'est aussi l'application du principe « tester tôt »."
+                  }
+                ],
+                "correct": 1,
+                "correctExplain": "Le processus commence par l'analyse des exigences : on ne peut ni planifier ni concevoir des tests sans avoir compris ce que le système doit faire. C'est aussi l'application du principe « tester tôt »."
+              },
+              {
+                "q": "Quels sont les deux livrables principaux de l'étape de planification des tests ?",
+                "options": [
+                  {
+                    "text": "Les scénarios et les cas de test",
+                    "explain": "La bonne r?ponse est ? La stratégie de test et le plan de test ?. La planification produit la stratégie de test (l'approche générale) et le plan de test (qui teste quoi, quand, avec quels moyens et selon quels critères de sortie)."
+                  },
+                  {
+                    "text": "Les rapports d'anomalies et les fiches de déviation",
+                    "explain": "La bonne r?ponse est ? La stratégie de test et le plan de test ?. La planification produit la stratégie de test (l'approche générale) et le plan de test (qui teste quoi, quand, avec quels moyens et selon quels critères de sortie)."
+                  },
+                  {
+                    "text": "La stratégie de test et le plan de test",
+                    "explain": ""
+                  },
+                  {
+                    "text": "Le rapport de clôture et les leçons apprises",
+                    "explain": "La bonne r?ponse est ? La stratégie de test et le plan de test ?. La planification produit la stratégie de test (l'approche générale) et le plan de test (qui teste quoi, quand, avec quels moyens et selon quels critères de sortie)."
+                  }
+                ],
+                "correct": 2,
+                "correctExplain": "La planification produit la stratégie de test (l'approche générale) et le plan de test (qui teste quoi, quand, avec quels moyens et selon quels critères de sortie)."
+              },
+              {
+                "q": "Laquelle de ces affirmations décrit correctement une exigence de test ?",
+                "options": [
+                  {
+                    "text": "Elle décrit une situation à vérifier, sans données de test",
+                    "explain": ""
+                  },
+                  {
+                    "text": "Elle précise les valeurs exactes à saisir pendant le test",
+                    "explain": "La bonne r?ponse est ? Elle décrit une situation à vérifier, sans données de test ?. L'exigence de test dit quoi vérifier (situation normale, alternative ou d'erreur) sans fixer de données. Les données sont choisies plus tard, au moment des cas de test."
+                  },
+                  {
+                    "text": "Elle est rédigée par le client dans le cahier des charges",
+                    "explain": "La bonne r?ponse est ? Elle décrit une situation à vérifier, sans données de test ?. L'exigence de test dit quoi vérifier (situation normale, alternative ou d'erreur) sans fixer de données. Les données sont choisies plus tard, au moment des cas de test."
+                  },
+                  {
+                    "text": "Elle remplace la spécification fonctionnelle",
+                    "explain": "La bonne r?ponse est ? Elle décrit une situation à vérifier, sans données de test ?. L'exigence de test dit quoi vérifier (situation normale, alternative ou d'erreur) sans fixer de données. Les données sont choisies plus tard, au moment des cas de test."
+                  }
+                ],
+                "correct": 0,
+                "correctExplain": "L'exigence de test dit quoi vérifier (situation normale, alternative ou d'erreur) sans fixer de données. Les données sont choisies plus tard, au moment des cas de test."
+              },
+              {
+                "q": "« Saisir 320 $ au guichet et vérifier qu'un message d'erreur s'affiche. » De quoi s'agit-il ?",
+                "options": [
+                  {
+                    "text": "D'une exigence fonctionnelle",
+                    "explain": "La bonne r?ponse est ? D'un cas de test ?. La présence d'une donnée précise (320 $) et d'un résultat attendu en fait un cas de test. L'exigence de test correspondante serait : « Valider qu'un retrait supérieur à 300 $ est refusé »."
+                  },
+                  {
+                    "text": "D'une exigence de test",
+                    "explain": "La bonne r?ponse est ? D'un cas de test ?. La présence d'une donnée précise (320 $) et d'un résultat attendu en fait un cas de test. L'exigence de test correspondante serait : « Valider qu'un retrait supérieur à 300 $ est refusé »."
+                  },
+                  {
+                    "text": "D'un critère de sortie",
+                    "explain": "La bonne r?ponse est ? D'un cas de test ?. La présence d'une donnée précise (320 $) et d'un résultat attendu en fait un cas de test. L'exigence de test correspondante serait : « Valider qu'un retrait supérieur à 300 $ est refusé »."
+                  },
+                  {
+                    "text": "D'un cas de test",
+                    "explain": ""
+                  }
+                ],
+                "correct": 3,
+                "correctExplain": "La présence d'une donnée précise (320 $) et d'un résultat attendu en fait un cas de test. L'exigence de test correspondante serait : « Valider qu'un retrait supérieur à 300 $ est refusé »."
+              },
+              {
+                "q": "Quelle relation existe entre un scénario de test et les cas de test ?",
+                "options": [
+                  {
+                    "text": "Un scénario donne un seul cas de test",
+                    "explain": "La bonne r?ponse est ? Un scénario peut donner plusieurs cas de test, chacun avec ses données ?. La relation est de 1 à plusieurs : le même scénario (les étapes sans données) se décline en plusieurs cas de test, un par combinaison de données (40 $, 300 $, 320 $, NIP erroné…)."
+                  },
+                  {
+                    "text": "Un cas de test regroupe plusieurs scénarios",
+                    "explain": "La bonne r?ponse est ? Un scénario peut donner plusieurs cas de test, chacun avec ses données ?. La relation est de 1 à plusieurs : le même scénario (les étapes sans données) se décline en plusieurs cas de test, un par combinaison de données (40 $, 300 $, 320 $, NIP erroné…)."
+                  },
+                  {
+                    "text": "Un scénario peut donner plusieurs cas de test, chacun avec ses données",
+                    "explain": ""
+                  },
+                  {
+                    "text": "Scénarios et cas de test sont deux noms pour la même chose",
+                    "explain": "La bonne r?ponse est ? Un scénario peut donner plusieurs cas de test, chacun avec ses données ?. La relation est de 1 à plusieurs : le même scénario (les étapes sans données) se décline en plusieurs cas de test, un par combinaison de données (40 $, 300 $, 320 $, NIP erroné…)."
+                  }
+                ],
+                "correct": 2,
+                "correctExplain": "La relation est de 1 à plusieurs : le même scénario (les étapes sans données) se décline en plusieurs cas de test, un par combinaison de données (40 $, 300 $, 320 $, NIP erroné…)."
+              },
+              {
+                "q": "Selon l'ISTQB CTFL v4.0, quelle activité accompagne toutes les autres, de la planification à la clôture ?",
+                "options": [
+                  {
+                    "text": "L'analyse de test",
+                    "explain": "La bonne r?ponse est ? Le suivi et contrôle des tests ?. Le suivi et contrôle est continu : on mesure l'avancement par rapport au plan (suivi) et on décide des actions correctives (contrôle) tout au long du processus."
+                  },
+                  {
+                    "text": "Le suivi et contrôle des tests",
+                    "explain": ""
+                  },
+                  {
+                    "text": "L'implémentation des tests",
+                    "explain": "La bonne r?ponse est ? Le suivi et contrôle des tests ?. Le suivi et contrôle est continu : on mesure l'avancement par rapport au plan (suivi) et on décide des actions correctives (contrôle) tout au long du processus."
+                  },
+                  {
+                    "text": "La conception des tests",
+                    "explain": "La bonne r?ponse est ? Le suivi et contrôle des tests ?. Le suivi et contrôle est continu : on mesure l'avancement par rapport au plan (suivi) et on décide des actions correctives (contrôle) tout au long du processus."
+                  }
+                ],
+                "correct": 1,
+                "correctExplain": "Le suivi et contrôle est continu : on mesure l'avancement par rapport au plan (suivi) et on décide des actions correctives (contrôle) tout au long du processus."
+              },
+              {
+                "q": "Le client modifie la règle « montant maximal de 300 $ » en « 500 $ ». Qu'est-ce qui permet de savoir rapidement quels tests revoir ?",
+                "options": [
+                  {
+                    "text": "Le rapport de clôture du projet précédent",
+                    "explain": "La bonne r?ponse est ? La traçabilité entre exigences et cas de test ?. La traçabilité relie chaque exigence à ses exigences de test et à ses cas de test. Elle permet l'analyse d'impact : on retrouve tout de suite les cas liés à la règle modifiée."
+                  },
+                  {
+                    "text": "Le plan d'automatisation",
+                    "explain": "La bonne r?ponse est ? La traçabilité entre exigences et cas de test ?. La traçabilité relie chaque exigence à ses exigences de test et à ses cas de test. Elle permet l'analyse d'impact : on retrouve tout de suite les cas liés à la règle modifiée."
+                  },
+                  {
+                    "text": "La liste des anomalies ouvertes",
+                    "explain": "La bonne r?ponse est ? La traçabilité entre exigences et cas de test ?. La traçabilité relie chaque exigence à ses exigences de test et à ses cas de test. Elle permet l'analyse d'impact : on retrouve tout de suite les cas liés à la règle modifiée."
+                  },
+                  {
+                    "text": "La traçabilité entre exigences et cas de test",
+                    "explain": ""
+                  }
+                ],
+                "correct": 3,
+                "correctExplain": "La traçabilité relie chaque exigence à ses exigences de test et à ses cas de test. Elle permet l'analyse d'impact : on retrouve tout de suite les cas liés à la règle modifiée."
+              },
+              {
+                "q": "Le jour de l'exécution, la base de données de test est vide : aucun cas ne peut être lancé. Quel statut donner aux cas et quelle étape a été négligée ?",
+                "options": [
+                  {
+                    "text": "Bloqué ; la préparation de l'environnement de test",
+                    "explain": ""
+                  },
+                  {
+                    "text": "Échoué ; l'analyse des exigences",
+                    "explain": "La bonne r?ponse est ? Bloqué ; la préparation de l'environnement de test ?. Un cas qui ne peut pas s'exécuter est « bloqué », pas « échoué » : aucun écart n'a été constaté dans le logiciel. La cause se trouve dans la préparation de l'environnement (données non chargées)."
+                  },
+                  {
+                    "text": "Réussi ; la clôture des tests",
+                    "explain": "La bonne r?ponse est ? Bloqué ; la préparation de l'environnement de test ?. Un cas qui ne peut pas s'exécuter est « bloqué », pas « échoué » : aucun écart n'a été constaté dans le logiciel. La cause se trouve dans la préparation de l'environnement (données non chargées)."
+                  },
+                  {
+                    "text": "Non exécuté ; l'automatisation des tests",
+                    "explain": "La bonne r?ponse est ? Bloqué ; la préparation de l'environnement de test ?. Un cas qui ne peut pas s'exécuter est « bloqué », pas « échoué » : aucun écart n'a été constaté dans le logiciel. La cause se trouve dans la préparation de l'environnement (données non chargées)."
+                  }
+                ],
+                "correct": 0,
+                "correctExplain": "Un cas qui ne peut pas s'exécuter est « bloqué », pas « échoué » : aucun écart n'a été constaté dans le logiciel. La cause se trouve dans la préparation de l'environnement (données non chargées)."
+              },
+              {
+                "q": "Votre équipe dispose de deux semaines pour commencer l'automatisation. Quel choix est le plus judicieux ?",
+                "options": [
+                  {
+                    "text": "Automatiser d'abord les tests exploratoires, pour gagner du temps",
+                    "explain": "La bonne r?ponse est ? Automatiser les tests de régression des fonctionnalités stables, exécutés à chaque version ?. On automatise d'abord ce qui est stable, répétitif et fréquent : la régression. Une fonctionnalité instable rendrait les scripts obsolètes à chaque changement, et les tests exploratoires reposent sur le jugement du testeur. Tout automatiser est irréaliste (tests exhaustifs impossibles)."
+                  },
+                  {
+                    "text": "Automatiser la fonctionnalité de paiement, encore en cours de développement et souvent modifiée",
+                    "explain": "La bonne r?ponse est ? Automatiser les tests de régression des fonctionnalités stables, exécutés à chaque version ?. On automatise d'abord ce qui est stable, répétitif et fréquent : la régression. Une fonctionnalité instable rendrait les scripts obsolètes à chaque changement, et les tests exploratoires reposent sur le jugement du testeur. Tout automatiser est irréaliste (tests exhaustifs impossibles)."
+                  },
+                  {
+                    "text": "Automatiser les tests de régression des fonctionnalités stables, exécutés à chaque version",
+                    "explain": ""
+                  },
+                  {
+                    "text": "Automatiser tous les cas de test sans exception",
+                    "explain": "La bonne r?ponse est ? Automatiser les tests de régression des fonctionnalités stables, exécutés à chaque version ?. On automatise d'abord ce qui est stable, répétitif et fréquent : la régression. Une fonctionnalité instable rendrait les scripts obsolètes à chaque changement, et les tests exploratoires reposent sur le jugement du testeur. Tout automatiser est irréaliste (tests exhaustifs impossibles)."
+                  }
+                ],
+                "correct": 2,
+                "correctExplain": "On automatise d'abord ce qui est stable, répétitif et fréquent : la régression. Une fonctionnalité instable rendrait les scripts obsolètes à chaque changement, et les tests exploratoires reposent sur le jugement du testeur. Tout automatiser est irréaliste (tests exhaustifs impossibles)."
+              },
+              {
+                "q": "À la date de livraison, trois anomalies majeures restent ouvertes et un critère de sortie n'est pas atteint. Que doit faire l'équipe de test à la clôture ?",
+                "options": [
+                  {
+                    "text": "Archiver le testware et déclarer le logiciel prêt, puisque la date est atteinte",
+                    "explain": "La bonne r?ponse est ? Documenter l'écart avec les critères, présenter les risques des anomalies ouvertes et laisser les responsables décider de l'acceptation ?. La clôture analyse les critères de sortie et transforme les résultats en information pour la décision : on documente les écarts et les risques résiduels, puis on décide du sort des anomalies (corriger, reporter, accepter). Fermer des anomalies non corrigées serait falsifier le bilan."
+                  },
+                  {
+                    "text": "Documenter l'écart avec les critères, présenter les risques des anomalies ouvertes et laisser les responsables décider de l'acceptation",
+                    "explain": ""
+                  },
+                  {
+                    "text": "Fermer les anomalies ouvertes pour respecter les critères de sortie",
+                    "explain": "La bonne r?ponse est ? Documenter l'écart avec les critères, présenter les risques des anomalies ouvertes et laisser les responsables décider de l'acceptation ?. La clôture analyse les critères de sortie et transforme les résultats en information pour la décision : on documente les écarts et les risques résiduels, puis on décide du sort des anomalies (corriger, reporter, accepter). Fermer des anomalies non corrigées serait falsifier le bilan."
+                  },
+                  {
+                    "text": "Recommencer le processus depuis l'analyse des exigences",
+                    "explain": "La bonne r?ponse est ? Documenter l'écart avec les critères, présenter les risques des anomalies ouvertes et laisser les responsables décider de l'acceptation ?. La clôture analyse les critères de sortie et transforme les résultats en information pour la décision : on documente les écarts et les risques résiduels, puis on décide du sort des anomalies (corriger, reporter, accepter). Fermer des anomalies non corrigées serait falsifier le bilan."
+                  }
+                ],
+                "correct": 1,
+                "correctExplain": "La clôture analyse les critères de sortie et transforme les résultats en information pour la décision : on documente les écarts et les risques résiduels, puis on décide du sort des anomalies (corriger, reporter, accepter). Fermer des anomalies non corrigées serait falsifier le bilan."
+              }
+            ];
+        let currentQuestion = 0;
+        let answers = new Array(questions.length).fill(null);
+        let answered = new Array(questions.length).fill(false);
+
+        function displayQuestion() {
+            const container = document.getElementById('quiz-container');
+            const item = questions[currentQuestion];
+            
+            let html = `<div class="question">${currentQuestion + 1}. ${item.q}</div>`;
+            const letters = ['A', 'B', 'C', 'D'];
+            item.options.forEach((opt, i) => {
+                let classes = '';
+                if (answers[currentQuestion] === i) {
+                    classes = 'selected ';
+                    if (i === item.correct) {
+                        classes += 'correct';
+                    } else {
+                        classes += 'incorrect';
+                    }
+                }
+                const disabledClass = answered[currentQuestion] ? 'disabled' : '';
+                html += `<div class="option ${classes} ${disabledClass}" onclick="${answered[currentQuestion] ? '' : `handleAnswerClick(${i})`}" style="${answered[currentQuestion] ? 'cursor: not-allowed;' : ''}"><span class="option-letter">${letters[i]}</span> ${opt.text}</div>`;
+            });
+            
+            container.innerHTML = html;
+            
+            if (answered[currentQuestion]) {
+                showFeedback();
+            } else {
+                document.getElementById('feedback').innerHTML = '';
+                document.getElementById('feedback').classList.remove('show');
+            }
+            
+            updateProgressBar();
+            updateNavigationButtons();
+            updateProgressInfo();
+        }
+
+        function handleAnswerClick(index) {
+            if (answered[currentQuestion]) return;
+            
+            answers[currentQuestion] = index;
+            answered[currentQuestion] = true;
+            
+            showFeedback();
+            updateProgressBar();
+            updateProgressInfo();
+            updateNavigationButtons();
+            displayQuestion();
+        }
+
+        function showFeedback() {
+            const feedbackDiv = document.getElementById('feedback');
+            const item = questions[currentQuestion];
+            const isCorrect = answers[currentQuestion] === item.correct;
+            const selectedOption = item.options[answers[currentQuestion]];
+            
+            feedbackDiv.className = 'feedback-container show ' + (isCorrect ? 'feedback-correct' : 'feedback-incorrect');
+            
+            let html = '';
+            
+            if (isCorrect) {
+                html += `
+                    <div class="feedback-header">Bonne réponse!</div>
+                    <div class="feedback-explanation">${item.correctExplain}</div>
+                `;
+            } else {
+                html += `
+                    <div class="feedback-header">Pas tout à fait</div>
+                    <div class="feedback-explanation">${selectedOption.explain}</div>
+                    <div class="correct-answer-box">
+                        <div class="correct-answer-label">✓ Bonne réponse:</div>
+                        <div>${item.options[item.correct].text}</div>
+                        <div style="margin-top: 8px; font-size: 0.9em;">${item.correctExplain}</div>
+                    </div>
+                `;
+            }
+            
+            feedbackDiv.innerHTML = html;
+        }
+
+        function updateProgressBar() {
+            const progressBar = document.getElementById('progressBar');
+            progressBar.innerHTML = '';
+            
+            for (let i = 0; i < questions.length; i++) {
+                const segment = document.createElement('div');
+                segment.className = 'progress-segment';
+                
+                if (!answered[i]) {
+                    segment.classList.add('unanswered');
+                } else if (answers[i] === questions[i].correct) {
+                    segment.classList.add('correct');
+                } else {
+                    segment.classList.add('incorrect');
+                }
+                
+                progressBar.appendChild(segment);
+            }
+        }
+
+        function updateNavigationButtons() {
+            const isAnswered = answered[currentQuestion];
+            document.getElementById('prevBtn').disabled = currentQuestion === 0 || !isAnswered;
+            document.getElementById('nextBtn').disabled = !isAnswered;
+            
+            if (currentQuestion === questions.length - 1) {
+                document.getElementById('nextBtn').textContent = 'Voir Résultat';
+            } else {
+                document.getElementById('nextBtn').textContent = 'Suivant →';
+            }
+        }
+
+        function updateProgressInfo() {
+            document.getElementById('question-counter').textContent = `Question ${currentQuestion + 1} / ${questions.length}`;
+            
+            let correctCount = 0;
+            let incorrectCount = 0;
+            
+            for (let i = 0; i < answers.length; i++) {
+                if (answered[i]) {
+                    if (answers[i] === questions[i].correct) {
+                        correctCount++;
+                    } else {
+                        incorrectCount++;
+                    }
+                }
+            }
+            
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('incorrect-count').textContent = incorrectCount;
+        }
+
+        function nextQuestion() {
+            if (currentQuestion === questions.length - 1) {
+                showFinalResults();
+                return;
+            }
+            
+            currentQuestion++;
+            displayQuestion();
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        function showFinalResults() {
+            let score = 0;
+            answers.forEach((answer, index) => {
+                if (answer === questions[index].correct) score++;
+            });
+            
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '<div class="question">Quiz terminé!</div>';
+            
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.className = 'feedback-container';
+            feedbackDiv.innerHTML = '';
+            
+            let recapHtml = '<div class="recap-title">Résumé de vos réponses</div>';
+            
+            questions.forEach((question, index) => {
+                const userAnswer = question.options[answers[index]];
+                const correctAnswer = question.options[question.correct];
+                const isCorrect = answers[index] === question.correct;
+                
+                recapHtml += `
+                    <div class="recap-card ${isCorrect ? 'correct' : 'incorrect'}">
+                        <div class="recap-number">Question ${index + 1} / ${questions.length}</div>
+                        <div class="recap-question">${question.q}</div>
+                        <div class="recap-answer-item user">
+                            <span class="recap-label">Votre réponse:</span>
+                            ${userAnswer.text}
+                            <span class="recap-result ${isCorrect ? 'correct' : 'incorrect'}">
+                                ${isCorrect ? '✓ Correct' : '✗ Incorrect'}
+                            </span>
+                        </div>
+                        ${!isCorrect ? `
+                            <div class="recap-answer-item correct-answer">
+                                <span class="recap-label">Bonne réponse:</span>
+                                ${correctAnswer.text}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            
+            document.getElementById('result').innerHTML = `
+                <div style="font-size: 2em; margin: 30px 0 20px;">Votre score : ${score} / ${questions.length}</div>
+                <div style="font-size: 1.1em; color: #555; margin-bottom: 30px;">Réussite : ${Math.round(score / questions.length * 100)}%</div>
+                <div class="recap-container">${recapHtml}</div>
+            `;
+            
+            document.getElementById('prevBtn').disabled = false;
+            document.getElementById('nextBtn').textContent = 'Recommencer';
+            document.getElementById('nextBtn').disabled = false;
+            document.getElementById('nextBtn').onclick = function() { location.reload(); };
+            document.getElementById('prevBtn').onclick = function() {
+                currentQuestion = questions.length - 1;
+                displayQuestion();
+            };
+        }
+
+        displayQuestion();
+    </script>
+</body>
+</html>
