@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Quiz - HTML : la structure d'une page web</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <div class="global-course-title">Initiation à la fonction de travail d'un spécialiste en qualité logicielle</div>
+    <h1>Quiz : HTML : la structure d'une page web (Cours 4 - Séance 1)</h1>
+    
+    <div class="progress-container">
+        <div class="progress-info">
+            <span id="question-counter">Question 1 / 10</span>
+            <div class="progress-stats">
+                <span class="stat-badge incorrect"><span class="stat-icon">✕</span><span id="incorrect-count">0</span></span>
+                <span class="stat-badge correct"><span class="stat-icon">✓</span><span id="correct-count">0</span></span>
+            </div>
+        </div>
+        <div class="progress-bar-wrapper" id="progressBar"></div>
+    </div>
+    
+    <div id="quiz-container" class="card"></div>
+    
+    <div id="feedback" class="feedback-container"></div>
+    
+    <div class="quiz-navigation">
+        <button id="prevBtn" onclick="previousQuestion()">← Précédent</button>
+        <button id="nextBtn" onclick="nextQuestion()">Suivant →</button>
+    </div>
+    
+    <div id="result"></div>
+
+    <script>
+        const questions = [
+          {
+                    "q": "Selon le cours, quel langage décrit la structure d'une page web, c'est-à-dire ce qu'elle contient ?",
+                    "options": [
+                              {
+                                        "text": "CSS",
+                                        "explain": "Faux. Le CSS décrit l'apparence : couleurs, tailles, positions. Il ne dit pas ce que contient la page."
+                              },
+                              {
+                                        "text": "HTML",
+                                        "explain": "Correct. Le HTML décrit la structure : titres, paragraphes, images, champs, boutons. C'est la charpente de la maison."
+                              },
+                              {
+                                        "text": "JavaScript",
+                                        "explain": "Faux. JavaScript décrit le comportement : ce qui réagit aux clics, les messages, le contenu qui change."
+                              },
+                              {
+                                        "text": "HTTP",
+                                        "explain": "Faux. HTTP n'est pas un langage pour écrire une page : c'est le protocole d'échange entre le navigateur et le serveur."
+                              }
+                    ],
+                    "correct": 1,
+                    "correctExplain": "Le cours présente trois langages complémentaires. Le HTML donne la structure (ce qu'il y a sur la page), le CSS donne l'apparence (comment c'est présenté) et JavaScript donne le comportement (ce qui réagit). L'analogie de la maison : la charpente, la peinture et l'électricité."
+          },
+          {
+                    "q": "Dans le code &lt;p&gt;Bienvenue à la librairie&lt;/p&gt;, que représente « Bienvenue à la librairie » ?",
+                    "options": [
+                              {
+                                        "text": "La balise ouvrante",
+                                        "explain": "Faux. La balise ouvrante est &lt;p&gt;, au début de l'élément."
+                              },
+                              {
+                                        "text": "Un attribut",
+                                        "explain": "Faux. Un attribut s'écrit dans la balise ouvrante, sous la forme nom=\"valeur\". Il n'y en a aucun ici."
+                              },
+                              {
+                                        "text": "Le contenu de l'élément",
+                                        "explain": "Correct. Le contenu se trouve entre la balise ouvrante &lt;p&gt; et la balise fermante &lt;/p&gt;. C'est le texte affiché à l'écran."
+                              },
+                              {
+                                        "text": "La balise fermante",
+                                        "explain": "Faux. La balise fermante est &lt;/p&gt;, reconnaissable à sa barre oblique."
+                              }
+                    ],
+                    "correct": 2,
+                    "correctExplain": "Un élément HTML se compose d'une balise ouvrante (&lt;p&gt;), d'un contenu (le texte) et d'une balise fermante (&lt;/p&gt;). Le nom de la balise indique la nature du contenu : p signifie paragraphe."
+          },
+          {
+                    "q": "Dans le code &lt;a href=\"catalogue.html\"&gt;Catalogue&lt;/a&gt;, que sont href et \"catalogue.html\" ?",
+                    "options": [
+                              {
+                                        "text": "href est un attribut et \"catalogue.html\" est sa valeur",
+                                        "explain": "Correct. Un attribut s'écrit dans la balise ouvrante sous la forme nom=\"valeur\". Ici, l'attribut href indique la page vers laquelle mène le lien."
+                              },
+                              {
+                                        "text": "href est une balise et \"catalogue.html\" est son contenu",
+                                        "explain": "Faux. La balise est a. href est écrit à l'intérieur de la balise ouvrante : c'est un attribut. Le contenu est « Catalogue »."
+                              },
+                              {
+                                        "text": "href est un commentaire",
+                                        "explain": "Faux. Un commentaire s'écrit entre &lt;!-- et --&gt;. href fait partie du code actif du lien."
+                              },
+                              {
+                                        "text": "href est le texte affiché à l'écran",
+                                        "explain": "Faux. Le texte affiché est le contenu de l'élément, « Catalogue ». href n'est pas affiché."
+                              }
+                    ],
+                    "correct": 0,
+                    "correctExplain": "Les attributs ajoutent des informations à un élément. Ils s'écrivent dans la balise ouvrante, sous la forme nom=\"valeur\", et un élément peut en avoir plusieurs, séparés par un espace. Pour le QA, ils sont précieux : ils identifient et décrivent les éléments (id, class, name, type, href…)."
+          },
+          {
+                    "q": "Lequel de ces éléments est un élément vide, qui n'a ni contenu ni balise fermante ?",
+                    "options": [
+                              {
+                                        "text": "&lt;p&gt;",
+                                        "explain": "Faux. Un paragraphe entoure du texte et se ferme avec &lt;/p&gt;."
+                              },
+                              {
+                                        "text": "&lt;li&gt;",
+                                        "explain": "Faux. Un élément de liste contient du texte et se ferme avec &lt;/li&gt;."
+                              },
+                              {
+                                        "text": "&lt;h1&gt;",
+                                        "explain": "Faux. Un titre contient du texte et se ferme avec &lt;/h1&gt;."
+                              },
+                              {
+                                        "text": "&lt;img&gt;",
+                                        "explain": "Correct. &lt;img&gt; n'entoure aucun texte : toute l'information est dans ses attributs (src, alt…). Il n'a pas de balise fermante."
+                              }
+                    ],
+                    "correct": 3,
+                    "correctExplain": "Certains éléments n'entourent aucun contenu : &lt;img&gt;, &lt;br&gt;, &lt;input&gt;, &lt;meta&gt;. Toute leur information est dans leurs attributs, et ils n'ont pas de balise fermante. On rencontre parfois l'écriture &lt;br /&gt;, héritée du XHTML : c'est la même chose."
+          },
+          {
+                    "q": "Quel code respecte les règles d'imbrication ?",
+                    "options": [
+                              {
+                                        "text": "&lt;p&gt;Un livre &lt;strong&gt;gratuit&lt;/p&gt;&lt;/strong&gt;",
+                                        "explain": "Faux. &lt;strong&gt; est ouvert à l'intérieur de &lt;p&gt;, mais il est fermé après lui. Les fermetures se croisent."
+                              },
+                              {
+                                        "text": "&lt;p&gt;Un livre &lt;strong&gt;gratuit&lt;/strong&gt;&lt;/p&gt;",
+                                        "explain": "Correct. &lt;strong&gt; est ouvert dans &lt;p&gt; et fermé avant lui : les éléments sont fermés dans l'ordre inverse de leur ouverture."
+                              },
+                              {
+                                        "text": "&lt;strong&gt;&lt;p&gt;Un livre gratuit&lt;/strong&gt;&lt;/p&gt;",
+                                        "explain": "Faux. &lt;p&gt; est ouvert dans &lt;strong&gt;, mais fermé après lui. L'imbrication est croisée."
+                              },
+                              {
+                                        "text": "&lt;/p&gt;Un livre gratuit&lt;p&gt;",
+                                        "explain": "Faux. Les balises sont dans le mauvais ordre : la balise fermante arrive avant l'ouvrante."
+                              }
+                    ],
+                    "correct": 1,
+                    "correctExplain": "Les éléments s'imbriquent comme des poupées russes : un élément ouvert à l'intérieur d'un autre doit être fermé avant lui. Le navigateur tolère souvent les erreurs, mais le résultat devient imprévisible, ce qui est une source de bogues. L'indentation aide à vérifier visuellement l'imbrication."
+          },
+          {
+                    "q": "Où le navigateur affiche-t-il le texte placé dans la balise &lt;title&gt; ?",
+                    "options": [
+                              {
+                                        "text": "En haut de la page, comme un grand titre",
+                                        "explain": "Faux. Le grand titre visible dans la page est généralement un &lt;h1&gt;, placé dans &lt;body&gt;."
+                              },
+                              {
+                                        "text": "Dans l'onglet du navigateur",
+                                        "explain": "Correct. &lt;title&gt; se trouve dans &lt;head&gt;, avec les informations sur la page qui ne s'affichent pas dans la page elle-même. Son texte apparaît dans l'onglet."
+                              },
+                              {
+                                        "text": "Nulle part : c'est un commentaire",
+                                        "explain": "Faux. Un commentaire s'écrit entre &lt;!-- et --&gt;. &lt;title&gt; est un élément actif dont le texte est bien utilisé."
+                              },
+                              {
+                                        "text": "Dans le pied de page",
+                                        "explain": "Faux. Le pied de page est représenté par &lt;footer&gt;, dans &lt;body&gt;."
+                              }
+                    ],
+                    "correct": 1,
+                    "correctExplain": "La structure minimale d'une page comprend &lt;!DOCTYPE html&gt;, puis &lt;html&gt; (la racine), &lt;head&gt; (les informations sur la page, non affichées) et &lt;body&gt; (tout ce qui s'affiche). Le &lt;title&gt;, placé dans &lt;head&gt;, donne le texte de l'onglet du navigateur."
+          },
+          {
+                    "q": "Pourquoi l'attribut alt d'une image intéresse-t-il le spécialiste QA ?",
+                    "options": [
+                              {
+                                        "text": "Il fixe la taille de l'image",
+                                        "explain": "Faux. La taille est donnée par width et height."
+                              },
+                              {
+                                        "text": "Il indique l'emplacement du fichier image",
+                                        "explain": "Faux. C'est le rôle de l'attribut src."
+                              },
+                              {
+                                        "text": "Il fournit un texte de remplacement, lu aux personnes aveugles et affiché si l'image ne charge pas : son absence est un défaut d'accessibilité",
+                                        "explain": "Correct. L'attribut alt décrit l'image. Les lecteurs d'écran le lisent à voix haute, et le navigateur l'affiche si l'image est introuvable."
+                              },
+                              {
+                                        "text": "Il rend l'image cliquable",
+                                        "explain": "Faux. Pour rendre une image cliquable, on la place dans un lien &lt;a&gt;."
+                              }
+                    ],
+                    "correct": 2,
+                    "correctExplain": "Une image s'insère avec &lt;img&gt;, et ses attributs principaux sont src (le chemin du fichier), alt (le texte qui remplace l'image) et width/height (les dimensions). Pour le QA, alt compte particulièrement : il est lu aux personnes aveugles et affiché si l'image ne charge pas. Une image sans alt est un défaut d'accessibilité."
+          },
+          {
+                    "q": "Dans un tableau HTML, quelle balise représente une ligne ?",
+                    "options": [
+                              {
+                                        "text": "&lt;td&gt;",
+                                        "explain": "Faux. &lt;td&gt; représente une cellule de données, à l'intérieur d'une ligne."
+                              },
+                              {
+                                        "text": "&lt;th&gt;",
+                                        "explain": "Faux. &lt;th&gt; représente une cellule d'en-tête."
+                              },
+                              {
+                                        "text": "&lt;tr&gt;",
+                                        "explain": "Correct. &lt;tr&gt; (table row) représente une ligne. Elle contient des cellules &lt;th&gt; ou &lt;td&gt;."
+                              },
+                              {
+                                        "text": "&lt;caption&gt;",
+                                        "explain": "Faux. &lt;caption&gt; donne le titre du tableau."
+                              }
+                    ],
+                    "correct": 2,
+                    "correctExplain": "Un tableau se construit avec &lt;table&gt; (le tableau), &lt;tr&gt; (une ligne), &lt;th&gt; (une cellule d'en-tête) et &lt;td&gt; (une cellule de données). Un tableau bien structuré ajoute &lt;caption&gt; (le titre), &lt;thead&gt; (le groupe des lignes d'en-tête) et &lt;tbody&gt; (le groupe des lignes de données)."
+          },
+          {
+                    "q": "Vous lisez ce champ : &lt;input type=\"text\" id=\"prenom\" maxlength=\"30\" required&gt;. Quels tests découlent directement de ses attributs ?",
+                    "options": [
+                              {
+                                        "text": "Vérifier que la page s'affiche en bleu",
+                                        "explain": "Faux. La couleur relève du CSS, pas de ces attributs."
+                              },
+                              {
+                                        "text": "Envoyer le formulaire avec le champ vide, puis saisir 30, puis 31 caractères",
+                                        "explain": "Correct. required rend le champ obligatoire : on teste l'envoi à vide. maxlength=\"30\" limite la longueur : on teste la limite (30) et juste au-dessus (31)."
+                              },
+                              {
+                                        "text": "Vérifier que le champ masque les caractères saisis",
+                                        "explain": "Faux. Seul type=\"password\" masque la saisie. Ici, le type est text."
+                              },
+                              {
+                                        "text": "Vérifier que le champ propose un calendrier",
+                                        "explain": "Faux. C'est le comportement de type=\"date\". Ici, le type est text."
+                              }
+                    ],
+                    "correct": 1,
+                    "correctExplain": "Le cours présente les attributs qu'un QA vérifie : required (champ obligatoire, à tester avec le champ vide), maxlength (longueur maximale, à tester à la limite et juste au-dessus), min/max, placeholder, disabled et readonly. Lire les attributs d'un champ, c'est déjà trouver des idées de tests."
+          },
+          {
+                    "q": "Dans DevTools, vous changez le texte du &lt;h1&gt; de la page, puis vous rechargez la page. Que se passe-t-il ?",
+                    "options": [
+                              {
+                                        "text": "Le nouveau texte reste affiché, car le fichier a été modifié",
+                                        "explain": "Faux. DevTools modifie la page affichée dans le navigateur, pas le fichier sur le disque ou sur le serveur."
+                              },
+                              {
+                                        "text": "La page devient blanche, car le code a été endommagé",
+                                        "explain": "Faux. Le fichier n'a pas été touché : la page se recharge normalement."
+                              },
+                              {
+                                        "text": "Le texte d'origine revient : les modifications dans DevTools sont temporaires et ne changent pas le fichier",
+                                        "explain": "Correct. DevTools permet d'expérimenter en direct, mais tout disparaît au rechargement. Le fichier source reste intact."
+                              },
+                              {
+                                        "text": "Le navigateur demande d'enregistrer les modifications",
+                                        "explain": "Faux. DevTools n'enregistre pas les modifications dans le fichier de la page."
+                              }
+                    ],
+                    "correct": 2,
+                    "correctExplain": "L'onglet Elements de DevTools permet de sélectionner un élément, de déplier son contenu, de chercher avec Ctrl+F et de modifier un texte ou un attribut en direct. Ces modifications sont temporaires : elles disparaissent au rechargement, car le fichier n'a pas changé. C'est utile au QA pour expérimenter sans risque, sur n'importe quelle page."
+          }
+];
+        let currentQuestion = 0;
+        let answers = new Array(questions.length).fill(null);
+        let answered = new Array(questions.length).fill(false);
+
+        function displayQuestion() {
+            const container = document.getElementById('quiz-container');
+            const item = questions[currentQuestion];
+            
+            let html = `<div class="question">${currentQuestion + 1}. ${item.q}</div>`;
+            const letters = ['A', 'B', 'C', 'D'];
+            item.options.forEach((opt, i) => {
+                let classes = '';
+                if (answers[currentQuestion] === i) {
+                    classes = 'selected ';
+                    if (i === item.correct) {
+                        classes += 'correct';
+                    } else {
+                        classes += 'incorrect';
+                    }
+                }
+                const disabledClass = answered[currentQuestion] ? 'disabled' : '';
+                html += `<div class="option ${classes} ${disabledClass}" onclick="${answered[currentQuestion] ? '' : `handleAnswerClick(${i})`}" style="${answered[currentQuestion] ? 'cursor: not-allowed;' : ''}"><span class="option-letter">${letters[i]}</span> ${opt.text}</div>`;
+            });
+            
+            container.innerHTML = html;
+            
+            if (answered[currentQuestion]) {
+                showFeedback();
+            } else {
+                document.getElementById('feedback').innerHTML = '';
+                document.getElementById('feedback').classList.remove('show');
+            }
+            
+            updateProgressBar();
+            updateNavigationButtons();
+            updateProgressInfo();
+        }
+
+        function handleAnswerClick(index) {
+            if (answered[currentQuestion]) return;
+            
+            answers[currentQuestion] = index;
+            answered[currentQuestion] = true;
+            
+            showFeedback();
+            updateProgressBar();
+            updateProgressInfo();
+            updateNavigationButtons();
+            displayQuestion();
+        }
+
+        function showFeedback() {
+            const feedbackDiv = document.getElementById('feedback');
+            const item = questions[currentQuestion];
+            const isCorrect = answers[currentQuestion] === item.correct;
+            const selectedOption = item.options[answers[currentQuestion]];
+            
+            feedbackDiv.className = 'feedback-container show ' + (isCorrect ? 'feedback-correct' : 'feedback-incorrect');
+            
+            let html = '';
+            
+            if (isCorrect) {
+                html += `
+                    <div class="feedback-header">Bonne réponse!</div>
+                    <div class="feedback-explanation">${item.correctExplain}</div>
+                `;
+            } else {
+                html += `
+                    <div class="feedback-header">Pas tout à fait</div>
+                    <div class="feedback-explanation">${selectedOption.explain}</div>
+                    <div class="correct-answer-box">
+                        <div class="correct-answer-label">✓ Bonne réponse:</div>
+                        <div>${item.options[item.correct].text}</div>
+                        <div style="margin-top: 8px; font-size: 0.9em;">${item.correctExplain}</div>
+                    </div>
+                `;
+            }
+            
+            feedbackDiv.innerHTML = html;
+        }
+
+        function updateProgressBar() {
+            const progressBar = document.getElementById('progressBar');
+            progressBar.innerHTML = '';
+            
+            for (let i = 0; i < questions.length; i++) {
+                const segment = document.createElement('div');
+                segment.className = 'progress-segment';
+                
+                if (!answered[i]) {
+                    segment.classList.add('unanswered');
+                } else if (answers[i] === questions[i].correct) {
+                    segment.classList.add('correct');
+                } else {
+                    segment.classList.add('incorrect');
+                }
+                
+                progressBar.appendChild(segment);
+            }
+        }
+
+        function updateNavigationButtons() {
+            const isAnswered = answered[currentQuestion];
+            document.getElementById('prevBtn').disabled = currentQuestion === 0 || !isAnswered;
+            document.getElementById('nextBtn').disabled = !isAnswered;
+            
+            if (currentQuestion === questions.length - 1) {
+                document.getElementById('nextBtn').textContent = 'Voir Résultat';
+            } else {
+                document.getElementById('nextBtn').textContent = 'Suivant →';
+            }
+        }
+
+        function updateProgressInfo() {
+            document.getElementById('question-counter').textContent = `Question ${currentQuestion + 1} / ${questions.length}`;
+            
+            let correctCount = 0;
+            let incorrectCount = 0;
+            
+            for (let i = 0; i < answers.length; i++) {
+                if (answered[i]) {
+                    if (answers[i] === questions[i].correct) {
+                        correctCount++;
+                    } else {
+                        incorrectCount++;
+                    }
+                }
+            }
+            
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('incorrect-count').textContent = incorrectCount;
+        }
+
+        function nextQuestion() {
+            if (currentQuestion === questions.length - 1) {
+                showFinalResults();
+                return;
+            }
+            
+            currentQuestion++;
+            displayQuestion();
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        function showFinalResults() {
+            let score = 0;
+            answers.forEach((answer, index) => {
+                if (answer === questions[index].correct) score++;
+            });
+            
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '<div class="question">Quiz terminé!</div>';
+            
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.className = 'feedback-container';
+            feedbackDiv.innerHTML = '';
+            
+            let recapHtml = '<div class="recap-title">Résumé de vos réponses</div>';
+            
+            questions.forEach((question, index) => {
+                const userAnswer = question.options[answers[index]];
+                const correctAnswer = question.options[question.correct];
+                const isCorrect = answers[index] === question.correct;
+                
+                recapHtml += `
+                    <div class="recap-card ${isCorrect ? 'correct' : 'incorrect'}">
+                        <div class="recap-number">Question ${index + 1} / ${questions.length}</div>
+                        <div class="recap-question">${question.q}</div>
+                        <div class="recap-answer-item user">
+                            <span class="recap-label">Votre réponse:</span>
+                            ${userAnswer.text}
+                            <span class="recap-result ${isCorrect ? 'correct' : 'incorrect'}">
+                                ${isCorrect ? '✓ Correct' : '✗ Incorrect'}
+                            </span>
+                        </div>
+                        ${!isCorrect ? `
+                            <div class="recap-answer-item correct-answer">
+                                <span class="recap-label">Bonne réponse:</span>
+                                ${correctAnswer.text}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            
+            document.getElementById('result').innerHTML = `
+                <div style="font-size: 2em; margin: 30px 0 20px;">Votre score : ${score} / ${questions.length}</div>
+                <div style="font-size: 1.1em; color: #555; margin-bottom: 30px;">Réussite : ${Math.round(score / questions.length * 100)}%</div>
+                <div class="recap-container">${recapHtml}</div>
+            `;
+            
+            document.getElementById('prevBtn').disabled = false;
+            document.getElementById('nextBtn').textContent = 'Recommencer';
+            document.getElementById('nextBtn').disabled = false;
+            document.getElementById('nextBtn').onclick = function() { location.reload(); };
+            document.getElementById('prevBtn').onclick = function() {
+                currentQuestion = questions.length - 1;
+                displayQuestion();
+            };
+        }
+
+        displayQuestion();
+    </script>
+</body>
+</html>

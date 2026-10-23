@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Quiz - DOM, CSS et inspection avec DevTools</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <div class="global-course-title">Initiation à la fonction de travail d'un spécialiste en qualité logicielle</div>
+    <h1>Quiz : DOM, CSS et inspection avec DevTools (Cours 4 - Séance 2)</h1>
+    
+    <div class="progress-container">
+        <div class="progress-info">
+            <span id="question-counter">Question 1 / 10</span>
+            <div class="progress-stats">
+                <span class="stat-badge incorrect"><span class="stat-icon">✕</span><span id="incorrect-count">0</span></span>
+                <span class="stat-badge correct"><span class="stat-icon">✓</span><span id="correct-count">0</span></span>
+            </div>
+        </div>
+        <div class="progress-bar-wrapper" id="progressBar"></div>
+    </div>
+    
+    <div id="quiz-container" class="card"></div>
+    
+    <div id="feedback" class="feedback-container"></div>
+    
+    <div class="quiz-navigation">
+        <button id="prevBtn" onclick="previousQuestion()">← Précédent</button>
+        <button id="nextBtn" onclick="nextQuestion()">Suivant →</button>
+    </div>
+    
+    <div id="result"></div>
+
+    <script>
+        const questions = [
+          {
+                    "q": "Dans ce code, quel est le parent de &lt;h2&gt; ?<br><code>&lt;main&gt;&lt;h2&gt;Nouveautés&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Livre A&lt;/li&gt;&lt;/ul&gt;&lt;/main&gt;</code>",
+                    "options": [
+                              {
+                                        "text": "&lt;ul&gt;",
+                                        "explain": "Faux. &lt;ul&gt; est un frère de &lt;h2&gt; : ils ont le même parent."
+                              },
+                              {
+                                        "text": "&lt;main&gt;",
+                                        "explain": "Correct. &lt;h2&gt; est directement contenu dans &lt;main&gt; : &lt;main&gt; est son parent."
+                              },
+                              {
+                                        "text": "&lt;li&gt;",
+                                        "explain": "Faux. &lt;li&gt; est un enfant de &lt;ul&gt;. Il n'a pas de lien direct avec &lt;h2&gt;."
+                              },
+                              {
+                                        "text": "&lt;h2&gt; n'a pas de parent",
+                                        "explain": "Faux. Tout élément de la page a un parent, sauf la racine &lt;html&gt;."
+                              }
+                    ],
+                    "correct": 1,
+                    "correctExplain": "Le navigateur transforme le HTML en arbre : le DOM. Le vocabulaire est celui de la famille : un parent contient directement ses enfants, les éléments qui ont le même parent sont des frères, les descendants sont tous les éléments contenus (directement ou non) et les ancêtres sont tous les éléments qui le contiennent."
+          },
+          {
+                    "q": "Dans le même code, quels éléments sont frères ?<br><code>&lt;main&gt;&lt;h2&gt;Nouveautés&lt;/h2&gt;&lt;ul&gt;&lt;li&gt;Livre A&lt;/li&gt;&lt;/ul&gt;&lt;/main&gt;</code>",
+                    "options": [
+                              {
+                                        "text": "&lt;main&gt; et &lt;h2&gt;",
+                                        "explain": "Faux. &lt;main&gt; est le parent de &lt;h2&gt;, pas son frère."
+                              },
+                              {
+                                        "text": "&lt;ul&gt; et &lt;li&gt;",
+                                        "explain": "Faux. &lt;ul&gt; est le parent de &lt;li&gt;."
+                              },
+                              {
+                                        "text": "&lt;h2&gt; et &lt;ul&gt;",
+                                        "explain": "Correct. &lt;h2&gt; et &lt;ul&gt; ont le même parent, &lt;main&gt; : ce sont des frères. Dans un code bien indenté, ils sont alignés."
+                              },
+                              {
+                                        "text": "&lt;li&gt; et &lt;main&gt;",
+                                        "explain": "Faux. &lt;main&gt; est un ancêtre de &lt;li&gt;."
+                              }
+                    ],
+                    "correct": 2,
+                    "correctExplain": "Lire l'indentation, c'est lire l'arbre. Un cran à droite : c'est un enfant de la ligne au-dessus. Même alignement : ce sont des frères. Un cran à gauche : on remonte vers le parent. DevTools affiche l'arbre de la même façon, avec les triangles ▸ et ▾."
+          },
+          {
+                    "q": "Quelle affirmation sur id et class est exacte ?",
+                    "options": [
+                              {
+                                        "text": "Un id doit être unique dans la page ; une classe peut être partagée par plusieurs éléments",
+                                        "explain": "Correct. L'id identifie un élément précis. La classe regroupe des éléments semblables, et un élément peut en avoir plusieurs."
+                              },
+                              {
+                                        "text": "Une classe doit être unique dans la page ; un id peut être répété",
+                                        "explain": "Faux. C'est l'inverse : c'est l'id qui doit être unique."
+                              },
+                              {
+                                        "text": "Un élément peut avoir plusieurs id",
+                                        "explain": "Faux. Un élément a au plus un id. Il peut en revanche avoir plusieurs classes : class=\"btn btn-primaire\"."
+                              },
+                              {
+                                        "text": "id et class sont affichés à l'écran",
+                                        "explain": "Faux. Ce sont des attributs : ils ne sont pas affichés, mais visibles dans le code et dans DevTools."
+                              }
+                    ],
+                    "correct": 0,
+                    "correctExplain": "Le cours compare id et class. L'id est unique dans la page, un seul par élément, et sert à identifier un élément précis. La classe peut être partagée par plusieurs éléments, un élément peut en avoir plusieurs, et elle sert à regrouper des éléments semblables. Pour le QA, deux éléments avec le même id sont un défaut qu'on peut repérer dans DevTools."
+          },
+          {
+                    "q": "Quels éléments la règle CSS .prix { font-weight: bold; } met-elle en gras ?",
+                    "options": [
+                              {
+                                        "text": "Tous les éléments &lt;prix&gt;",
+                                        "explain": "Faux. Sans symbole, le sélecteur viserait une balise, et il n'existe pas de balise &lt;prix&gt;. Le point change tout."
+                              },
+                              {
+                                        "text": "L'élément dont l'id est prix",
+                                        "explain": "Faux. Pour viser un id, on utilise le dièse : #prix."
+                              },
+                              {
+                                        "text": "Tous les éléments qui ont la classe prix",
+                                        "explain": "Correct. Le point « . » vise une classe : tous les éléments avec class=\"prix\" sont concernés."
+                              },
+                              {
+                                        "text": "Seulement le premier élément de la page",
+                                        "explain": "Faux. Un sélecteur de classe s'applique à tous les éléments qui portent cette classe."
+                              }
+                    ],
+                    "correct": 2,
+                    "correctExplain": "Le cours présente trois sélecteurs simples : la balise (p vise tous les paragraphes), la classe (.prix vise tous les éléments avec class=\"prix\") et l'identifiant (#panier vise l'élément avec id=\"panier\"). À retenir : le point « . » vise une classe, le dièse « # » vise un id."
+          },
+          {
+                    "q": "Dans la règle h1 { color: #D9783F; }, que désigne color ?",
+                    "options": [
+                              {
+                                        "text": "Le sélecteur",
+                                        "explain": "Faux. Le sélecteur est h1 : il indique à qui la règle s'applique."
+                              },
+                              {
+                                        "text": "La propriété",
+                                        "explain": "Correct. color est la propriété : ce qu'on modifie. #D9783F est sa valeur."
+                              },
+                              {
+                                        "text": "La valeur",
+                                        "explain": "Faux. La valeur est #D9783F : elle indique comment on modifie la propriété."
+                              },
+                              {
+                                        "text": "Un attribut HTML",
+                                        "explain": "Faux. color s'écrit ici dans une règle CSS. Les attributs HTML s'écrivent dans les balises."
+                              }
+                    ],
+                    "correct": 1,
+                    "correctExplain": "Une règle CSS se compose d'un sélecteur (qui ?), suivi d'accolades contenant des déclarations. Chaque déclaration associe une propriété (quoi ?) à une valeur (comment ?) et se termine par un point-virgule. Lecture de l'exemple : « tous les h1 auront la couleur orange »."
+          },
+          {
+                    "q": "Selon le cours, quelle est la meilleure façon d'ajouter du CSS à un site de plusieurs pages ?",
+                    "options": [
+                              {
+                                        "text": "Un attribut style dans chaque balise",
+                                        "explain": "Faux. Le style dans la balise est réservé à un cas isolé : il est à éviter, car il disperse la mise en forme partout."
+                              },
+                              {
+                                        "text": "Une balise &lt;style&gt; dans le &lt;head&gt; de chaque page",
+                                        "explain": "Faux. Cette méthode convient à une seule page. Sur un site, il faudrait la répéter et la modifier partout."
+                              },
+                              {
+                                        "text": "Un fichier .css relié à chaque page par &lt;link rel=\"stylesheet\" href=\"style.css\"&gt;",
+                                        "explain": "Correct. Un seul fichier pour tout le site : changer une couleur à un endroit change tout le site."
+                              },
+                              {
+                                        "text": "Écrire le CSS dans le contenu des paragraphes",
+                                        "explain": "Faux. Le CSS écrit dans le contenu s'afficherait comme du texte : il ne mettrait rien en forme."
+                              }
+                    ],
+                    "correct": 2,
+                    "correctExplain": "Le cours présente trois façons d'ajouter du CSS : dans la balise (attribut style), dans le &lt;head&gt; (balise &lt;style&gt;) et dans un fichier externe relié par &lt;link&gt;. Le fichier externe est la bonne pratique. En cas de conflit, la déclaration la plus proche de l'élément l'emporte. Si la page s'affiche sans style, l'erreur la plus fréquente est un mauvais chemin dans href."
+          },
+          {
+                    "q": "Quelle est la différence entre display: none et visibility: hidden ?",
+                    "options": [
+                              {
+                                        "text": "Aucune : les deux suppriment l'élément du code",
+                                        "explain": "Faux. Aucune des deux ne supprime l'élément du code : il reste visible dans DevTools."
+                              },
+                              {
+                                        "text": "display: none masque l'élément sans lui laisser de place ; visibility: hidden le masque mais conserve sa place",
+                                        "explain": "Correct. Avec display: none, la page se comporte comme si l'élément n'était pas là. Avec visibility: hidden, un espace vide reste à sa place."
+                              },
+                              {
+                                        "text": "visibility: hidden supprime l'élément du code ; display: none le grise",
+                                        "explain": "Faux. Aucune des deux ne supprime l'élément du code, et aucune ne le grise."
+                              },
+                              {
+                                        "text": "display: none ne fonctionne que sur les images",
+                                        "explain": "Faux. display: none s'applique à n'importe quel élément."
+                              }
+                    ],
+                    "correct": 1,
+                    "correctExplain": "Le cours insiste sur un point clé pour le QA : un élément peut être présent dans le code sans être visible à l'écran. display: none ne l'affiche pas et ne lui laisse aucune place. visibility: hidden le rend invisible mais garde sa place. opacity: 0 le rend transparent. Un &lt;input type=\"hidden\"&gt; n'est jamais affiché mais est envoyé au serveur. Un message d'erreur ou un bandeau peut donc exister bien avant d'apparaître."
+          },
+          {
+                    "q": "Dans la boutique de la démo, le code source (Ctrl+U) montre une &lt;div id=\"liste-livres\"&gt; vide, mais l'onglet Elements la montre remplie de livres. Pourquoi ?",
+                    "options": [
+                              {
+                                        "text": "Le code source est toujours faux",
+                                        "explain": "Faux. Le code source est exact : c'est le fichier reçu du serveur. Il ne montre simplement pas ce qui a été ajouté ensuite."
+                              },
+                              {
+                                        "text": "DevTools invente du contenu pour aider le développeur",
+                                        "explain": "Faux. DevTools montre la page réelle, telle qu'elle est en ce moment dans le navigateur."
+                              },
+                              {
+                                        "text": "JavaScript a ajouté les livres après le chargement de la page",
+                                        "explain": "Correct. Elements montre la page vivante, modifiée par JavaScript. Le code source montre le fichier d'origine, avant ces modifications."
+                              },
+                              {
+                                        "text": "Le CSS a caché les livres dans le code source",
+                                        "explain": "Faux. Le CSS agit sur l'apparence de la page, pas sur le contenu du fichier source."
+                              }
+                    ],
+                    "correct": 2,
+                    "correctExplain": "JavaScript peut afficher et masquer des éléments, ajouter du contenu, vérifier un formulaire et parler au serveur. Le code source ne montre donc pas toujours ce que voit l'utilisateur : le QA inspecte la page vivante dans DevTools. Et comme le contenu arrive parfois après un délai, il faut savoir attendre avant de conclure qu'il manque quelque chose."
+          },
+          {
+                    "q": "Pendant l'exploration, vous trouvez dans Elements, avant même d'avoir cliqué, une &lt;div id=\"message-erreur\" class=\"alerte cache\"&gt; vide. Quelle conclusion est la plus juste ?",
+                    "options": [
+                              {
+                                        "text": "C'est un défaut : un élément vide ne devrait pas exister",
+                                        "explain": "Faux. Préparer un élément vide et caché, que JavaScript remplit au besoin, est une pratique courante, pas un défaut."
+                              },
+                              {
+                                        "text": "L'élément existe déjà, mais une règle CSS liée à la classe cache le rend invisible ; JavaScript l'affichera en cas d'erreur",
+                                        "explain": "Correct. Dans l'onglet Styles, on voit que la classe cache applique display: none. JavaScript retire cette classe et écrit le message en cas d'erreur."
+                              },
+                              {
+                                        "text": "L'élément sera créé par le serveur au moment de l'erreur",
+                                        "explain": "Faux. L'élément est déjà dans le code, avant toute erreur : il n'a pas besoin d'être créé."
+                              },
+                              {
+                                        "text": "L'élément est un commentaire HTML",
+                                        "explain": "Faux. Un commentaire s'écrit entre &lt;!-- et --&gt; et n'apparaît pas comme un élément dans l'arbre."
+                              }
+                    ],
+                    "correct": 1,
+                    "correctExplain": "Cette question combine plusieurs notions. Un élément peut exister dans le DOM sans être visible : ici, la classe cache est associée à la règle display: none. JavaScript retire cette classe et remplit le message au moment de l'erreur. La méthode d'exploration du cours s'applique : observer la page, inspecter le code, comparer ce qui est affiché et ce qui existe, puis vérifier dans l'onglet Styles quelle règle masque l'élément."
+          },
+          {
+                    "q": "Vous demandez à l'IA d'expliquer une ligne du catalogue. Elle répond que l'attribut data-prix contient le prix affiché dans la cellule de classe prix. Dans DevTools, vous voyez data-prix=\"22.50\" et une cellule qui affiche 27,50 $. Quelle est la bonne démarche ?",
+                    "options": [
+                              {
+                                        "text": "Faire confiance à l'IA : elle a forcément raison sur une question aussi simple",
+                                        "explain": "Faux. L'IA se trompe parfois avec assurance. Ici, la vérification montre que son affirmation est fausse pour ce livre."
+                              },
+                              {
+                                        "text": "Conclure que DevTools affiche une mauvaise valeur",
+                                        "explain": "Faux. DevTools montre le code réel de la page : c'est la source la plus fiable dans cette situation."
+                              },
+                              {
+                                        "text": "Ignorer l'écart : un attribut data-* n'a aucune importance",
+                                        "explain": "Faux. Les attributs data-* sont lus par JavaScript, par exemple pour calculer un total. Un écart avec le prix affiché peut produire de vraies erreurs."
+                              },
+                              {
+                                        "text": "Traiter la réponse de l'IA comme un livrable à vérifier, constater l'écart dans DevTools et le signaler comme un défaut",
+                                        "explain": "Correct. Le prix stocké et le prix affiché ne concordent pas. DevTools tranche, et l'écart mérite une fiche d'anomalie."
+                              }
+                    ],
+                    "correct": 3,
+                    "correctExplain": "Cette question combine trois notions. Les attributs data-* stockent des données invisibles à l'écran, utilisées par JavaScript : ils révèlent parfois un écart avec ce qui est affiché. Lire le code dans DevTools permet de le constater. Enfin, la règle vue au cours 3 s'applique : ce que produit l'IA est un livrable à tester. L'IA a donné une explication générale plausible, mais fausse dans ce cas précis ; la vérification a permis de trouver un défaut."
+          }
+];
+        let currentQuestion = 0;
+        let answers = new Array(questions.length).fill(null);
+        let answered = new Array(questions.length).fill(false);
+
+        function displayQuestion() {
+            const container = document.getElementById('quiz-container');
+            const item = questions[currentQuestion];
+            
+            let html = `<div class="question">${currentQuestion + 1}. ${item.q}</div>`;
+            const letters = ['A', 'B', 'C', 'D'];
+            item.options.forEach((opt, i) => {
+                let classes = '';
+                if (answers[currentQuestion] === i) {
+                    classes = 'selected ';
+                    if (i === item.correct) {
+                        classes += 'correct';
+                    } else {
+                        classes += 'incorrect';
+                    }
+                }
+                const disabledClass = answered[currentQuestion] ? 'disabled' : '';
+                html += `<div class="option ${classes} ${disabledClass}" onclick="${answered[currentQuestion] ? '' : `handleAnswerClick(${i})`}" style="${answered[currentQuestion] ? 'cursor: not-allowed;' : ''}"><span class="option-letter">${letters[i]}</span> ${opt.text}</div>`;
+            });
+            
+            container.innerHTML = html;
+            
+            if (answered[currentQuestion]) {
+                showFeedback();
+            } else {
+                document.getElementById('feedback').innerHTML = '';
+                document.getElementById('feedback').classList.remove('show');
+            }
+            
+            updateProgressBar();
+            updateNavigationButtons();
+            updateProgressInfo();
+        }
+
+        function handleAnswerClick(index) {
+            if (answered[currentQuestion]) return;
+            
+            answers[currentQuestion] = index;
+            answered[currentQuestion] = true;
+            
+            showFeedback();
+            updateProgressBar();
+            updateProgressInfo();
+            updateNavigationButtons();
+            displayQuestion();
+        }
+
+        function showFeedback() {
+            const feedbackDiv = document.getElementById('feedback');
+            const item = questions[currentQuestion];
+            const isCorrect = answers[currentQuestion] === item.correct;
+            const selectedOption = item.options[answers[currentQuestion]];
+            
+            feedbackDiv.className = 'feedback-container show ' + (isCorrect ? 'feedback-correct' : 'feedback-incorrect');
+            
+            let html = '';
+            
+            if (isCorrect) {
+                html += `
+                    <div class="feedback-header">Bonne réponse!</div>
+                    <div class="feedback-explanation">${item.correctExplain}</div>
+                `;
+            } else {
+                html += `
+                    <div class="feedback-header">Pas tout à fait</div>
+                    <div class="feedback-explanation">${selectedOption.explain}</div>
+                    <div class="correct-answer-box">
+                        <div class="correct-answer-label">✓ Bonne réponse:</div>
+                        <div>${item.options[item.correct].text}</div>
+                        <div style="margin-top: 8px; font-size: 0.9em;">${item.correctExplain}</div>
+                    </div>
+                `;
+            }
+            
+            feedbackDiv.innerHTML = html;
+        }
+
+        function updateProgressBar() {
+            const progressBar = document.getElementById('progressBar');
+            progressBar.innerHTML = '';
+            
+            for (let i = 0; i < questions.length; i++) {
+                const segment = document.createElement('div');
+                segment.className = 'progress-segment';
+                
+                if (!answered[i]) {
+                    segment.classList.add('unanswered');
+                } else if (answers[i] === questions[i].correct) {
+                    segment.classList.add('correct');
+                } else {
+                    segment.classList.add('incorrect');
+                }
+                
+                progressBar.appendChild(segment);
+            }
+        }
+
+        function updateNavigationButtons() {
+            const isAnswered = answered[currentQuestion];
+            document.getElementById('prevBtn').disabled = currentQuestion === 0 || !isAnswered;
+            document.getElementById('nextBtn').disabled = !isAnswered;
+            
+            if (currentQuestion === questions.length - 1) {
+                document.getElementById('nextBtn').textContent = 'Voir Résultat';
+            } else {
+                document.getElementById('nextBtn').textContent = 'Suivant →';
+            }
+        }
+
+        function updateProgressInfo() {
+            document.getElementById('question-counter').textContent = `Question ${currentQuestion + 1} / ${questions.length}`;
+            
+            let correctCount = 0;
+            let incorrectCount = 0;
+            
+            for (let i = 0; i < answers.length; i++) {
+                if (answered[i]) {
+                    if (answers[i] === questions[i].correct) {
+                        correctCount++;
+                    } else {
+                        incorrectCount++;
+                    }
+                }
+            }
+            
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('incorrect-count').textContent = incorrectCount;
+        }
+
+        function nextQuestion() {
+            if (currentQuestion === questions.length - 1) {
+                showFinalResults();
+                return;
+            }
+            
+            currentQuestion++;
+            displayQuestion();
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        function showFinalResults() {
+            let score = 0;
+            answers.forEach((answer, index) => {
+                if (answer === questions[index].correct) score++;
+            });
+            
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '<div class="question">Quiz terminé!</div>';
+            
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.className = 'feedback-container';
+            feedbackDiv.innerHTML = '';
+            
+            let recapHtml = '<div class="recap-title">Résumé de vos réponses</div>';
+            
+            questions.forEach((question, index) => {
+                const userAnswer = question.options[answers[index]];
+                const correctAnswer = question.options[question.correct];
+                const isCorrect = answers[index] === question.correct;
+                
+                recapHtml += `
+                    <div class="recap-card ${isCorrect ? 'correct' : 'incorrect'}">
+                        <div class="recap-number">Question ${index + 1} / ${questions.length}</div>
+                        <div class="recap-question">${question.q}</div>
+                        <div class="recap-answer-item user">
+                            <span class="recap-label">Votre réponse:</span>
+                            ${userAnswer.text}
+                            <span class="recap-result ${isCorrect ? 'correct' : 'incorrect'}">
+                                ${isCorrect ? '✓ Correct' : '✗ Incorrect'}
+                            </span>
+                        </div>
+                        ${!isCorrect ? `
+                            <div class="recap-answer-item correct-answer">
+                                <span class="recap-label">Bonne réponse:</span>
+                                ${correctAnswer.text}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            
+            document.getElementById('result').innerHTML = `
+                <div style="font-size: 2em; margin: 30px 0 20px;">Votre score : ${score} / ${questions.length}</div>
+                <div style="font-size: 1.1em; color: #555; margin-bottom: 30px;">Réussite : ${Math.round(score / questions.length * 100)}%</div>
+                <div class="recap-container">${recapHtml}</div>
+            `;
+            
+            document.getElementById('prevBtn').disabled = false;
+            document.getElementById('nextBtn').textContent = 'Recommencer';
+            document.getElementById('nextBtn').disabled = false;
+            document.getElementById('nextBtn').onclick = function() { location.reload(); };
+            document.getElementById('prevBtn').onclick = function() {
+                currentQuestion = questions.length - 1;
+                displayQuestion();
+            };
+        }
+
+        displayQuestion();
+    </script>
+</body>
+</html>

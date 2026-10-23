@@ -293,5 +293,40 @@
     "title": "Principes fondamentaux du test",
     "path": "cours/icq/quiz-icq-cours4.html",
     "questionsCount": 10
+  },
+  "k3w8t5n1": {
+    "course": "IFT-SQL",
+    "lesson": 1,
+    "title": "Introduction à la qualité logicielle et au métier de spécialiste en qualité",
+    "path": "cours/ift-sql/quiz-ift-sql-cours1.html",
+    "questionsCount": 10
+  },
+  "s7d2f9j4": {
+    "course": "IFT-SQL",
+    "lesson": 2,
+    "title": "Vérification, validation et cycle de vie des anomalies",
+    "path": "cours/ift-sql/quiz-ift-sql-cours2.html",
+    "questionsCount": 10
+  },
+  "y4h6c1v8": {
+    "course": "IFT-SQL",
+    "lesson": 3,
+    "title": "Posture du testeur, autoréflexion et usage de l'IA",
+    "path": "cours/ift-sql/quiz-ift-sql-cours3.html",
+    "questionsCount": 10
+  },
+  "b2q9x5m7": {
+    "course": "IFT-SQL",
+    "lesson": "4-S1",
+    "title": "HTML : la structure d'une page web",
+    "path": "cours/ift-sql/quiz-ift-sql-cours4-s1.html",
+    "questionsCount": 10
+  },
+  "u8n3z6r4": {
+    "course": "IFT-SQL",
+    "lesson": "4-S2",
+    "title": "DOM, CSS et inspection avec DevTools",
+    "path": "cours/ift-sql/quiz-ift-sql-cours4-s2.html",
+    "questionsCount": 10
   }
 }

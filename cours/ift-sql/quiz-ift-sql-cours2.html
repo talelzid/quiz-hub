@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Quiz - Vérification, validation et cycle de vie des anomalies</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <div class="global-course-title">Initiation à la fonction de travail d'un spécialiste en qualité logicielle</div>
+    <h1>Quiz : Vérification, validation et cycle de vie des anomalies (Cours 2)</h1>
+    
+    <div class="progress-container">
+        <div class="progress-info">
+            <span id="question-counter">Question 1 / 10</span>
+            <div class="progress-stats">
+                <span class="stat-badge incorrect"><span class="stat-icon">✕</span><span id="incorrect-count">0</span></span>
+                <span class="stat-badge correct"><span class="stat-icon">✓</span><span id="correct-count">0</span></span>
+            </div>
+        </div>
+        <div class="progress-bar-wrapper" id="progressBar"></div>
+    </div>
+    
+    <div id="quiz-container" class="card"></div>
+    
+    <div id="feedback" class="feedback-container"></div>
+    
+    <div class="quiz-navigation">
+        <button id="prevBtn" onclick="previousQuestion()">← Précédent</button>
+        <button id="nextBtn" onclick="nextQuestion()">Suivant →</button>
+    </div>
+    
+    <div id="result"></div>
+
+    <script>
+        const questions = [
+          {
+                    "q": "Un client de 65 ans essaie de s'inscrire et l'application refuse son inscription, alors que les clients de 65 ans devraient être acceptés. Selon le vocabulaire vu au cours, comment appelle-t-on ce refus observé à l'exécution ?",
+                    "options": [
+                              {
+                                        "text": "Une défaillance",
+                                        "explain": "Correct. Une défaillance est un comportement du logiciel, observé à l'exécution, qui ne correspond pas au résultat attendu. Ici, le refus du client de 65 ans est ce que l'on voit à l'écran."
+                              },
+                              {
+                                        "text": "Une erreur",
+                                        "explain": "Faux. L'erreur est l'action humaine à l'origine du problème, par exemple le programmeur qui a inversé &lt; et &lt;=. Ce n'est pas ce qu'on observe à l'exécution."
+                              },
+                              {
+                                        "text": "Un défaut",
+                                        "explain": "Faux. Le défaut est la trace laissée par l'erreur dans le code (la condition fausse). Il existe même si personne n'exécute le programme. Ce qu'on observe à l'exécution est la défaillance."
+                              },
+                              {
+                                        "text": "Une déviation",
+                                        "explain": "Faux. Une fiche de déviation signale un écart avec la spécification, adressé aux analystes. Ce n'est pas le terme qui désigne un comportement fautif observé à l'exécution."
+                              }
+                    ],
+                    "correct": 0,
+                    "correctExplain": "Le cours présente une chaîne de trois notions. Une erreur est commise par une personne (le programmeur inverse &lt; et &lt;=). Elle laisse un défaut dans le code ou dans un document (la condition est fausse). Lorsque ce code est exécuté dans les bonnes conditions, il produit une défaillance : le logiciel ne fait pas ce qui est attendu (le client de 65 ans est refusé). Un défaut ne cause donc pas toujours une défaillance : il faut exécuter le code fautif avec les données qui le révèlent."
+          },
+          {
+                    "q": "Quelle question correspond à la validation ?",
+                    "options": [
+                              {
+                                        "text": "Avons-nous bien construit le produit ?",
+                                        "explain": "Faux. Cette question correspond à la vérification : on contrôle que le produit respecte ses spécifications."
+                              },
+                              {
+                                        "text": "Avons-nous construit le bon produit ?",
+                                        "explain": "Correct. La validation vérifie que le produit répond au vrai besoin des utilisateurs, par exemple au moyen de démonstrations, de tests d'acceptation ou de tests avec des utilisateurs."
+                              },
+                              {
+                                        "text": "Le code respecte-t-il les conventions de nommage ?",
+                                        "explain": "Faux. C'est une vérification de la qualité du code, que l'on peut automatiser avec un outil comme SonarQube. Elle ne dit rien du besoin réel des utilisateurs."
+                              },
+                              {
+                                        "text": "Tous les cas de test ont-ils été exécutés ?",
+                                        "explain": "Faux. C'est une question de suivi de l'avancement des tests, utile au gestionnaire des tests, mais ce n'est pas la définition de la validation."
+                              }
+                    ],
+                    "correct": 1,
+                    "correctExplain": "Le cours distingue deux questions. La vérification demande : avons-nous bien construit le produit ? On contrôle que le produit respecte ses spécifications, par des revues, des inspections et des tests par rapport aux spécifications. La validation demande : avons-nous construit le bon produit ? On s'assure que le produit répond au vrai besoin des utilisateurs, par des démonstrations, des tests d'acceptation et des tests avec des utilisateurs. Un produit peut être parfaitement conforme à des spécifications qui ne correspondent pas au besoin."
+          },
+          {
+                    "q": "Selon le cours, qui réalise principalement les tests unitaires ?",
+                    "options": [
+                              {
+                                        "text": "Le client",
+                                        "explain": "Faux. Le client intervient surtout au niveau des tests d'acceptation, pour valider que le produit répond à son besoin."
+                              },
+                              {
+                                        "text": "Le gestionnaire des tests",
+                                        "explain": "Faux. Le gestionnaire des tests planifie et pilote les activités de test. Il n'écrit généralement pas les tests unitaires."
+                              },
+                              {
+                                        "text": "Les développeurs",
+                                        "explain": "Correct. Les tests unitaires vérifient chaque fonction ou classe de façon isolée. Ils sont écrits par les développeurs, qui vérifient aussi la couverture de leur code."
+                              },
+                              {
+                                        "text": "L'analyste d'affaires",
+                                        "explain": "Faux. L'analyste d'affaires analyse les processus d'affaires et fait le lien entre l'organisation et l'équipe TI. Il n'écrit pas de code ni de tests unitaires."
+                              }
+                    ],
+                    "correct": 2,
+                    "correctExplain": "Le cours présente quatre niveaux de test. Les tests unitaires vérifient chaque fonction ou classe isolée et sont réalisés par les développeurs. Les tests d'intégration vérifient que les composantes fonctionnent ensemble ; développeurs et QA y participent. Les tests système vérifient le système complet de bout en bout et sont menés par les spécialistes QA. Les tests d'acceptation permettent au client de valider le besoin. Plus on descend dans la pyramide, plus les tests sont nombreux, rapides et automatisés."
+          },
+          {
+                    "q": "Dans une équipe Scrum, quel rôle gère et priorise le carnet de produit et définit les critères d'acceptation ?",
+                    "options": [
+                              {
+                                        "text": "Le Scrum Master",
+                                        "explain": "Faux. Le Scrum Master facilite le travail de l'équipe : il anime les événements Scrum et lève les obstacles. Il ne priorise pas le carnet de produit."
+                              },
+                              {
+                                        "text": "Le chef de projet",
+                                        "explain": "Faux. Le chef de projet planifie, estime et suit le projet, surtout dans les approches traditionnelles. Dans Scrum, la priorisation du carnet revient à un autre rôle."
+                              },
+                              {
+                                        "text": "L'analyste fonctionnel",
+                                        "explain": "Faux. L'analyste fonctionnel traduit les besoins en spécifications fonctionnelles. Il peut aider à rédiger les récits, mais la priorisation du carnet n'est pas sa responsabilité."
+                              },
+                              {
+                                        "text": "Le Product Owner",
+                                        "explain": "Correct. Le Product Owner porte la vision du produit. Il gère et priorise le carnet de produit, rédige les récits utilisateurs, définit les critères d'acceptation et accepte ou refuse l'incrément."
+                              }
+                    ],
+                    "correct": 3,
+                    "correctExplain": "Le cours présente le Product Owner comme le porteur de la vision du produit, chargé d'en maximiser la valeur. Ses tâches sont de gérer et prioriser le carnet de produit, de rédiger les récits utilisateurs, de définir les critères d'acceptation et d'accepter ou de refuser l'incrément. Le spécialiste QA reçoit de lui les priorités et les critères d'acceptation, et lui fournit en retour les risques qualité et l'état des tests."
+          },
+          {
+                    "q": "Un développeur vient de corriger une anomalie dans le module de paiement. Le testeur vérifie d'abord que le correctif fonctionne, puis relance une série de tests sur les autres modules pour s'assurer que rien d'autre n'a été cassé. Comment s'appelle ce second type de test ?",
+                    "options": [
+                              {
+                                        "text": "Un test de confirmation",
+                                        "explain": "Faux. Le test de confirmation vérifie que le correctif fonctionne, c'est-à-dire la première étape décrite. La seconde étape porte sur le reste du logiciel."
+                              },
+                              {
+                                        "text": "Un test de régression",
+                                        "explain": "Correct. Le test de régression vérifie qu'une modification n'a pas introduit de nouveaux défauts dans les parties qui fonctionnaient déjà. C'est un excellent candidat à l'automatisation."
+                              },
+                              {
+                                        "text": "Un test d'acceptation",
+                                        "explain": "Faux. Le test d'acceptation permet au client de valider que le produit répond à son besoin. Il n'est pas lié spécifiquement à la vérification après une correction."
+                              },
+                              {
+                                        "text": "Un test de performance",
+                                        "explain": "Faux. Le test de performance est un test non fonctionnel qui mesure les temps de réponse et le comportement sous charge. Il ne vise pas à vérifier que rien n'a été cassé."
+                              }
+                    ],
+                    "correct": 1,
+                    "correctExplain": "Le cours classe les tests liés aux changements en deux catégories. Le test de confirmation vérifie que le correctif fonctionne. Le test de régression vérifie que rien d'autre n'a été cassé par la modification. Les tests de régression sont répétitifs et stables, ce qui en fait les candidats idéaux à l'automatisation : le cours rappelle qu'on automatise d'abord les tests répétitifs et stables, comme la régression."
+          },
+          {
+                    "q": "Le nom de l'entreprise est mal orthographié sur la page d'accueil du site. Le site fonctionne parfaitement. Selon le cours, comment qualifier cette anomalie ?",
+                    "options": [
+                              {
+                                        "text": "Sévérité bloquante, priorité basse",
+                                        "explain": "Faux. Une faute d'orthographe n'empêche aucune fonctionnalité de marcher : la sévérité ne peut pas être bloquante."
+                              },
+                              {
+                                        "text": "Sévérité mineure, priorité basse",
+                                        "explain": "Faux. La sévérité est bien mineure, mais une erreur visible dès la page d'accueil nuit à l'image de l'entreprise : sa correction est urgente pour l'affaire."
+                              },
+                              {
+                                        "text": "Sévérité mineure, priorité haute",
+                                        "explain": "Correct. L'impact technique est faible (sévérité mineure), mais l'urgence pour l'affaire est forte (priorité haute), puisque l'erreur touche l'image de l'entreprise et est vue par tous les visiteurs."
+                              },
+                              {
+                                        "text": "Sévérité majeure, priorité haute",
+                                        "explain": "Faux. L'impact technique d'une faute d'orthographe est faible : il ne s'agit pas d'une sévérité majeure, même si la priorité est haute."
+                              }
+                    ],
+                    "correct": 2,
+                    "correctExplain": "Le cours distingue deux attributs d'une fiche d'anomalie. La sévérité mesure l'impact technique du défaut sur le système : bloquante, majeure, mineure ou cosmétique. La priorité mesure l'urgence de la correction pour l'affaire. Les deux ne vont pas toujours ensemble. L'exemple du cours le montre : une faute de frappe dans le logo a une sévérité mineure, mais une priorité haute. C'est exactement le cas du nom de l'entreprise mal orthographié sur la page d'accueil."
+          },
+          {
+                    "q": "Une anomalie vient de passer à l'état « Corrigée ». Selon le cycle de vie présenté au cours, que doit-il se passer ensuite ?",
+                    "options": [
+                              {
+                                        "text": "Le développeur ferme la fiche, puisqu'il a fait la correction",
+                                        "explain": "Faux. Le cours précise que seul un retest réussi permet de fermer l'anomalie. Le développeur corrige, mais c'est le testeur qui confirme la correction."
+                              },
+                              {
+                                        "text": "Le testeur reteste l'anomalie : si le retest réussit, la fiche est fermée ; sinon, elle est réouverte",
+                                        "explain": "Correct. Après « Corrigée », l'anomalie passe à « À retester ». Si le retest réussit, elle est fermée. S'il échoue, elle est réouverte et retourne en correction."
+                              },
+                              {
+                                        "text": "La fiche passe directement à « Rejetée ou différée »",
+                                        "explain": "Faux. L'état « Rejetée ou différée » s'applique à une anomalie non reproductible ou hors de la portée du projet. Il ne suit pas une correction."
+                              },
+                              {
+                                        "text": "Le Product Owner décide si l'anomalie doit être retestée",
+                                        "explain": "Faux. Le Product Owner peut influencer la priorité des anomalies, mais le retest après correction fait systématiquement partie du cycle de vie de l'anomalie."
+                              }
+                    ],
+                    "correct": 1,
+                    "correctExplain": "Le cours présente le cycle de vie d'une anomalie : Nouvelle, Assignée, En correction, Corrigée, puis À retester. Après le retest, l'anomalie est Fermée si le test réussit, ou Réouverte s'il échoue ; elle retourne alors en correction. Une anomalie peut aussi être Rejetée ou différée, par exemple si elle n'est pas reproductible ou hors portée. Le testeur ouvre la fiche et confirme la correction, le développeur corrige. Seul un retest réussi permet de fermer l'anomalie. Les états exacts varient selon l'outil et l'organisation."
+          },
+          {
+                    "q": "Vous devez vérifier rapidement qu'un service web renvoie le code 200 et les bonnes données JSON pour le client 42, sans passer par l'interface graphique. Quel outil vu au cours est le plus adapté ?",
+                    "options": [
+                              {
+                                        "text": "JMeter",
+                                        "explain": "Faux. JMeter sert principalement aux tests de performance : charge, stress, endurance. Il peut envoyer des requêtes, mais ce n'est pas l'outil présenté pour vérifier le contenu d'une API."
+                              },
+                              {
+                                        "text": "SonarQube",
+                                        "explain": "Faux. SonarQube analyse le code source sans l'exécuter (analyse statique). Il ne peut pas interroger un service web en fonctionnement."
+                              },
+                              {
+                                        "text": "Selenium WebDriver",
+                                        "explain": "Faux. Selenium pilote un navigateur pour tester l'interface graphique. La consigne demande justement de ne pas passer par l'interface."
+                              },
+                              {
+                                        "text": "Postman",
+                                        "explain": "Correct. Postman est le client de test présenté au cours pour les API. Il envoie une requête (par exemple GET /clients/42) et permet de vérifier le code de statut, le contenu de la réponse et le temps de réponse."
+                              }
+                    ],
+                    "correct": 3,
+                    "correctExplain": "Le cours présente Postman comme l'outil de test des API. Postman envoie une requête au service, par exemple GET /clients/42, et reçoit une réponse, par exemple 200 OK avec des données JSON. On vérifie alors le code de statut, le contenu et le temps de réponse. Les tests d'API ne passent pas par l'écran : ils sont plus rapides et plus stables que les tests d'interface. Les autres outils ont un rôle différent : Selenium teste l'interface, JMeter la performance et SonarQube la qualité du code."
+          },
+          {
+                    "q": "En concevant vos cas de test, vous constatez que la spécification fonctionnelle ne précise pas comment arrondir un montant de taxe (au cent supérieur ou au plus proche). Selon le cours, quelle est la démarche la plus appropriée ?",
+                    "options": [
+                              {
+                                        "text": "Choisir l'arrondi qui vous semble le plus logique et écrire les cas de test en conséquence",
+                                        "explain": "Faux. Le spécialiste QA ne doit pas inventer une règle d'affaires. S'il devine mal, ses tests valideront un comportement incorrect."
+                              },
+                              {
+                                        "text": "Demander au développeur comment il a codé l'arrondi et tester ce comportement",
+                                        "explain": "Faux. Tester ce que le développeur a codé ne permet pas de savoir si c'est la bonne règle. On risque de valider un défaut au lieu de le détecter."
+                              },
+                              {
+                                        "text": "Signaler l'ambiguïté à l'analyste fonctionnel, par exemple au moyen d'une fiche de déviation, pour obtenir la règle exacte",
+                                        "explain": "Correct. L'analyste fonctionnel est responsable des spécifications. Le cours indique que le QA lui fournit les ambiguïtés et les fiches de déviation, et en reçoit les spécifications et les règles de gestion."
+                              },
+                              {
+                                        "text": "Ignorer ce cas, puisqu'il n'est pas décrit dans la spécification",
+                                        "explain": "Faux. Un comportement non spécifié est un risque. L'ignorer laisserait un défaut potentiel non testé, alors que l'AQ vise justement à détecter les problèmes le plus tôt possible."
+                              }
+                    ],
+                    "correct": 2,
+                    "correctExplain": "Pour répondre, il faut combiner deux notions du cours. D'abord, les liens de collaboration : le QA reçoit de l'analyste fonctionnel les spécifications et les règles de gestion, et lui fournit les ambiguïtés et les fiches de déviation. Ensuite, la tâche « analyser les exigences » de l'analyste AQ, qui consiste à examiner en détail le dossier des exigences. Repérer une ambiguïté à ce stade est un exemple de shift-left : la clarifier avant le codage coûte beaucoup moins cher que de découvrir un défaut en production. Deviner la règle ou tester ce que le développeur a codé ne permet pas de savoir si le comportement est correct."
+          },
+          {
+                    "q": "Votre équipe veut qu'à chaque modification poussée dans Git, une série de tests de régression d'interface s'exécute automatiquement, et que le code présentant des vulnérabilités soit refusé. En vous appuyant sur l'ensemble du cours, quelle organisation est la plus cohérente ?",
+                    "options": [
+                              {
+                                        "text": "Le testeur exécute manuellement les tests de régression chaque soir et vérifie lui-même le code pour repérer les vulnérabilités",
+                                        "explain": "Faux. Cette approche ne répond pas à la demande : rien n'est automatique, et une revue manuelle du code ne remplace pas une analyse systématique. Elle ne s'exécute pas non plus à chaque modification."
+                              },
+                              {
+                                        "text": "Un pipeline d'intégration continue (Jenkins ou GitHub Actions), maintenu par l'ingénieur DevOps, exécute les scripts Selenium ou Playwright écrits par le scripteur, et un seuil de qualité SonarQube bloque le code non conforme",
+                                        "explain": "Correct. Chaque élément répond à un besoin. Le pipeline déclenche tout automatiquement à chaque modification, les scripts du scripteur automatisent la régression d'interface et le seuil de qualité de SonarQube refuse le code vulnérable. L'ingénieur DevOps maintient le pipeline."
+                              },
+                              {
+                                        "text": "Le gestionnaire des tests crée un plan de test dans Xray et Postman vérifie les vulnérabilités du code",
+                                        "explain": "Faux. Xray gère les cas et campagnes de test, mais ne les exécute pas automatiquement. Postman teste les API en fonctionnement ; il n'analyse pas le code source pour y trouver des vulnérabilités."
+                              },
+                              {
+                                        "text": "JMeter exécute les tests d'interface à chaque modification et Docker détecte les vulnérabilités",
+                                        "explain": "Faux. JMeter sert aux tests de performance, pas aux tests d'interface. Docker fournit des environnements identiques ; il n'analyse pas la qualité ni la sécurité du code."
+                              }
+                    ],
+                    "correct": 1,
+                    "correctExplain": "Cette question demande de combiner les rôles et les outils vus au cours. L'intégration continue déclenche automatiquement construction, tests et analyse à chaque modification ; elle s'appuie sur Jenkins ou GitHub Actions, et les pipelines sont maintenus par l'ingénieur DevOps. Les tests de régression d'interface sont automatisés avec Selenium WebDriver ou Playwright ; c'est le travail du scripteur, qui écrit les scripts, les intègre au pipeline et analyse les échecs. SonarQube analyse le code sans l'exécuter, repère bogues, vulnérabilités et mauvaises pratiques, et son seuil de qualité (quality gate) refuse automatiquement le code non conforme dans le pipeline. Les autres outils ont des rôles différents : Xray gère les tests, Postman teste les API, JMeter teste la performance et Docker fournit les environnements."
+          }
+];
+        let currentQuestion = 0;
+        let answers = new Array(questions.length).fill(null);
+        let answered = new Array(questions.length).fill(false);
+
+        function displayQuestion() {
+            const container = document.getElementById('quiz-container');
+            const item = questions[currentQuestion];
+            
+            let html = `<div class="question">${currentQuestion + 1}. ${item.q}</div>`;
+            const letters = ['A', 'B', 'C', 'D'];
+            item.options.forEach((opt, i) => {
+                let classes = '';
+                if (answers[currentQuestion] === i) {
+                    classes = 'selected ';
+                    if (i === item.correct) {
+                        classes += 'correct';
+                    } else {
+                        classes += 'incorrect';
+                    }
+                }
+                const disabledClass = answered[currentQuestion] ? 'disabled' : '';
+                html += `<div class="option ${classes} ${disabledClass}" onclick="${answered[currentQuestion] ? '' : `handleAnswerClick(${i})`}" style="${answered[currentQuestion] ? 'cursor: not-allowed;' : ''}"><span class="option-letter">${letters[i]}</span> ${opt.text}</div>`;
+            });
+            
+            container.innerHTML = html;
+            
+            if (answered[currentQuestion]) {
+                showFeedback();
+            } else {
+                document.getElementById('feedback').innerHTML = '';
+                document.getElementById('feedback').classList.remove('show');
+            }
+            
+            updateProgressBar();
+            updateNavigationButtons();
+            updateProgressInfo();
+        }
+
+        function handleAnswerClick(index) {
+            if (answered[currentQuestion]) return;
+            
+            answers[currentQuestion] = index;
+            answered[currentQuestion] = true;
+            
+            showFeedback();
+            updateProgressBar();
+            updateProgressInfo();
+            updateNavigationButtons();
+            displayQuestion();
+        }
+
+        function showFeedback() {
+            const feedbackDiv = document.getElementById('feedback');
+            const item = questions[currentQuestion];
+            const isCorrect = answers[currentQuestion] === item.correct;
+            const selectedOption = item.options[answers[currentQuestion]];
+            
+            feedbackDiv.className = 'feedback-container show ' + (isCorrect ? 'feedback-correct' : 'feedback-incorrect');
+            
+            let html = '';
+            
+            if (isCorrect) {
+                html += `
+                    <div class="feedback-header">Bonne réponse!</div>
+                    <div class="feedback-explanation">${item.correctExplain}</div>
+                `;
+            } else {
+                html += `
+                    <div class="feedback-header">Pas tout à fait</div>
+                    <div class="feedback-explanation">${selectedOption.explain}</div>
+                    <div class="correct-answer-box">
+                        <div class="correct-answer-label">✓ Bonne réponse:</div>
+                        <div>${item.options[item.correct].text}</div>
+                        <div style="margin-top: 8px; font-size: 0.9em;">${item.correctExplain}</div>
+                    </div>
+                `;
+            }
+            
+            feedbackDiv.innerHTML = html;
+        }
+
+        function updateProgressBar() {
+            const progressBar = document.getElementById('progressBar');
+            progressBar.innerHTML = '';
+            
+            for (let i = 0; i < questions.length; i++) {
+                const segment = document.createElement('div');
+                segment.className = 'progress-segment';
+                
+                if (!answered[i]) {
+                    segment.classList.add('unanswered');
+                } else if (answers[i] === questions[i].correct) {
+                    segment.classList.add('correct');
+                } else {
+                    segment.classList.add('incorrect');
+                }
+                
+                progressBar.appendChild(segment);
+            }
+        }
+
+        function updateNavigationButtons() {
+            const isAnswered = answered[currentQuestion];
+            document.getElementById('prevBtn').disabled = currentQuestion === 0 || !isAnswered;
+            document.getElementById('nextBtn').disabled = !isAnswered;
+            
+            if (currentQuestion === questions.length - 1) {
+                document.getElementById('nextBtn').textContent = 'Voir Résultat';
+            } else {
+                document.getElementById('nextBtn').textContent = 'Suivant →';
+            }
+        }
+
+        function updateProgressInfo() {
+            document.getElementById('question-counter').textContent = `Question ${currentQuestion + 1} / ${questions.length}`;
+            
+            let correctCount = 0;
+            let incorrectCount = 0;
+            
+            for (let i = 0; i < answers.length; i++) {
+                if (answered[i]) {
+                    if (answers[i] === questions[i].correct) {
+                        correctCount++;
+                    } else {
+                        incorrectCount++;
+                    }
+                }
+            }
+            
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('incorrect-count').textContent = incorrectCount;
+        }
+
+        function nextQuestion() {
+            if (currentQuestion === questions.length - 1) {
+                showFinalResults();
+                return;
+            }
+            
+            currentQuestion++;
+            displayQuestion();
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        function showFinalResults() {
+            let score = 0;
+            answers.forEach((answer, index) => {
+                if (answer === questions[index].correct) score++;
+            });
+            
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '<div class="question">Quiz terminé!</div>';
+            
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.className = 'feedback-container';
+            feedbackDiv.innerHTML = '';
+            
+            let recapHtml = '<div class="recap-title">Résumé de vos réponses</div>';
+            
+            questions.forEach((question, index) => {
+                const userAnswer = question.options[answers[index]];
+                const correctAnswer = question.options[question.correct];
+                const isCorrect = answers[index] === question.correct;
+                
+                recapHtml += `
+                    <div class="recap-card ${isCorrect ? 'correct' : 'incorrect'}">
+                        <div class="recap-number">Question ${index + 1} / ${questions.length}</div>
+                        <div class="recap-question">${question.q}</div>
+                        <div class="recap-answer-item user">
+                            <span class="recap-label">Votre réponse:</span>
+                            ${userAnswer.text}
+                            <span class="recap-result ${isCorrect ? 'correct' : 'incorrect'}">
+                                ${isCorrect ? '✓ Correct' : '✗ Incorrect'}
+                            </span>
+                        </div>
+                        ${!isCorrect ? `
+                            <div class="recap-answer-item correct-answer">
+                                <span class="recap-label">Bonne réponse:</span>
+                                ${correctAnswer.text}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            
+            document.getElementById('result').innerHTML = `
+                <div style="font-size: 2em; margin: 30px 0 20px;">Votre score : ${score} / ${questions.length}</div>
+                <div style="font-size: 1.1em; color: #555; margin-bottom: 30px;">Réussite : ${Math.round(score / questions.length * 100)}%</div>
+                <div class="recap-container">${recapHtml}</div>
+            `;
+            
+            document.getElementById('prevBtn').disabled = false;
+            document.getElementById('nextBtn').textContent = 'Recommencer';
+            document.getElementById('nextBtn').disabled = false;
+            document.getElementById('nextBtn').onclick = function() { location.reload(); };
+            document.getElementById('prevBtn').onclick = function() {
+                currentQuestion = questions.length - 1;
+                displayQuestion();
+            };
+        }
+
+        displayQuestion();
+    </script>
+</body>
+</html>

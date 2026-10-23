@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Quiz - Posture du testeur, autoréflexion et usage de l'IA</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <div class="global-course-title">Initiation à la fonction de travail d'un spécialiste en qualité logicielle</div>
+    <h1>Quiz : Posture du testeur, autoréflexion et usage de l'IA (Cours 3)</h1>
+    
+    <div class="progress-container">
+        <div class="progress-info">
+            <span id="question-counter">Question 1 / 10</span>
+            <div class="progress-stats">
+                <span class="stat-badge incorrect"><span class="stat-icon">✕</span><span id="incorrect-count">0</span></span>
+                <span class="stat-badge correct"><span class="stat-icon">✓</span><span id="correct-count">0</span></span>
+            </div>
+        </div>
+        <div class="progress-bar-wrapper" id="progressBar"></div>
+    </div>
+    
+    <div id="quiz-container" class="card"></div>
+    
+    <div id="feedback" class="feedback-container"></div>
+    
+    <div class="quiz-navigation">
+        <button id="prevBtn" onclick="previousQuestion()">← Précédent</button>
+        <button id="nextBtn" onclick="nextQuestion()">Suivant →</button>
+    </div>
+    
+    <div id="result"></div>
+
+    <script>
+        const questions = [
+          {
+                    "q": "Selon le cours, qu'est-ce qui distingue le scepticisme constructif du négativisme ?",
+                    "options": [
+                              {
+                                        "text": "Le scepticisme constructif critique le produit et propose des pistes ; le négativisme critique les personnes",
+                                        "explain": "Correct. Le testeur sceptique dit « montre-moi que ça fonctionne » et cherche les défauts pour protéger l'utilisateur. Le négativiste critique les personnes et cherche les défauts pour avoir raison."
+                              },
+                              {
+                                        "text": "Le scepticisme constructif consiste à ne jamais signaler d'anomalie pour préserver l'ambiance",
+                                        "explain": "Faux. Signaler les anomalies est au cœur du métier. Le scepticisme constructif porte sur la façon de le faire : factuellement, sans attaquer les personnes."
+                              },
+                              {
+                                        "text": "Le négativisme est une technique de test reconnue par l'ISTQB",
+                                        "explain": "Faux. Le négativisme n'est pas une technique de test : c'est une attitude à éviter, qui nuit à la collaboration."
+                              },
+                              {
+                                        "text": "Il n'y a aucune différence : dans les deux cas, on doute de tout",
+                                        "explain": "Faux. Le testeur doute du produit, jamais des personnes. C'est ce qui sépare une attitude constructive d'une attitude négative."
+                              }
+                    ],
+                    "correct": 0,
+                    "correctExplain": "Le cours oppose deux attitudes. Le scepticisme constructif : « montre-moi que ça fonctionne », on critique le produit en proposant des pistes, et on cherche les défauts pour protéger l'utilisateur. Le négativisme : « de toute façon, rien ne marche », on critique les personnes, et on cherche les défauts pour avoir raison. La phrase à retenir : le bon testeur doute du produit, jamais des personnes."
+          },
+          {
+                    "q": "Un testeur exécute toujours les mêmes scénarios « qui marchent » et conclut que le module est fiable. Quel biais illustre surtout ce comportement ?",
+                    "options": [
+                              {
+                                        "text": "La pression du groupe",
+                                        "explain": "Faux. La pression du groupe pousse à ne pas signaler un problème parce que l'équipe est pressée. Ici, le testeur ne subit pas de pression : il choisit des scénarios qui confirment son idée."
+                              },
+                              {
+                                        "text": "Le biais de confirmation",
+                                        "explain": "Correct. Le biais de confirmation pousse à chercher ce qui prouve que « ça marche » au lieu de chercher ce qui pourrait échouer. Exécuter seulement les scénarios réussis en est un exemple typique."
+                              },
+                              {
+                                        "text": "La curiosité",
+                                        "explain": "Faux. La curiosité est une habileté positive : explorer au-delà du scénario prévu. C'est justement ce qui manque ici."
+                              },
+                              {
+                                        "text": "La méthodologie",
+                                        "explain": "Faux. La méthodologie est une habileté : suivre une démarche structurée, à partir des exigences et des risques. Le comportement décrit est un biais, pas une habileté."
+                              }
+                    ],
+                    "correct": 1,
+                    "correctExplain": "Le cours présente quatre biais à surveiller : le biais de confirmation (chercher ce qui prouve que ça marche), l'effet tunnel (toujours tester le même chemin), l'excès de confiance (« ce module a toujours marché ») et la pression du groupe (ne pas oser signaler un problème). Le comportement décrit, ne garder que les scénarios qui réussissent pour conclure à la fiabilité, est un cas typique de biais de confirmation. Il se combine souvent à l'effet tunnel."
+          },
+          {
+                    "q": "Vous remarquez que le total affiché est arrondi au dollar alors que la spécification exige le cent. Quelle habileté avez-vous surtout mobilisée ?",
+                    "options": [
+                              {
+                                        "text": "L'organisation",
+                                        "explain": "Faux. L'organisation consiste à planifier, prioriser et suivre son travail. Elle n'explique pas qu'on repère un écart aussi fin."
+                              },
+                              {
+                                        "text": "La collaboration",
+                                        "explain": "Faux. La collaboration porte sur le travail avec les autres. Repérer cet écart relève d'une habileté individuelle de précision."
+                              },
+                              {
+                                        "text": "La rigueur et le souci du détail",
+                                        "explain": "Correct. Comparer exactement le résultat obtenu au résultat attendu, jusqu'au cent près, est l'exemple même de la rigueur et du souci du détail présenté au cours."
+                              },
+                              {
+                                        "text": "La communication orale",
+                                        "explain": "Faux. La communication interviendra ensuite, pour signaler l'anomalie. Le repérage lui-même relève de la rigueur."
+                              }
+                    ],
+                    "correct": 2,
+                    "correctExplain": "Le cours décrit la rigueur et le souci du détail comme le fait d'être précis et complet et de ne rien laisser au hasard. Au quotidien, cela veut dire comparer exactement le résultat obtenu au résultat attendu, noter la version, l'environnement et les données, et vérifier deux fois avant de conclure. L'exemple du total arrondi au dollar au lieu du cent est précisément celui utilisé dans la fiche de cette habileté. Le signal d'alarme correspondant : « à peu près correct » devient « correct »."
+          },
+          {
+                    "q": "Un étudiant écrit dans son autoévaluation : « Je suis très méthodique. » Selon le cours, de quoi s'agit-il ?",
+                    "options": [
+                              {
+                                        "text": "D'un acquis",
+                                        "explain": "Faux. Un acquis est un savoir ou un savoir-faire maîtrisé, par exemple écrire une requête SQL simple. Être méthodique est un trait personnel."
+                              },
+                              {
+                                        "text": "D'une lacune",
+                                        "explain": "Faux. Une lacune est un savoir-faire qu'on ne maîtrise pas encore. Être méthodique est un atout, pas un manque."
+                              },
+                              {
+                                        "text": "D'une faiblesse",
+                                        "explain": "Faux. Une faiblesse est un trait qui nuit parfois, par exemple hésiter à poser des questions. Être méthodique aide plutôt à réussir."
+                              },
+                              {
+                                        "text": "D'une force",
+                                        "explain": "Correct. Une force est un trait personnel qui aide à réussir. Le cours utilise justement l'exemple « je suis très méthodique »."
+                              }
+                    ],
+                    "correct": 3,
+                    "correctExplain": "Le cours distingue quatre mots. Les acquis et les lacunes portent sur les savoirs et savoir-faire : ce que je sais déjà faire (j'écris une requête SQL simple) ou pas encore (je n'ai jamais automatisé un test). Les forces et les faiblesses portent sur les traits personnels : ce qui m'aide à réussir (je suis très méthodique) ou ce qui me nuit parfois (j'hésite à poser des questions)."
+          },
+          {
+                    "q": "Un assistant d'IA vous propose 12 cas de test pour un champ « âge » qui accepte les valeurs de 18 à 65. Selon le cours, quelle est la meilleure attitude ?",
+                    "options": [
+                              {
+                                        "text": "Les utiliser tels quels : l'IA a été entraînée sur des millions d'exemples",
+                                        "explain": "Faux. Le cours rappelle que l'IA se trompe avec assurance, invente parfois et oublie des cas importants. Son ton sûr de lui ne garantit rien."
+                              },
+                              {
+                                        "text": "Les traiter comme un livrable à tester : vérifier qu'ils couvrent les limites (17, 18, 65, 66) et compléter ce qui manque",
+                                        "explain": "Correct. Selon la règle du QA, tout ce que produit l'IA est un livrable à tester : on vérifie, on compare avec la documentation et on complète, par exemple avec les valeurs limites."
+                              },
+                              {
+                                        "text": "Les rejeter tous : l'IA ne devrait jamais être utilisée par un testeur",
+                                        "explain": "Faux. Le cours présente l'IA comme un outil de travail utile au QA, notamment pour trouver des idées de cas de test. Le problème n'est pas de l'utiliser, mais de lui faire confiance aveuglément."
+                              },
+                              {
+                                        "text": "Demander à l'IA si ses cas de test sont complets et la croire",
+                                        "explain": "Faux. Demander à l'IA de valider sa propre réponse ne remplace pas votre jugement. L'IA peut répondre « oui » avec assurance même si des cas manquent."
+                              }
+                    ],
+                    "correct": 1,
+                    "correctExplain": "Le cours présente l'IA à la fois comme outil et comme compétence. Comme outil, elle aide à générer des idées de cas de test. Comme compétence, elle demande un esprit critique, car l'IA invente, oublie des cas importants (valeurs limites, erreurs, accessibilité) et rassure par un ton sûr de lui, même quand elle se trompe. D'où la règle du QA : tout ce que produit l'IA est un livrable à tester. Pour un champ acceptant 18 à 65, on vérifie notamment que 17, 18, 65 et 66 sont couverts."
+          },
+          {
+                    "q": "Lequel de ces éléments pouvez-vous coller sans risque dans un outil d'IA public pour obtenir de l'aide ?",
+                    "options": [
+                              {
+                                        "text": "Un extrait du code source de votre client",
+                                        "explain": "Faux. Le code source et les documents du client font partie de ce qu'on ne partage jamais dans un outil d'IA public."
+                              },
+                              {
+                                        "text": "Une liste de clients réels avec leurs courriels",
+                                        "explain": "Faux. Ce sont des renseignements personnels. Au Québec, la Loi 25 encadre leur protection : ils ne doivent jamais être collés dans un outil public."
+                              },
+                              {
+                                        "text": "Un jeu de données fictif que vous avez créé pour l'exercice",
+                                        "explain": "Correct. Des données fictives ou anonymisées ne contiennent rien de confidentiel. C'est justement l'un des bons réflexes présentés au cours."
+                              },
+                              {
+                                        "text": "Le jeton d'accès de l'environnement de test",
+                                        "explain": "Faux. Les mots de passe, clés et jetons d'accès ne se partagent jamais : ils donneraient accès aux systèmes de l'organisation."
+                              }
+                    ],
+                    "correct": 2,
+                    "correctExplain": "Le cours liste ce qu'on ne colle jamais dans un outil d'IA public : le code source et les documents du client, les renseignements personnels (noms, courriels, numéros), les données de production, et les mots de passe, clés ou jetons d'accès. Les bons réflexes sont de respecter la politique de l'employeur sur l'IA et d'anonymiser ou d'utiliser des données fictives. Au Québec, la Loi 25 encadre les renseignements personnels."
+          },
+          {
+                    "q": "Vous voulez utiliser l'IA pour apprendre à corriger vos erreurs de programmation. Quelle demande respecte le mieux les conseils du cours ?",
+                    "options": [
+                              {
+                                        "text": "« Corrige mon code et donne-moi la version finale. »",
+                                        "explain": "Faux. Cette demande fait le travail à votre place : vous obtenez un code corrigé sans comprendre vos erreurs. C'est le piège « fais mon devoir »."
+                              },
+                              {
+                                        "text": "« Voici mon code : quelles sont les erreurs ? Ne les corrige pas, explique-les. »",
+                                        "explain": "Correct. C'est exactement l'exemple du cours : vous demandez une explication plutôt qu'une solution, ce qui vous fait apprendre."
+                              },
+                              {
+                                        "text": "« Écris le devoir à ma place, je le relirai ensuite. »",
+                                        "explain": "Faux. Copier une réponse sans la comprendre est à éviter. Vous n'apprenez rien et vous ne pourrez pas refaire l'exercice seul."
+                              },
+                              {
+                                        "text": "« Est-ce que mon code est bon ? Réponds seulement oui ou non. »",
+                                        "explain": "Faux. Une réponse oui/non ne vous apprend rien. Elle peut aussi être fausse, car l'IA se trompe parfois avec assurance."
+                              }
+                    ],
+                    "correct": 1,
+                    "correctExplain": "Pour apprendre avec l'IA, le cours conseille de demander d'expliquer plutôt que de faire. Les bons exemples : demander d'expliquer une notion avec un exemple, se faire poser des questions pour vérifier sa compréhension, ou demander d'expliquer ses erreurs sans les corriger. Les pièges à éviter : « fais mon devoir », copier une réponse sans la comprendre, et croire une explication sans vérifier la source. La version gratuite d'un assistant conversationnel suffit pour apprendre."
+          },
+          {
+                    "q": "Un étudiant remplit sa grille d'autoévaluation en se donnant 4 partout, sans aucun exemple. Selon le cours, quel est le principal problème ?",
+                    "options": [
+                              {
+                                        "text": "Il aurait dû se donner 1 partout, par modestie",
+                                        "explain": "Faux. Se sous-estimer est aussi un piège. Le but n'est pas la modestie, mais le réalisme."
+                              },
+                              {
+                                        "text": "Ses notes ne s'appuient sur aucune preuve, et il se surestime probablement",
+                                        "explain": "Correct. Une autoévaluation réaliste part de preuves : chaque note doit être justifiée par un exemple concret. Un 4, c'est « je pourrais l'enseigner », ce qui est rare en début de formation."
+                              },
+                              {
+                                        "text": "Il aurait dû utiliser une échelle de 1 à 10",
+                                        "explain": "Faux. Le problème ne vient pas de l'échelle, mais de l'absence de justification et du manque de réalisme."
+                              },
+                              {
+                                        "text": "Il n'y a aucun problème si l'étudiant est sincère",
+                                        "explain": "Faux. La sincérité ne suffit pas. Sans exemple concret, une note ne peut pas être vérifiée et ne permet pas de bâtir un plan de développement."
+                              }
+                    ],
+                    "correct": 1,
+                    "correctExplain": "Le cours donne quatre conseils pour s'évaluer de façon réaliste : partir de preuves (un exemple concret pour chaque note), demander un regard extérieur, éviter les deux pièges (se surestimer quand on débute, se sous-estimer par manque de confiance) et voir une lacune comme un plan. Sur l'échelle de la grille, 4 signifie « je pourrais l'enseigner ». En début de formation, beaucoup de 1 et de 2, c'est normal : c'est le point de départ qu'on mesurera plus tard."
+          },
+          {
+                    "q": "La veille d'une mise en production, il reste 40 cas de test et une demi-journée. Le gestionnaire vous demande si on peut livrer. En combinant les habiletés vues au cours, quelle réaction est la plus appropriée ?",
+                    "options": [
+                              {
+                                        "text": "Exécuter les tests dans l'ordre du document le plus vite possible, puis répondre « oui » pour ne pas retarder l'équipe",
+                                        "explain": "Faux. Tester dans l'ordre du document risque de laisser les fonctions critiques non testées. Répondre « oui » sans base, c'est céder à la pression du groupe."
+                              },
+                              {
+                                        "text": "Refuser de donner un avis tant que les 40 tests ne sont pas exécutés",
+                                        "explain": "Faux. Le gestionnaire a besoin d'information pour décider. Refuser de répondre n'aide pas : le rôle du QA est d'informer la décision avec les risques connus."
+                              },
+                              {
+                                        "text": "Exécuter d'abord les tests des fonctions critiques, puis annoncer clairement ce qui a été testé, ce qui ne l'a pas été et les risques qui restent",
+                                        "explain": "Correct. Cette réaction combine l'organisation (prioriser selon les risques), la communication (dire clairement ce qui est testé et ce qui ne l'est pas) et l'esprit critique (un avis basé sur les risques)."
+                              },
+                              {
+                                        "text": "Demander à l'IA de décider si on peut livrer",
+                                        "explain": "Faux. L'IA ne connaît ni votre produit ni les résultats de vos tests. La décision s'appuie sur votre analyse des risques, et votre jugement reste indispensable."
+                              }
+                    ],
+                    "correct": 2,
+                    "correctExplain": "Cette situation, vue en classe, montre que plusieurs habiletés se combinent. L'organisation : exécuter d'abord les tests des fonctions critiques. La communication : annoncer clairement ce qui est testé et ce qui ne l'est pas. L'esprit critique : donner un avis basé sur les risques, pas sur l'envie de finir. Elle rappelle aussi un rôle des tests vu au cours 2 : informer les décisions. Le gestionnaire décide, mais il le fait à partir de l'information fournie par le QA."
+          },
+          {
+                    "q": "Dans vos offres d'emploi, Postman revient souvent et vous ne le connaissez pas. En vous appuyant sur l'ensemble du cours, quel plan d'apprentissage est le plus solide ?",
+                    "options": [
+                              {
+                                        "text": "« Je vais apprendre Postman un jour, quand j'aurai le temps. »",
+                                        "explain": "Faux. Ce plan n'a ni ressource, ni rythme, ni échéance, ni mise en pratique. Il a peu de chances d'aboutir."
+                              },
+                              {
+                                        "text": "Acheter une formation payante complète et la suivre en une fin de semaine",
+                                        "explain": "Faux. Le cours met l'accent sur les ressources gratuites, qui suffisent pour débuter. Tout apprendre en une fin de semaine, sans pratique répartie dans le temps, est aussi moins efficace."
+                              },
+                              {
+                                        "text": "Demander à l'IA de générer des tests Postman et les remettre sans les comprendre",
+                                        "explain": "Faux. C'est le piège « fais mon devoir » : on obtient un résultat sans apprendre, et sans vérifier ce que l'IA a produit."
+                              },
+                              {
+                                        "text": "Suivre la documentation et Postman Academy (gratuites), 3 × 30 minutes par semaine pendant un mois, en testant une API publique, puis expliquer sa démarche à un collègue",
+                                        "explain": "Correct. Ce plan suit les cinq étapes du cours : cibler une lacune repérée dans les offres, choisir une ressource gratuite, planifier un rythme, pratiquer sur un mini-projet, et partager."
+                              }
+                    ],
+                    "correct": 3,
+                    "correctExplain": "Cette question combine plusieurs notions du cours. Le plan d'apprentissage en cinq étapes : cibler une lacune précise repérée dans les offres, choisir une ressource gratuite adaptée, planifier un rythme réaliste, pratiquer sur un mini-projet concret, puis partager (expliquer à un collègue, publier). Les ressources gratuites présentées au cours (documentation officielle, Postman Academy, Test Automation University…) suffisent pour progresser. L'IA peut aider à apprendre, à condition de demander des explications plutôt que des réponses toutes faites. Enfin, la lacune vient de l'activité sur les offres d'emploi : c'est le lien entre l'autoévaluation et le plan de développement."
+          }
+];
+        let currentQuestion = 0;
+        let answers = new Array(questions.length).fill(null);
+        let answered = new Array(questions.length).fill(false);
+
+        function displayQuestion() {
+            const container = document.getElementById('quiz-container');
+            const item = questions[currentQuestion];
+            
+            let html = `<div class="question">${currentQuestion + 1}. ${item.q}</div>`;
+            const letters = ['A', 'B', 'C', 'D'];
+            item.options.forEach((opt, i) => {
+                let classes = '';
+                if (answers[currentQuestion] === i) {
+                    classes = 'selected ';
+                    if (i === item.correct) {
+                        classes += 'correct';
+                    } else {
+                        classes += 'incorrect';
+                    }
+                }
+                const disabledClass = answered[currentQuestion] ? 'disabled' : '';
+                html += `<div class="option ${classes} ${disabledClass}" onclick="${answered[currentQuestion] ? '' : `handleAnswerClick(${i})`}" style="${answered[currentQuestion] ? 'cursor: not-allowed;' : ''}"><span class="option-letter">${letters[i]}</span> ${opt.text}</div>`;
+            });
+            
+            container.innerHTML = html;
+            
+            if (answered[currentQuestion]) {
+                showFeedback();
+            } else {
+                document.getElementById('feedback').innerHTML = '';
+                document.getElementById('feedback').classList.remove('show');
+            }
+            
+            updateProgressBar();
+            updateNavigationButtons();
+            updateProgressInfo();
+        }
+
+        function handleAnswerClick(index) {
+            if (answered[currentQuestion]) return;
+            
+            answers[currentQuestion] = index;
+            answered[currentQuestion] = true;
+            
+            showFeedback();
+            updateProgressBar();
+            updateProgressInfo();
+            updateNavigationButtons();
+            displayQuestion();
+        }
+
+        function showFeedback() {
+            const feedbackDiv = document.getElementById('feedback');
+            const item = questions[currentQuestion];
+            const isCorrect = answers[currentQuestion] === item.correct;
+            const selectedOption = item.options[answers[currentQuestion]];
+            
+            feedbackDiv.className = 'feedback-container show ' + (isCorrect ? 'feedback-correct' : 'feedback-incorrect');
+            
+            let html = '';
+            
+            if (isCorrect) {
+                html += `
+                    <div class="feedback-header">Bonne réponse!</div>
+                    <div class="feedback-explanation">${item.correctExplain}</div>
+                `;
+            } else {
+                html += `
+                    <div class="feedback-header">Pas tout à fait</div>
+                    <div class="feedback-explanation">${selectedOption.explain}</div>
+                    <div class="correct-answer-box">
+                        <div class="correct-answer-label">✓ Bonne réponse:</div>
+                        <div>${item.options[item.correct].text}</div>
+                        <div style="margin-top: 8px; font-size: 0.9em;">${item.correctExplain}</div>
+                    </div>
+                `;
+            }
+            
+            feedbackDiv.innerHTML = html;
+        }
+
+        function updateProgressBar() {
+            const progressBar = document.getElementById('progressBar');
+            progressBar.innerHTML = '';
+            
+            for (let i = 0; i < questions.length; i++) {
+                const segment = document.createElement('div');
+                segment.className = 'progress-segment';
+                
+                if (!answered[i]) {
+                    segment.classList.add('unanswered');
+                } else if (answers[i] === questions[i].correct) {
+                    segment.classList.add('correct');
+                } else {
+                    segment.classList.add('incorrect');
+                }
+                
+                progressBar.appendChild(segment);
+            }
+        }
+
+        function updateNavigationButtons() {
+            const isAnswered = answered[currentQuestion];
+            document.getElementById('prevBtn').disabled = currentQuestion === 0 || !isAnswered;
+            document.getElementById('nextBtn').disabled = !isAnswered;
+            
+            if (currentQuestion === questions.length - 1) {
+                document.getElementById('nextBtn').textContent = 'Voir Résultat';
+            } else {
+                document.getElementById('nextBtn').textContent = 'Suivant →';
+            }
+        }
+
+        function updateProgressInfo() {
+            document.getElementById('question-counter').textContent = `Question ${currentQuestion + 1} / ${questions.length}`;
+            
+            let correctCount = 0;
+            let incorrectCount = 0;
+            
+            for (let i = 0; i < answers.length; i++) {
+                if (answered[i]) {
+                    if (answers[i] === questions[i].correct) {
+                        correctCount++;
+                    } else {
+                        incorrectCount++;
+                    }
+                }
+            }
+            
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('incorrect-count').textContent = incorrectCount;
+        }
+
+        function nextQuestion() {
+            if (currentQuestion === questions.length - 1) {
+                showFinalResults();
+                return;
+            }
+            
+            currentQuestion++;
+            displayQuestion();
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        function showFinalResults() {
+            let score = 0;
+            answers.forEach((answer, index) => {
+                if (answer === questions[index].correct) score++;
+            });
+            
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '<div class="question">Quiz terminé!</div>';
+            
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.className = 'feedback-container';
+            feedbackDiv.innerHTML = '';
+            
+            let recapHtml = '<div class="recap-title">Résumé de vos réponses</div>';
+            
+            questions.forEach((question, index) => {
+                const userAnswer = question.options[answers[index]];
+                const correctAnswer = question.options[question.correct];
+                const isCorrect = answers[index] === question.correct;
+                
+                recapHtml += `
+                    <div class="recap-card ${isCorrect ? 'correct' : 'incorrect'}">
+                        <div class="recap-number">Question ${index + 1} / ${questions.length}</div>
+                        <div class="recap-question">${question.q}</div>
+                        <div class="recap-answer-item user">
+                            <span class="recap-label">Votre réponse:</span>
+                            ${userAnswer.text}
+                            <span class="recap-result ${isCorrect ? 'correct' : 'incorrect'}">
+                                ${isCorrect ? '✓ Correct' : '✗ Incorrect'}
+                            </span>
+                        </div>
+                        ${!isCorrect ? `
+                            <div class="recap-answer-item correct-answer">
+                                <span class="recap-label">Bonne réponse:</span>
+                                ${correctAnswer.text}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            
+            document.getElementById('result').innerHTML = `
+                <div style="font-size: 2em; margin: 30px 0 20px;">Votre score : ${score} / ${questions.length}</div>
+                <div style="font-size: 1.1em; color: #555; margin-bottom: 30px;">Réussite : ${Math.round(score / questions.length * 100)}%</div>
+                <div class="recap-container">${recapHtml}</div>
+            `;
+            
+            document.getElementById('prevBtn').disabled = false;
+            document.getElementById('nextBtn').textContent = 'Recommencer';
+            document.getElementById('nextBtn').disabled = false;
+            document.getElementById('nextBtn').onclick = function() { location.reload(); };
+            document.getElementById('prevBtn').onclick = function() {
+                currentQuestion = questions.length - 1;
+                displayQuestion();
+            };
+        }
+
+        displayQuestion();
+    </script>
+</body>
+</html>

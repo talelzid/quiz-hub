@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Quiz - Introduction à la qualité logicielle et au métier de spécialiste en qualité</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <div class="global-course-title">Initiation à la fonction de travail d'un spécialiste en qualité logicielle</div>
+    <h1>Quiz : Introduction à la qualité logicielle et au métier de spécialiste en qualité (Cours 1)</h1>
+    
+    <div class="progress-container">
+        <div class="progress-info">
+            <span id="question-counter">Question 1 / 10</span>
+            <div class="progress-stats">
+                <span class="stat-badge incorrect"><span class="stat-icon">✕</span><span id="incorrect-count">0</span></span>
+                <span class="stat-badge correct"><span class="stat-icon">✓</span><span id="correct-count">0</span></span>
+            </div>
+        </div>
+        <div class="progress-bar-wrapper" id="progressBar"></div>
+    </div>
+    
+    <div id="quiz-container" class="card"></div>
+    
+    <div id="feedback" class="feedback-container"></div>
+    
+    <div class="quiz-navigation">
+        <button id="prevBtn" onclick="previousQuestion()">← Précédent</button>
+        <button id="nextBtn" onclick="nextQuestion()">Suivant →</button>
+    </div>
+    
+    <div id="result"></div>
+
+    <script>
+        const questions = [
+          {
+                    "q": "Selon le cours, laquelle de ces activités relève de l'assurance qualité plutôt que du contrôle qualité ou des tests ?",
+                    "options": [
+                              {
+                                        "text": "Exécuter un cas de test sur la version livrée par les développeurs",
+                                        "explain": "Faux. Exécuter le logiciel pour y trouver des défauts, c'est faire des tests. Les tests sont une technique du contrôle qualité, qui porte sur le produit."
+                              },
+                              {
+                                        "text": "Vérifier qu'un livrable respecte ses exigences avant de l'accepter",
+                                        "explain": "Faux. Vérifier un livrable par rapport à ses exigences, c'est du contrôle qualité : on cherche à détecter les défauts dans le produit."
+                              },
+                              {
+                                        "text": "Mettre en place des normes, des revues et une démarche d'amélioration continue pour prévenir les défauts",
+                                        "explain": "Correct. L'assurance qualité porte sur le processus. Son but est de prévenir les défauts grâce aux normes, aux méthodes, aux revues et à l'amélioration continue."
+                              },
+                              {
+                                        "text": "Rédiger une fiche d'anomalie après une défaillance",
+                                        "explain": "Faux. Documenter une anomalie découverte fait partie de l'activité de test, donc du contrôle qualité. On est dans la détection, pas dans la prévention."
+                              }
+                    ],
+                    "correct": 2,
+                    "correctExplain": "Le cours présente trois notions imbriquées. L'assurance qualité englobe le contrôle qualité, qui englobe lui-même les tests. L'assurance qualité porte sur le processus et vise à prévenir les défauts : normes, méthodes, revues, amélioration continue. Le contrôle qualité porte sur le produit et vise à détecter les défauts en vérifiant qu'un livrable respecte ses exigences. Les tests sont une technique du contrôle qualité : on exécute le logiciel pour y trouver des défauts."
+          },
+          {
+                    "q": "Quel est l'ordre correct des grandes étapes d'un cycle de vie logiciel présentées dans le cours ?",
+                    "options": [
+                              {
+                                        "text": "Conception, Analyse, Réalisation, Validation, Déploiement, Maintenance",
+                                        "explain": "Faux. On ne peut pas concevoir une solution avant d'avoir analysé et spécifié les besoins. L'analyse vient toujours en premier."
+                              },
+                              {
+                                        "text": "Analyse, Conception, Réalisation, Validation, Déploiement, Maintenance",
+                                        "explain": "Correct. On comprend et spécifie d'abord les besoins (analyse), puis on conçoit l'architecture et le détail (conception). On code et on intègre (réalisation), on vérifie le produit (validation), on le met en production (déploiement) et on le corrige ou le fait évoluer (maintenance)."
+                              },
+                              {
+                                        "text": "Analyse, Réalisation, Conception, Déploiement, Validation, Maintenance",
+                                        "explain": "Faux. La conception précède le codage, et la validation doit avoir lieu avant la mise en production, pas après."
+                              },
+                              {
+                                        "text": "Analyse, Conception, Validation, Réalisation, Maintenance, Déploiement",
+                                        "explain": "Faux. On ne peut pas valider un produit qui n'a pas encore été réalisé, et la maintenance suit le déploiement."
+                              }
+                    ],
+                    "correct": 1,
+                    "correctExplain": "Le cours regroupe les tâches du cycle de vie en six grandes étapes. L'analyse couvre la compréhension du métier, la collecte, l'analyse et la spécification des besoins. La conception couvre l'architecture et la conception détaillée. La réalisation couvre le codage, les tests unitaires, l'intégration et les tests d'intégration. La validation couvre les tests fonctionnels, le contrôle qualité et les tests d'acceptation. Viennent ensuite le déploiement (mise en production) et la maintenance (corrections et évolutions). Le cours souligne que ces étapes existent dans tous les projets : ce qui change d'un modèle à l'autre, c'est leur ordre et leur répétition."
+          },
+          {
+                    "q": "Dans le cycle en V, à quel niveau de conception les tests d'acceptation sont-ils associés ?",
+                    "options": [
+                              {
+                                        "text": "Aux exigences",
+                                        "explain": "Correct. Les tests d'acceptation se trouvent en haut de la branche droite du V, en face des exigences. Ils vérifient que le produit répond aux besoins exprimés par le client."
+                              },
+                              {
+                                        "text": "À la conception détaillée",
+                                        "explain": "Faux. La conception détaillée est associée aux tests unitaires, au bas du V, juste avant le codage."
+                              },
+                              {
+                                        "text": "À la conception architecturale",
+                                        "explain": "Faux. La conception architecturale est associée aux tests d'intégration, qui vérifient que les composantes fonctionnent ensemble."
+                              },
+                              {
+                                        "text": "Au codage",
+                                        "explain": "Faux. Le codage est la pointe du V. Il fait la jonction entre la branche du développement et la branche de la validation, sans niveau de test propre dans ce schéma."
+                              }
+                    ],
+                    "correct": 0,
+                    "correctExplain": "Le cycle en V associe chaque niveau de conception à un niveau de test. Les exigences correspondent aux tests d'acceptation, les spécifications fonctionnelles aux tests système, la conception architecturale aux tests d'intégration et la conception détaillée aux tests unitaires. Le cours insiste sur une limite du modèle : les tests sont planifiés dès la conception, mais exécutés seulement après le codage. Ce modèle est courant dans les systèmes critiques et réglementés."
+          },
+          {
+                    "q": "Selon le cours, pourquoi est-il avantageux d'impliquer l'assurance qualité dès le début d'un projet (« shift-left ») ?",
+                    "options": [
+                              {
+                                        "text": "Parce que les testeurs coûtent moins cher au début du projet qu'à la fin",
+                                        "explain": "Faux. Le cours ne parle pas du coût des testeurs, mais du coût de correction d'un défaut selon le moment où il est découvert."
+                              },
+                              {
+                                        "text": "Parce que cela permet d'éliminer complètement l'étape des tests en fin de projet",
+                                        "explain": "Faux. Impliquer l'AQ tôt ne supprime pas les tests en fin de projet. On trouve simplement une partie des défauts plus tôt, là où ils coûtent moins cher."
+                              },
+                              {
+                                        "text": "Parce que les normes ISO interdisent de tester après le codage",
+                                        "explain": "Faux. Aucune norme n'interdit de tester après le codage. Les tests unitaires, d'intégration, système et d'acceptation ont tous lieu après le codage."
+                              },
+                              {
+                                        "text": "Parce qu'un défaut coûte de plus en plus cher à corriger à mesure qu'il est découvert tard dans le cycle de vie",
+                                        "explain": "Correct. Selon les ordres de grandeur souvent cités, un défaut corrigé à l'étape des exigences coûte 1, contre environ 100 s'il est découvert en production. Il faut alors refaire le code, les tests et la documentation."
+                              }
+                    ],
+                    "correct": 3,
+                    "correctExplain": "Le cours présente le coût relatif de correction d'un défaut selon l'étape où il est détecté. Les ordres de grandeur souvent cités vont de 1 à l'étape des exigences, à 5 en conception, 10 en codage, 20 en tests et environ 100 en production. Les ratios exacts varient selon les projets, mais la tendance est constante. Un défaut d'exigence découvert en production oblige à reprendre le code, les tests et la documentation. C'est pourquoi l'AQ intervient dès le début du projet : on parle de shift-left."
+          },
+          {
+                    "q": "Qu'est-ce qui distingue principalement le modèle en W du cycle en V ?",
+                    "options": [
+                              {
+                                        "text": "Le modèle en W n'a pas d'étape de codage",
+                                        "explain": "Faux. Le modèle en W comprend bien une étape de codage. La différence porte sur le moment où les activités de test commencent."
+                              },
+                              {
+                                        "text": "Dans le modèle en W, chaque activité de développement a une activité de test associée, menée en parallèle dès les exigences",
+                                        "explain": "Correct. Le modèle en W ajoute une activité de test à chaque étape du développement. Par exemple, la revue des exigences et le plan de test se font pendant l'analyse des exigences. Le testeur intervient dès le début."
+                              },
+                              {
+                                        "text": "Dans le modèle en W, les tests ne sont faits que par le client",
+                                        "explain": "Faux. Le modèle en W ne confie pas les tests au client. Il implique au contraire le testeur dès les exigences."
+                              },
+                              {
+                                        "text": "Le modèle en W remplace les tests par des revues de code",
+                                        "explain": "Faux. Les revues font partie des activités de test du modèle en W, mais elles ne remplacent pas l'exécution des tests unitaires, d'intégration, système et d'acceptation."
+                              }
+                    ],
+                    "correct": 1,
+                    "correctExplain": "Dans le cycle en V, les tests sont planifiés pendant la conception mais exécutés seulement après le codage. Le modèle en W ajoute une activité de test parallèle à chaque activité de développement. La revue des exigences et le plan de test accompagnent les exigences, et la conception des cas de test accompagne la conception. Les tests unitaires et la préparation des données de test accompagnent le codage, les tests d'intégration et système accompagnent l'intégration, et les tests d'acceptation accompagnent la livraison. Le testeur intervient dès les exigences : les défauts sont trouvés plus tôt, donc corrigés à moindre coût."
+          },
+          {
+                    "q": "Dans le cadre Scrum présenté au cours, où se situe le spécialiste en qualité logicielle ?",
+                    "options": [
+                              {
+                                        "text": "Il occupe le rôle de Scrum Master, car il veille à la qualité du processus",
+                                        "explain": "Faux. Le Scrum Master facilite le processus Scrum et lève les obstacles de l'équipe. Ce n'est pas le rôle du spécialiste QA."
+                              },
+                              {
+                                        "text": "Il remplace le Product Owner pour prioriser les fonctionnalités à tester",
+                                        "explain": "Faux. Le Product Owner porte la vision du produit et priorise le carnet de produit. Le spécialiste QA ne le remplace pas, même s'il lui signale des risques qualité."
+                              },
+                              {
+                                        "text": "Il fait partie des Développeurs, qui construisent ensemble l'incrément",
+                                        "explain": "Correct. Dans Scrum, le groupe des Développeurs réunit tous ceux qui construisent l'incrément, y compris le spécialiste QA. Une fonctionnalité n'est « terminée » que lorsqu'elle a été testée."
+                              },
+                              {
+                                        "text": "Il travaille hors de l'équipe Scrum et teste l'incrément après la revue de sprint",
+                                        "explain": "Faux. Dans Scrum, les tests font partie de chaque sprint. Le spécialiste QA est intégré à l'équipe et n'attend pas la fin du sprint pour tester."
+                              }
+                    ],
+                    "correct": 2,
+                    "correctExplain": "Le cours présente trois rôles dans Scrum, selon le Guide Scrum (2020). Le Product Owner porte la vision du produit et priorise le carnet de produit. Le Scrum Master facilite le processus et lève les obstacles. Les Développeurs construisent l'incrément, et le spécialiste QA fait partie de ce groupe. Tester fait partie de chaque sprint : une fonctionnalité n'est considérée comme terminée qu'une fois testée."
+          },
+          {
+                    "q": "Quelle affirmation décrit correctement un consultant autonome en qualité logicielle ?",
+                    "options": [
+                              {
+                                        "text": "Il est travailleur autonome, facture un taux horaire pour la durée d'un mandat et prend en charge ses impôts et ses assurances",
+                                        "explain": "Correct. Le consultant autonome est mandaté par un client ou une agence. Il facture un taux horaire, n'a pas d'avantages sociaux fournis par un employeur et doit gérer ses impôts, ses assurances et sa recherche de mandats."
+                              },
+                              {
+                                        "text": "Il est employé de l'organisation pour une durée indéterminée et bénéficie de ses avantages sociaux",
+                                        "explain": "Faux. Cette description correspond à un poste permanent."
+                              },
+                              {
+                                        "text": "Il est employé pour une durée déterminée, souvent de 6 à 12 mois, et son renouvellement est incertain",
+                                        "explain": "Faux. Cette description correspond à un poste contractuel."
+                              },
+                              {
+                                        "text": "Il est toujours un employé permanent d'une firme de services placé chez des clients",
+                                        "explain": "Faux. Le cours précise qu'un consultant peut être un employé permanent d'une firme de services, mais ce n'est pas le cas du consultant autonome, qui est travailleur autonome."
+                              }
+                    ],
+                    "correct": 0,
+                    "correctExplain": "Le cours compare trois statuts d'emploi. Le permanent est employé de l'organisation pour une durée indéterminée, avec un salaire annuel et des avantages sociaux. Le contractuel est employé pour une durée ou un projet, souvent de 6 à 12 mois, avec des avantages partiels ou aucun et un renouvellement incertain. Le consultant autonome est travailleur autonome, mandaté par un client ou une agence. Il facture un taux horaire et prend en charge ses impôts, ses assurances et sa recherche de mandats. Le cours met aussi en garde : le mot « consultant » désigne parfois un employé permanent d'une firme de services placé chez ses clients."
+          },
+          {
+                    "q": "Les perspectives d'emploi des testeurs (CNP 22222) dans la région de Montréal pour 2025-2027 sont jugées limitées. Selon le cours, quelle stratégie est la plus pertinente pour un finissant ?",
+                    "options": [
+                              {
+                                        "text": "Attendre que des postes se libèrent grâce aux nombreux départs à la retraite",
+                                        "explain": "Faux. Le cours indique justement que peu de départs à la retraite sont prévus. Cette stratégie ne tient pas compte des raisons du diagnostic."
+                              },
+                              {
+                                        "text": "Viser uniquement les postes de testeur de jeux vidéo, où la demande est la plus forte",
+                                        "explain": "Faux. Le cours ne présente pas les jeux vidéo comme un secteur en forte demande. Il rappelle plutôt que ces postes tirent la rémunération médiane du CNP 22222 vers le bas."
+                              },
+                              {
+                                        "text": "Éviter les compétences techniques, car le métier de testeur est surtout manuel",
+                                        "explain": "Faux. Le cours montre au contraire que les compétences techniques (automatisation, API, intégration continue) sont un moyen clé de se démarquer et d'accéder aux postes mieux rémunérés."
+                              },
+                              {
+                                        "text": "Se démarquer en développant des compétences recherchées comme l'automatisation, les tests d'API et l'intégration continue, et en soignant son profil professionnel",
+                                        "explain": "Correct. Le marché d'entrée est compétitif. Le cours propose de se démarquer par l'automatisation des tests et les tests d'API, l'intégration continue et DevOps, la performance, la sécurité et l'accessibilité. La certification ISTQB, la connaissance d'un domaine métier et un profil professionnel soigné aident aussi."
+                              }
+                    ],
+                    "correct": 3,
+                    "correctExplain": "Selon Guichet-Emplois, les perspectives des testeurs (CNP 22222) dans la région de Montréal pour 2025-2027 sont limitées. Peu de nouveaux postes seront créés, peu de départs à la retraite sont prévus et des chercheurs d'emploi expérimentés sont déjà disponibles. Le cours en tire une stratégie : se démarquer. Les leviers proposés sont l'automatisation des tests et les tests d'API, l'intégration continue et DevOps, la performance, la sécurité et l'accessibilité, la certification ISTQB, la connaissance d'un domaine métier et un profil professionnel soigné (vu au cours 9). Ces compétences mènent aussi vers les postes d'analyste et d'automatisation, généralement mieux rémunérés que la médiane du CNP 22222."
+          },
+          {
+                    "q": "Une offre d'emploi décrit le poste ainsi : « Vous testerez nos systèmes de gestion des réclamations et leurs intégrations. Les mises en production suivent un calendrier trimestriel. Vous deviendrez expert de nos produits d'assurance et devrez documenter vos tests pour nos audits. » De quel type d'employeur s'agit-il le plus probablement ?",
+                    "options": [
+                              {
+                                        "text": "Une jeune pousse",
+                                        "explain": "Faux. Une jeune pousse construit un produit nouveau à un rythme très rapide, avec une formalité faible. Un calendrier trimestriel et des audits ne correspondent pas à ce contexte."
+                              },
+                              {
+                                        "text": "Une organisation dotée d'un service TI interne, dans un secteur réglementé",
+                                        "explain": "Correct. On teste les systèmes de l'organisation et leurs intégrations, les mises en production sont planifiées et le spécialiste devient expert du domaine métier. Le secteur de l'assurance est réglementé, d'où la formalité élevée et les audits."
+                              },
+                              {
+                                        "text": "Un éditeur de jeux vidéo",
+                                        "explain": "Faux. Un éditeur teste son propre produit, version après version, à un rythme rapide. Les systèmes de réclamations d'assurance ne sont pas un produit vendu par un éditeur de jeux."
+                              },
+                              {
+                                        "text": "Une firme spécialisée dans la mise en place de l'AQ",
+                                        "explain": "Faux. Une telle firme travaille par mandat chez des clients pour mettre en place leurs processus et outils. Le spécialiste y joue un rôle de conseiller ou de formateur, pas d'expert durable d'un produit d'assurance."
+                              }
+                    ],
+                    "correct": 1,
+                    "correctExplain": "Pour répondre, il faut croiser plusieurs indices avec le tableau « Ce que le type d'employeur change au quotidien ». On teste les systèmes de l'organisation et leurs intégrations, ce qui est typique d'un service TI interne. Les mises en production sont planifiées selon un calendrier fixe, ce qui correspond au rythme d'un service TI interne. Le spécialiste devient expert du domaine métier, l'assurance, comme le cours l'associe au service TI interne. Enfin, les tests doivent être documentés pour des audits : le cours place la banque, l'assurance et le gouvernement du côté formel, avec sécurité, conformité et traçabilité. Tous ces indices désignent une organisation dotée d'un service TI interne dans un secteur réglementé."
+          },
+          {
+                    "q": "Une équipe doit développer le logiciel de contrôle d'un appareil médical. Les exigences sont stables, le secteur est soumis à des normes strictes et à des audits, et chaque exigence doit pouvoir être reliée à des tests documentés. En vous appuyant sur l'ensemble du cours, quel choix est le plus cohérent ?",
+                    "options": [
+                              {
+                                        "text": "L'approche Agile (Scrum) sans documentation, pour livrer le plus vite possible",
+                                        "explain": "Faux. Scrum convient bien aux besoins changeants. Ici, les besoins sont stables et le secteur exige des preuves documentées pour les audits. Abandonner la documentation serait incompatible avec la réglementation."
+                              },
+                              {
+                                        "text": "Le modèle en cascade, en concentrant tous les tests à la fin pour réduire les coûts",
+                                        "explain": "Faux. Concentrer les tests à la fin fait découvrir les défauts d'exigence tard, là où ils coûtent le plus cher. C'est l'inverse d'une réduction des coûts, surtout pour un système critique."
+                              },
+                              {
+                                        "text": "Le cycle en V, idéalement enrichi des activités de test précoces du modèle en W, avec une AQ formelle et documentée",
+                                        "explain": "Correct. Le cycle en V relie chaque niveau de conception à un niveau de test, ce qui facilite la traçabilité exigée en santé. Le cours le présente comme courant dans les systèmes critiques et réglementés. Ajouter les activités du modèle en W (revue des exigences, conception précoce des tests) applique le shift-left. Le secteur de la santé demande en plus une formalité élevée : normes, audits et preuves documentées."
+                              },
+                              {
+                                        "text": "Le modèle en spirale, car tous les projets du secteur de la santé utilisent obligatoirement des prototypes",
+                                        "explain": "Faux. Le modèle en spirale convient aux gros projets risqués, aux technologies nouvelles et aux besoins incertains. Ici, les besoins sont stables. Aucune règle n'impose la spirale dans le secteur de la santé."
+                              }
+                    ],
+                    "correct": 2,
+                    "correctExplain": "Cette question demande de combiner plusieurs notions du cours. D'abord, le choix du modèle de cycle de vie : le cycle en V est présenté comme courant dans les systèmes critiques et réglementés (aéronautique, santé, automobile). Il associe un niveau de test à chaque niveau de conception, ce qui facilite la traçabilité entre exigences et tests. Ensuite, le coût des défauts : un défaut découvert tard coûte beaucoup plus cher. Ajouter les activités de test précoces du modèle en W (revue des exigences, conception des cas de test pendant la conception) réduit ce risque. Enfin, l'influence du secteur : la santé se situe à l'extrémité la plus formelle de l'échelle, avec des normes strictes, des audits et des preuves documentées. Le choix le plus cohérent est donc un cycle en V enrichi d'activités de test précoces, encadré par une AQ formelle et documentée."
+          }
+];
+        let currentQuestion = 0;
+        let answers = new Array(questions.length).fill(null);
+        let answered = new Array(questions.length).fill(false);
+
+        function displayQuestion() {
+            const container = document.getElementById('quiz-container');
+            const item = questions[currentQuestion];
+            
+            let html = `<div class="question">${currentQuestion + 1}. ${item.q}</div>`;
+            const letters = ['A', 'B', 'C', 'D'];
+            item.options.forEach((opt, i) => {
+                let classes = '';
+                if (answers[currentQuestion] === i) {
+                    classes = 'selected ';
+                    if (i === item.correct) {
+                        classes += 'correct';
+                    } else {
+                        classes += 'incorrect';
+                    }
+                }
+                const disabledClass = answered[currentQuestion] ? 'disabled' : '';
+                html += `<div class="option ${classes} ${disabledClass}" onclick="${answered[currentQuestion] ? '' : `handleAnswerClick(${i})`}" style="${answered[currentQuestion] ? 'cursor: not-allowed;' : ''}"><span class="option-letter">${letters[i]}</span> ${opt.text}</div>`;
+            });
+            
+            container.innerHTML = html;
+            
+            if (answered[currentQuestion]) {
+                showFeedback();
+            } else {
+                document.getElementById('feedback').innerHTML = '';
+                document.getElementById('feedback').classList.remove('show');
+            }
+            
+            updateProgressBar();
+            updateNavigationButtons();
+            updateProgressInfo();
+        }
+
+        function handleAnswerClick(index) {
+            if (answered[currentQuestion]) return;
+            
+            answers[currentQuestion] = index;
+            answered[currentQuestion] = true;
+            
+            showFeedback();
+            updateProgressBar();
+            updateProgressInfo();
+            updateNavigationButtons();
+            displayQuestion();
+        }
+
+        function showFeedback() {
+            const feedbackDiv = document.getElementById('feedback');
+            const item = questions[currentQuestion];
+            const isCorrect = answers[currentQuestion] === item.correct;
+            const selectedOption = item.options[answers[currentQuestion]];
+            
+            feedbackDiv.className = 'feedback-container show ' + (isCorrect ? 'feedback-correct' : 'feedback-incorrect');
+            
+            let html = '';
+            
+            if (isCorrect) {
+                html += `
+                    <div class="feedback-header">Bonne réponse!</div>
+                    <div class="feedback-explanation">${item.correctExplain}</div>
+                `;
+            } else {
+                html += `
+                    <div class="feedback-header">Pas tout à fait</div>
+                    <div class="feedback-explanation">${selectedOption.explain}</div>
+                    <div class="correct-answer-box">
+                        <div class="correct-answer-label">✓ Bonne réponse:</div>
+                        <div>${item.options[item.correct].text}</div>
+                        <div style="margin-top: 8px; font-size: 0.9em;">${item.correctExplain}</div>
+                    </div>
+                `;
+            }
+            
+            feedbackDiv.innerHTML = html;
+        }
+
+        function updateProgressBar() {
+            const progressBar = document.getElementById('progressBar');
+            progressBar.innerHTML = '';
+            
+            for (let i = 0; i < questions.length; i++) {
+                const segment = document.createElement('div');
+                segment.className = 'progress-segment';
+                
+                if (!answered[i]) {
+                    segment.classList.add('unanswered');
+                } else if (answers[i] === questions[i].correct) {
+                    segment.classList.add('correct');
+                } else {
+                    segment.classList.add('incorrect');
+                }
+                
+                progressBar.appendChild(segment);
+            }
+        }
+
+        function updateNavigationButtons() {
+            const isAnswered = answered[currentQuestion];
+            document.getElementById('prevBtn').disabled = currentQuestion === 0 || !isAnswered;
+            document.getElementById('nextBtn').disabled = !isAnswered;
+            
+            if (currentQuestion === questions.length - 1) {
+                document.getElementById('nextBtn').textContent = 'Voir Résultat';
+            } else {
+                document.getElementById('nextBtn').textContent = 'Suivant →';
+            }
+        }
+
+        function updateProgressInfo() {
+            document.getElementById('question-counter').textContent = `Question ${currentQuestion + 1} / ${questions.length}`;
+            
+            let correctCount = 0;
+            let incorrectCount = 0;
+            
+            for (let i = 0; i < answers.length; i++) {
+                if (answered[i]) {
+                    if (answers[i] === questions[i].correct) {
+                        correctCount++;
+                    } else {
+                        incorrectCount++;
+                    }
+                }
+            }
+            
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('incorrect-count').textContent = incorrectCount;
+        }
+
+        function nextQuestion() {
+            if (currentQuestion === questions.length - 1) {
+                showFinalResults();
+                return;
+            }
+            
+            currentQuestion++;
+            displayQuestion();
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        function showFinalResults() {
+            let score = 0;
+            answers.forEach((answer, index) => {
+                if (answer === questions[index].correct) score++;
+            });
+            
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '<div class="question">Quiz terminé!</div>';
+            
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.className = 'feedback-container';
+            feedbackDiv.innerHTML = '';
+            
+            let recapHtml = '<div class="recap-title">Résumé de vos réponses</div>';
+            
+            questions.forEach((question, index) => {
+                const userAnswer = question.options[answers[index]];
+                const correctAnswer = question.options[question.correct];
+                const isCorrect = answers[index] === question.correct;
+                
+                recapHtml += `
+                    <div class="recap-card ${isCorrect ? 'correct' : 'incorrect'}">
+                        <div class="recap-number">Question ${index + 1} / ${questions.length}</div>
+                        <div class="recap-question">${question.q}</div>
+                        <div class="recap-answer-item user">
+                            <span class="recap-label">Votre réponse:</span>
+                            ${userAnswer.text}
+                            <span class="recap-result ${isCorrect ? 'correct' : 'incorrect'}">
+                                ${isCorrect ? '✓ Correct' : '✗ Incorrect'}
+                            </span>
+                        </div>
+                        ${!isCorrect ? `
+                            <div class="recap-answer-item correct-answer">
+                                <span class="recap-label">Bonne réponse:</span>
+                                ${correctAnswer.text}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            
+            document.getElementById('result').innerHTML = `
+                <div style="font-size: 2em; margin: 30px 0 20px;">Votre score : ${score} / ${questions.length}</div>
+                <div style="font-size: 1.1em; color: #555; margin-bottom: 30px;">Réussite : ${Math.round(score / questions.length * 100)}%</div>
+                <div class="recap-container">${recapHtml}</div>
+            `;
+            
+            document.getElementById('prevBtn').disabled = false;
+            document.getElementById('nextBtn').textContent = 'Recommencer';
+            document.getElementById('nextBtn').disabled = false;
+            document.getElementById('nextBtn').onclick = function() { location.reload(); };
+            document.getElementById('prevBtn').onclick = function() {
+                currentQuestion = questions.length - 1;
+                displayQuestion();
+            };
+        }
+
+        displayQuestion();
+    </script>
+</body>
+</html>

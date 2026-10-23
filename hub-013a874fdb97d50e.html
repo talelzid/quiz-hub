@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Quiz Hub - Centre des Quiz</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8eef5 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin: 0 0 10px 0;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            margin: 0;
+            color: #555;
+        }
+
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .course-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+        }
+
+        .course-header {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .course-header h2 {
+            margin: 0;
+            font-size: 1.3em;
+            word-break: break-word;
+        }
+
+        .course-header .code {
+            font-size: 0.9em;
+            opacity: 0.95;
+            margin-top: 5px;
+        }
+
+        .course-content {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .quiz-list {
+            flex-grow: 1;
+        }
+
+        .quiz-item {
+            margin-bottom: 10px;
+        }
+
+        .quiz-link {
+            display: block;
+            padding: 10px 15px;
+            background: #f0f4f8;
+            color: #2c3e50;
+            text-decoration: none;
+            border-radius: 5px;
+            border-left: 4px solid #3498db;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+
+        .quiz-link:hover {
+            background: #3498db;
+            color: white;
+            padding-left: 20px;
+        }
+
+        .no-quizzes {
+            color: #999;
+            font-style: italic;
+            font-size: 0.9em;
+        }
+
+        .placeholder-btn {
+            padding: 12px 20px;
+            background: #e0e0e0;
+            color: #999;
+            border: none;
+            border-radius: 5px;
+            cursor: not-allowed;
+            font-size: 0.9em;
+            margin-top: auto;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .courses-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .login-box {
+            max-width: 380px;
+            margin: 80px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .login-box input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 10px 12px;
+            margin: 15px 0 10px;
+            border: 1px solid #ccd5df;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        .login-box button {
+            width: 100%;
+            padding: 10px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            cursor: pointer;
+        }
+
+        .login-box button:hover {
+            background: #2980b9;
+        }
+
+        .login-error {
+            color: #e74c3c;
+            min-height: 1.2em;
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-box" id="loginBox">
+        <h2>Quiz Hub</h2>
+        <form id="loginForm">
+            <input type="password" id="passwordInput" placeholder="Mot de passe" autocomplete="current-password" autofocus>
+            <button type="submit">Accéder</button>
+        </form>
+        <div class="login-error" id="loginError"></div>
+    </div>
+
+    <div class="container" id="hub" style="display: none;">
+        <div class="header">
+            <h1>📚 Quiz Hub</h1>
+            <p>Bienvenue au centre des quiz d'apprentissage</p>
+        </div>
+
+        <div class="courses-grid" id="coursesGrid"></div>
+    </div>
+
+    <script>
+        // Liste des cours chiffrée par build-hub.js (AES-GCM, clé dérivée du mot de passe)
+        const PAYLOAD = {"iterations":310000,"salt":"l/2Q9kOAOAmJWCVwP4zWrg==","iv":"yyfhM349rMYZiNUx","data":"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"};
+
+        const fromBase64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+
+        async function decryptCourses(password) {
+            const keyMaterial = await crypto.subtle.importKey(
+                'raw', new TextEncoder().encode(password), 'PBKDF2', false, ['deriveKey']);
+            const key = await crypto.subtle.deriveKey(
+                { name: 'PBKDF2', salt: fromBase64(PAYLOAD.salt), iterations: PAYLOAD.iterations, hash: 'SHA-256' },
+                keyMaterial, { name: 'AES-GCM', length: 256 }, false, ['decrypt']);
+            const plain = await crypto.subtle.decrypt(
+                { name: 'AES-GCM', iv: fromBase64(PAYLOAD.iv) }, key, fromBase64(PAYLOAD.data));
+            return JSON.parse(new TextDecoder().decode(plain));
+        }
+
+        function renderCourses(courses) {
+            const grid = document.getElementById('coursesGrid');
+            grid.innerHTML = courses.map(course => `
+                <div class="course-card">
+                    <div class="course-header">
+                        <h2>${course.name}</h2>
+                        <div class="code">${course.title}</div>
+                    </div>
+                    <div class="course-content">
+                        <div class="quiz-list">
+                            ${course.quizzes.length > 0
+                                ? course.quizzes.map(quiz => `
+                                    <div class="quiz-item">
+                                        <a href="quiz.html?id=${quiz.id}" class="quiz-link">
+                                            📝 Cours ${quiz.course}
+                                        </a>
+                                    </div>
+                                `).join('')
+                                : '<p class="no-quizzes">Aucun quiz disponible</p>'
+                            }
+                        </div>
+                        ${course.quizzes.length === 0
+                            ? '<button class="placeholder-btn" disabled>➕ À venir</button>'
+                            : ''
+                        }
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function unlock(password, silent) {
+            const error = document.getElementById('loginError');
+            error.textContent = '';
+            if (!window.crypto || !crypto.subtle) {
+                error.textContent = 'Navigateur non compatible (HTTPS requis).';
+                return;
+            }
+            try {
+                const courses = await decryptCourses(password);
+                sessionStorage.setItem('hubPassword', password);
+                document.getElementById('loginBox').style.display = 'none';
+                document.getElementById('hub').style.display = 'block';
+                renderCourses(courses);
+            } catch (e) {
+                sessionStorage.removeItem('hubPassword');
+                if (!silent) error.textContent = 'Mot de passe incorrect.';
+            }
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', event => {
+            event.preventDefault();
+            unlock(document.getElementById('passwordInput').value, false);
+        });
+
+        const savedPassword = sessionStorage.getItem('hubPassword');
+        if (savedPassword) unlock(savedPassword, true);
+    </script>
+</body>
+</html>

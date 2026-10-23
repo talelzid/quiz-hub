@@ -58,6 +58,23 @@ quiz-hub/
 
 Le gabarit contient déjà le bon chemin : `<link rel="stylesheet" href="../../css/style.css">`
 
+## Page principale (hub) protégée
+
+La liste des cours n'est pas publique :
+
+- `index.html` est une page neutre (« Page non disponible »).
+- Le hub est dans un fichier à nom secret, avec la liste des cours **chiffrée** (mot de passe demandé à l'ouverture).
+- `hub-template.html` est le gabarit du hub (sans données) et `build-hub.js` génère la page chiffrée.
+- `hub-data.local.json` contient le nom secret du hub et la liste des cours **en clair** : il est ignoré par git (`.gitignore`) et ne doit jamais être publié.
+
+Pour ajouter un quiz à la carte du hub :
+
+1. Ajouter `{ course: N, id: "code" }` au bon cours dans `hub-data.local.json` (en plus de l'entrée dans `quiz-mapping.json`).
+2. Lancer `node build-hub.js` (le mot de passe est demandé, ou lu dans la variable d'environnement `HUB_PASSWORD`).
+3. Publier le fichier hub régénéré.
+
+Les liens `quiz.html?id=code` distribués aux étudiants ne changent pas. Toutes les pages portent `noindex` pour éviter l'indexation par les moteurs de recherche.
+
 ## Listes des cours à créer
 
 - [ ] IFT-SSD (12+ cours)
