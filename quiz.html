@@ -139,7 +139,7 @@
 
             try {
                 // Charger le fichier de mapping
-                const response = await fetch('quiz-mapping.json');
+                const response = await fetch('quiz-mapping.json', { cache: 'no-store' });
                 if (!response.ok) {
                     throw new Error('Impossible de charger la configuration des quiz');
                 }
