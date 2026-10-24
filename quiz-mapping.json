@@ -301,6 +301,44 @@
     "path": "cours/icq/quiz-icq-cours5.html",
     "questionsCount": 10
   },
+  "i6q4c8p2": {
+    "course": "ICQ",
+    "lesson": 6,
+    "title": "Les outils du processus de test",
+    "path": "cours/icq/quiz-icq-cours6.html",
+    "questionsCount": 10
+  },
+  "i7q5d9r3": {
+    "course": "ICQ",
+    "lesson": 7,
+    "title": "Contrôle qualité, assurance qualité et référentiels",
+    "path": "cours/icq/quiz-icq-cours7.html",
+    "questionsCount": 10
+  },
+  "i8q6e2s4": {
+    "course": "ICQ",
+    "lesson": 8,
+    "title": "Cours 8 (contenu à venir)",
+    "path": "cours/icq/quiz-icq-cours8.html"
+  },
+  "i9q7f3t5": {
+    "course": "ICQ",
+    "lesson": 9,
+    "title": "Cours 9 (contenu à venir)",
+    "path": "cours/icq/quiz-icq-cours9.html"
+  },
+  "i0q8g4u6": {
+    "course": "ICQ",
+    "lesson": 10,
+    "title": "Cours 10 (contenu à venir)",
+    "path": "cours/icq/quiz-icq-cours10.html"
+  },
+  "i1q9h5v7": {
+    "course": "ICQ",
+    "lesson": 11,
+    "title": "Cours 11 (contenu à venir)",
+    "path": "cours/icq/quiz-icq-cours11.html"
+  },
   "k3w8t5n1": {
     "course": "IFT-SQL",
     "lesson": 1,

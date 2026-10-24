@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Quiz - Les outils du processus de test</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <div class="global-course-title">Initiation aux concepts qualité</div>
+    <h1>Quiz : Les outils du processus de test (Cours 6)</h1>
+    
+    <div class="progress-container">
+        <div class="progress-info">
+            <span id="question-counter">Question 1 / 10</span>
+            <div class="progress-stats">
+                <span class="stat-badge incorrect"><span class="stat-icon">✕</span><span id="incorrect-count">0</span></span>
+                <span class="stat-badge correct"><span class="stat-icon">✓</span><span id="correct-count">0</span></span>
+            </div>
+        </div>
+        <div class="progress-bar-wrapper" id="progressBar"></div>
+    </div>
+    
+    <div id="quiz-container" class="card"></div>
+    
+    <div id="feedback" class="feedback-container"></div>
+    
+    <div class="quiz-navigation">
+        <button id="prevBtn" onclick="previousQuestion()">← Précédent</button>
+        <button id="nextBtn" onclick="nextQuestion()">Suivant →</button>
+    </div>
+    
+    <div id="result"></div>
+
+    <script>
+        const questions = [
+    {
+        "q": "Quel est le rôle d'un outil de test dans le processus de test ?",
+        "options": [
+            {
+                "text": "Remplacer les étapes du processus qui prennent le plus de temps",
+                "explain": ""
+            },
+            {
+                "text": "Soutenir une ou plusieurs activités d'une étape du processus",
+                "explain": ""
+            },
+            {
+                "text": "Garantir que le logiciel ne contient plus de défauts",
+                "explain": ""
+            },
+            {
+                "text": "Remplacer le jugement du testeur par des résultats objectifs",
+                "explain": ""
+            }
+        ],
+        "correct": 1,
+        "correctExplain": "Un outil soutient une activité (produire, conserver, exécuter, mesurer, communiquer) ; il ne remplace ni le processus ni le jugement du testeur. Aucun outil ne peut garantir l'absence de défauts."
+    },
+    {
+        "q": "À quelle famille d'outils appartiennent Jira et Azure DevOps lorsqu'on les utilise pour suivre les anomalies ?",
+        "options": [
+            {
+                "text": "Outils de test statique",
+                "explain": ""
+            },
+            {
+                "text": "Outils de tests non fonctionnels",
+                "explain": ""
+            },
+            {
+                "text": "Outils de gestion",
+                "explain": ""
+            },
+            {
+                "text": "Outils d'exécution et de couverture",
+                "explain": ""
+            }
+        ],
+        "correct": 2,
+        "correctExplain": "Le suivi des anomalies, des exigences et des tests relève des outils de gestion. Azure DevOps couvre aussi d'autres familles (pipelines), mais on classe un outil selon l'usage qu'on en fait."
+    },
+    {
+        "q": "Lequel de ces outils sert principalement à tester des API REST ?",
+        "options": [
+            {
+                "text": "Postman",
+                "explain": ""
+            },
+            {
+                "text": "Docker",
+                "explain": ""
+            },
+            {
+                "text": "SonarQube",
+                "explain": ""
+            },
+            {
+                "text": "Confluence",
+                "explain": ""
+            }
+        ],
+        "correct": 0,
+        "correctExplain": "Postman envoie des requêtes à une API et vérifie les réponses, sans interface graphique. Docker prépare des environnements, SonarQube analyse le code sans l'exécuter et Confluence sert à la documentation."
+    },
+    {
+        "q": "SonarQube analyse le code source sans l'exécuter pour y repérer des défauts et des mauvaises pratiques. De quel type d'outil s'agit-il ?",
+        "options": [
+            {
+                "text": "Un outil de test dynamique",
+                "explain": ""
+            },
+            {
+                "text": "Un outil de test statique",
+                "explain": ""
+            },
+            {
+                "text": "Un outil de tests de performance",
+                "explain": ""
+            },
+            {
+                "text": "Un outil de gestion des tests",
+                "explain": ""
+            }
+        ],
+        "correct": 1,
+        "correctExplain": "Un test est statique quand le code n'est pas exécuté : revues et analyse statique. SonarQube s'intègre souvent au pipeline d'intégration continue, avant les tests qui exécutent le code."
+    },
+    {
+        "q": "Parmi ces affirmations sur l'automatisation, laquelle est un risque reconnu par l'ISTQB ?",
+        "options": [
+            {
+                "text": "L'exécution des tests de régression devient plus rapide",
+                "explain": ""
+            },
+            {
+                "text": "Les mêmes étapes sont exécutées de la même façon à chaque fois",
+                "explain": ""
+            },
+            {
+                "text": "L'effort pour maintenir les scripts de test est sous-estimé",
+                "explain": ""
+            },
+            {
+                "text": "Les résultats sont accessibles dans des tableaux de bord",
+                "explain": ""
+            }
+        ],
+        "correct": 2,
+        "correctExplain": "Les trois autres choix sont des bénéfices. La maintenance oubliée est un risque majeur : chaque changement de l'application peut casser des scripts. C'est le principe « les tests s'usent » appliqué aux outils."
+    },
+    {
+        "q": "Selon la pyramide des tests, à quel niveau devrait-on automatiser le plus grand nombre de tests ?",
+        "options": [
+            {
+                "text": "Au niveau de l'interface utilisateur, avec Playwright ou Selenium",
+                "explain": ""
+            },
+            {
+                "text": "Au niveau des tests d'acceptation manuels",
+                "explain": ""
+            },
+            {
+                "text": "Au niveau des API, avec Postman",
+                "explain": ""
+            },
+            {
+                "text": "Au niveau des tests unitaires, avec JUnit ou pytest",
+                "explain": ""
+            }
+        ],
+        "correct": 3,
+        "correctExplain": "Les tests unitaires sont rapides, peu coûteux et stables : on en automatise beaucoup. Plus on monte vers l'interface, plus les tests sont lents et fragiles : on en garde moins."
+    },
+    {
+        "q": "Votre équipe doit tester une application web sur Chrome, Safari, Firefox et sur plusieurs téléphones, sans acheter les appareils. Quel outil soutient le mieux cette activité de l'étape 4 ?",
+        "options": [
+            {
+                "text": "BrowserStack",
+                "explain": ""
+            },
+            {
+                "text": "JMeter",
+                "explain": ""
+            },
+            {
+                "text": "Jira",
+                "explain": ""
+            },
+            {
+                "text": "Cucumber",
+                "explain": ""
+            }
+        ],
+        "correct": 0,
+        "correctExplain": "BrowserStack (comme Sauce Labs) donne accès en ligne à des navigateurs et à des appareils réels : c'est un outil de préparation de l'environnement. JMeter sert à la charge, Jira au suivi, Cucumber aux scénarios BDD."
+    },
+    {
+        "q": "À chaque modification du code, les tests unitaires, d'API et d'interface s'exécutent sans intervention humaine, et l'équipe est avertie en cas d'échec. Quel type d'outil orchestre ce fonctionnement ?",
+        "options": [
+            {
+                "text": "Un outil de gestion des tests comme TestRail",
+                "explain": ""
+            },
+            {
+                "text": "Un outil d'intégration continue comme Jenkins ou GitHub Actions",
+                "explain": ""
+            },
+            {
+                "text": "Un outil de virtualisation comme VirtualBox",
+                "explain": ""
+            },
+            {
+                "text": "Un outil de collaboration comme Teams",
+                "explain": ""
+            }
+        ],
+        "correct": 1,
+        "correctExplain": "Les outils d'intégration continue (famille DevOps) déclenchent le pipeline à chaque modification : analyse statique, tests, rapport. C'est le principe « tester tôt » appliqué en continu."
+    },
+    {
+        "q": "Un gestionnaire veut acheter un outil d'automatisation après une démonstration du fournisseur. Quelle démarche recommandez-vous ?",
+        "options": [
+            {
+                "text": "Acheter l'outil tout de suite, puisque la démonstration a convaincu l'équipe",
+                "explain": ""
+            },
+            {
+                "text": "Choisir l'outil le plus cité dans les offres d'emploi, sans autre analyse",
+                "explain": ""
+            },
+            {
+                "text": "Préciser le besoin et les critères, essayer deux ou trois candidats sur un vrai cas, puis mener un projet pilote",
+                "explain": ""
+            },
+            {
+                "text": "Choisir automatiquement un outil libre, puisqu'il est gratuit",
+                "explain": ""
+            }
+        ],
+        "correct": 2,
+        "correctExplain": "Une démonstration montre l'outil dans un cas idéal. La démarche part du besoin, fixe des critères, compare quelques candidats sur un vrai cas (preuve de concept) et valide les gains par un projet pilote. Gratuit ne veut pas dire sans coût."
+    },
+    {
+        "q": "Une institution financière québécoise, dont l'équipe développe en C# avec Azure DevOps, cherche un outil pour automatiser ses tests d'interface web. Les tests manipulent des données de clients. Quel choix est le mieux argumenté ?",
+        "options": [
+            {
+                "text": "Cypress, parce qu'il est réputé facile à prendre en main",
+                "explain": ""
+            },
+            {
+                "text": "Un outil commercial au hasard, parce que le soutien du fournisseur règle tous les problèmes",
+                "explain": ""
+            },
+            {
+                "text": "Selenium ou Playwright en C#, intégrés à Azure Pipelines, avec des données de test anonymisées",
+                "explain": ""
+            },
+            {
+                "text": "Aucun outil : l'automatisation est trop risquée avec des données de clients",
+                "explain": ""
+            }
+        ],
+        "correct": 2,
+        "correctExplain": "Selenium et Playwright prennent en charge C#, ce qui respecte les compétences de l'équipe, et s'intègrent à Azure Pipelines (compatibilité). L'anonymisation des données répond aux exigences de protection des renseignements personnels (Loi 25). Cypress ne fonctionne qu'en JavaScript/TypeScript."
+    }
+];
+        let currentQuestion = 0;
+        let answers = new Array(questions.length).fill(null);
+        let answered = new Array(questions.length).fill(false);
+
+        function displayQuestion() {
+            const container = document.getElementById('quiz-container');
+            const item = questions[currentQuestion];
+            
+            let html = `<div class="question">${currentQuestion + 1}. ${item.q}</div>`;
+            const letters = ['A', 'B', 'C', 'D'];
+            item.options.forEach((opt, i) => {
+                let classes = '';
+                if (answers[currentQuestion] === i) {
+                    classes = 'selected ';
+                    if (i === item.correct) {
+                        classes += 'correct';
+                    } else {
+                        classes += 'incorrect';
+                    }
+                }
+                const disabledClass = answered[currentQuestion] ? 'disabled' : '';
+                html += `<div class="option ${classes} ${disabledClass}" onclick="${answered[currentQuestion] ? '' : `handleAnswerClick(${i})`}" style="${answered[currentQuestion] ? 'cursor: not-allowed;' : ''}"><span class="option-letter">${letters[i]}</span> ${opt.text}</div>`;
+            });
+            
+            container.innerHTML = html;
+            
+            if (answered[currentQuestion]) {
+                showFeedback();
+            } else {
+                document.getElementById('feedback').innerHTML = '';
+                document.getElementById('feedback').classList.remove('show');
+            }
+            
+            updateProgressBar();
+            updateNavigationButtons();
+            updateProgressInfo();
+        }
+
+        function handleAnswerClick(index) {
+            if (answered[currentQuestion]) return;
+            
+            answers[currentQuestion] = index;
+            answered[currentQuestion] = true;
+            
+            showFeedback();
+            updateProgressBar();
+            updateProgressInfo();
+            updateNavigationButtons();
+            displayQuestion();
+        }
+
+        function showFeedback() {
+            const feedbackDiv = document.getElementById('feedback');
+            const item = questions[currentQuestion];
+            const isCorrect = answers[currentQuestion] === item.correct;
+            const selectedOption = item.options[answers[currentQuestion]];
+            
+            feedbackDiv.className = 'feedback-container show ' + (isCorrect ? 'feedback-correct' : 'feedback-incorrect');
+            
+            let html = '';
+            
+            if (isCorrect) {
+                html += `
+                    <div class="feedback-header">Bonne réponse!</div>
+                    <div class="feedback-explanation">${item.correctExplain}</div>
+                `;
+            } else {
+                html += `
+                    <div class="feedback-header">Pas tout à fait</div>
+                    <div class="feedback-explanation">${selectedOption.explain}</div>
+                    <div class="correct-answer-box">
+                        <div class="correct-answer-label">✓ Bonne réponse:</div>
+                        <div>${item.options[item.correct].text}</div>
+                        <div style="margin-top: 8px; font-size: 0.9em;">${item.correctExplain}</div>
+                    </div>
+                `;
+            }
+            
+            feedbackDiv.innerHTML = html;
+        }
+
+        function updateProgressBar() {
+            const progressBar = document.getElementById('progressBar');
+            progressBar.innerHTML = '';
+            
+            for (let i = 0; i < questions.length; i++) {
+                const segment = document.createElement('div');
+                segment.className = 'progress-segment';
+                
+                if (!answered[i]) {
+                    segment.classList.add('unanswered');
+                } else if (answers[i] === questions[i].correct) {
+                    segment.classList.add('correct');
+                } else {
+                    segment.classList.add('incorrect');
+                }
+                
+                progressBar.appendChild(segment);
+            }
+        }
+
+        function updateNavigationButtons() {
+            const isAnswered = answered[currentQuestion];
+            document.getElementById('prevBtn').disabled = currentQuestion === 0 || !isAnswered;
+            document.getElementById('nextBtn').disabled = !isAnswered;
+            
+            if (currentQuestion === questions.length - 1) {
+                document.getElementById('nextBtn').textContent = 'Voir Résultat';
+            } else {
+                document.getElementById('nextBtn').textContent = 'Suivant →';
+            }
+        }
+
+        function updateProgressInfo() {
+            document.getElementById('question-counter').textContent = `Question ${currentQuestion + 1} / ${questions.length}`;
+            
+            let correctCount = 0;
+            let incorrectCount = 0;
+            
+            for (let i = 0; i < answers.length; i++) {
+                if (answered[i]) {
+                    if (answers[i] === questions[i].correct) {
+                        correctCount++;
+                    } else {
+                        incorrectCount++;
+                    }
+                }
+            }
+            
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('incorrect-count').textContent = incorrectCount;
+        }
+
+        function nextQuestion() {
+            if (currentQuestion === questions.length - 1) {
+                showFinalResults();
+                return;
+            }
+            
+            currentQuestion++;
+            displayQuestion();
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        function showFinalResults() {
+            let score = 0;
+            answers.forEach((answer, index) => {
+                if (answer === questions[index].correct) score++;
+            });
+            
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '<div class="question">Quiz terminé!</div>';
+            
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.className = 'feedback-container';
+            feedbackDiv.innerHTML = '';
+            
+            let recapHtml = '<div class="recap-title">Résumé de vos réponses</div>';
+            
+            questions.forEach((question, index) => {
+                const userAnswer = question.options[answers[index]];
+                const correctAnswer = question.options[question.correct];
+                const isCorrect = answers[index] === question.correct;
+                
+                recapHtml += `
+                    <div class="recap-card ${isCorrect ? 'correct' : 'incorrect'}">
+                        <div class="recap-number">Question ${index + 1} / ${questions.length}</div>
+                        <div class="recap-question">${question.q}</div>
+                        <div class="recap-answer-item user">
+                            <span class="recap-label">Votre réponse:</span>
+                            ${userAnswer.text}
+                            <span class="recap-result ${isCorrect ? 'correct' : 'incorrect'}">
+                                ${isCorrect ? '✓ Correct' : '✗ Incorrect'}
+                            </span>
+                        </div>
+                        ${!isCorrect ? `
+                            <div class="recap-answer-item correct-answer">
+                                <span class="recap-label">Bonne réponse:</span>
+                                ${correctAnswer.text}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            
+            document.getElementById('result').innerHTML = `
+                <div style="font-size: 2em; margin: 30px 0 20px;">Votre score : ${score} / ${questions.length}</div>
+                <div style="font-size: 1.1em; color: #555; margin-bottom: 30px;">Réussite : ${Math.round(score / questions.length * 100)}%</div>
+                <div class="recap-container">${recapHtml}</div>
+            `;
+            
+            document.getElementById('prevBtn').disabled = false;
+            document.getElementById('nextBtn').textContent = 'Recommencer';
+            document.getElementById('nextBtn').disabled = false;
+            document.getElementById('nextBtn').onclick = function() { location.reload(); };
+            document.getElementById('prevBtn').onclick = function() {
+                currentQuestion = questions.length - 1;
+                displayQuestion();
+            };
+        }
+
+        displayQuestion();
+    </script>
+</body>
+</html>

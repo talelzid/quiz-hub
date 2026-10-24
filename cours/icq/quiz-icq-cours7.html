@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Quiz - Contrôle qualité, assurance qualité et référentiels</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <div class="global-course-title">Initiation aux concepts qualité</div>
+    <h1>Quiz : Contrôle qualité, assurance qualité et référentiels (Cours 7)</h1>
+    
+    <div class="progress-container">
+        <div class="progress-info">
+            <span id="question-counter">Question 1 / 10</span>
+            <div class="progress-stats">
+                <span class="stat-badge incorrect"><span class="stat-icon">✕</span><span id="incorrect-count">0</span></span>
+                <span class="stat-badge correct"><span class="stat-icon">✓</span><span id="correct-count">0</span></span>
+            </div>
+        </div>
+        <div class="progress-bar-wrapper" id="progressBar"></div>
+    </div>
+    
+    <div id="quiz-container" class="card"></div>
+    
+    <div id="feedback" class="feedback-container"></div>
+    
+    <div class="quiz-navigation">
+        <button id="prevBtn" onclick="previousQuestion()">← Précédent</button>
+        <button id="nextBtn" onclick="nextQuestion()">Suivant →</button>
+    </div>
+    
+    <div id="result"></div>
+
+    <script>
+        const questions = [
+    {
+        "q": "Sur quoi porte principalement l'assurance qualité (AQ) ?",
+        "options": [
+            {
+                "text": "Sur le produit logiciel livré au client",
+                "explain": ""
+            },
+            {
+                "text": "Sur le processus, c'est-à-dire la façon de produire le logiciel",
+                "explain": ""
+            },
+            {
+                "text": "Uniquement sur l'exécution des tests",
+                "explain": ""
+            },
+            {
+                "text": "Sur la correction des anomalies trouvées en production",
+                "explain": ""
+            }
+        ],
+        "correct": 1,
+        "correctExplain": "L'AQ porte sur le processus et vise à donner confiance que les exigences pour la qualité seront satisfaites. Le contrôle qualité, lui, examine le produit."
+    },
+    {
+        "q": "Quelle affirmation décrit correctement la relation entre le test et le contrôle qualité ?",
+        "options": [
+            {
+                "text": "Le test et le contrôle qualité sont deux noms pour la même activité",
+                "explain": ""
+            },
+            {
+                "text": "Le contrôle qualité est une technique de test",
+                "explain": ""
+            },
+            {
+                "text": "Le test est une technique de contrôle qualité, parmi d'autres comme les revues",
+                "explain": ""
+            },
+            {
+                "text": "Le test relève de l'assurance qualité, pas du contrôle qualité",
+                "explain": ""
+            }
+        ],
+        "correct": 2,
+        "correctExplain": "Tout test est du contrôle qualité, mais le contrôle qualité comprend aussi les revues, les inspections et l'analyse statique. L'ISTQB CTFL v4.0 présente le test comme une forme de contrôle qualité."
+    },
+    {
+        "q": "Lequel de ces référentiels certifie les connaissances d'une personne plutôt que celles d'une organisation ?",
+        "options": [
+            {
+                "text": "ISO 9001",
+                "explain": ""
+            },
+            {
+                "text": "CMMI v3.0",
+                "explain": ""
+            },
+            {
+                "text": "TMMi",
+                "explain": ""
+            },
+            {
+                "text": "ISTQB",
+                "explain": ""
+            }
+        ],
+        "correct": 3,
+        "correctExplain": "L'ISTQB certifie des personnes par examen (par exemple le CTFL). ISO 9001 certifie le système qualité d'un organisme ; CMMI et TMMi évaluent la maturité des processus d'une organisation."
+    },
+    {
+        "q": "Une équipe adopte un gabarit de récit utilisateur qui rend obligatoires les critères d'acceptation. Comment classer cette activité ?",
+        "options": [
+            {
+                "text": "AQ, prévention",
+                "explain": ""
+            },
+            {
+                "text": "AQ, détection",
+                "explain": ""
+            },
+            {
+                "text": "CQ, détection",
+                "explain": ""
+            },
+            {
+                "text": "CQ, correction",
+                "explain": ""
+            }
+        ],
+        "correct": 0,
+        "correctExplain": "Le gabarit change la façon de travailler (processus, donc AQ) avant que le défaut existe (prévention) : il évite les exigences incomplètes au lieu de les chercher après coup."
+    },
+    {
+        "q": "Un auditeur vérifie que les revues de code prévues au plan ont bien été tenues et consignées. Comment classer cette activité ?",
+        "options": [
+            {
+                "text": "CQ, détection : il cherche des défauts dans le code",
+                "explain": ""
+            },
+            {
+                "text": "AQ, détection : il cherche des écarts entre le processus prévu et le processus suivi",
+                "explain": ""
+            },
+            {
+                "text": "AQ, prévention : il définit un nouveau processus",
+                "explain": ""
+            },
+            {
+                "text": "CQ, prévention : il évite que le code contienne des défauts",
+                "explain": ""
+            }
+        ],
+        "correct": 1,
+        "correctExplain": "L'audit porte sur le processus (AQ) et détecte des écarts : ce n'est pas un défaut du produit qu'il trouve, mais une activité prévue qui n'a pas eu lieu ou n'a pas été consignée."
+    },
+    {
+        "q": "Selon le coût de la qualité, pourquoi investir dans la prévention est-il généralement rentable ?",
+        "options": [
+            {
+                "text": "Parce que la prévention remplace complètement les tests",
+                "explain": ""
+            },
+            {
+                "text": "Parce que les coûts de prévention sont toujours nuls",
+                "explain": ""
+            },
+            {
+                "text": "Parce qu'elle réduit les coûts d'évaluation et surtout ceux des défaillances, qui augmentent à chaque étape",
+                "explain": ""
+            },
+            {
+                "text": "Parce que les normes l'exigent, sans égard aux coûts",
+                "explain": ""
+            }
+        ],
+        "correct": 2,
+        "correctExplain": "Le coût d'un défaut augmente à chaque étape où il survit. Prévenir coûte moins cher que détecter, et détecter coûte moins cher que subir une défaillance chez le client. La prévention ne remplace toutefois pas le contrôle."
+    },
+    {
+        "q": "Une équipe inspecte le document d'exigences pour y trouver des ambiguïtés avant le début du codage. Quelle analyse est la plus juste ?",
+        "options": [
+            {
+                "text": "C'est de l'AQ, puisque l'activité se déroule avant le codage",
+                "explain": ""
+            },
+            {
+                "text": "C'est du CQ : elle détecte des défauts dans un livrable, ce qui évite qu'ils se propagent au code",
+                "explain": ""
+            },
+            {
+                "text": "Ce n'est pas une activité qualité, puisque rien n'est exécuté",
+                "explain": ""
+            },
+            {
+                "text": "C'est de la prévention pure, puisqu'aucun défaut n'existe encore",
+                "explain": ""
+            }
+        ],
+        "correct": 1,
+        "correctExplain": "L'inspection examine un produit (le document d'exigences) : c'est du CQ, de la détection. Son effet est préventif pour la suite, puisque le défaut n'atteint jamais le code : c'est le principe « tester tôt »."
+    },
+    {
+        "q": "Quelle rubrique NE fait PAS partie d'un plan d'assurance qualité, mais plutôt d'un plan de test ?",
+        "options": [
+            {
+                "text": "Organisation, rôles et responsabilités qualité",
+                "explain": ""
+            },
+            {
+                "text": "Revues et audits prévus pendant le projet",
+                "explain": ""
+            },
+            {
+                "text": "Critères d'entrée et de sortie de l'exécution des tests",
+                "explain": ""
+            },
+            {
+                "text": "Gestion des anomalies et actions correctives",
+                "explain": ""
+            }
+        ],
+        "correct": 2,
+        "correctExplain": "Les critères d'entrée et de sortie des tests appartiennent au plan de test. Le plan d'assurance qualité couvre toutes les activités qualité du projet et renvoie au plan de test pour le détail des tests."
+    },
+    {
+        "q": "Une entreprise suit son processus depuis deux ans sans jamais vérifier s'il réduit le nombre d'anomalies. Quelle composante de son système d'assurance qualité est la plus faible ?",
+        "options": [
+            {
+                "text": "La politique et les objectifs qualité",
+                "explain": ""
+            },
+            {
+                "text": "Les normes et gabarits",
+                "explain": ""
+            },
+            {
+                "text": "Les activités de CQ planifiées",
+                "explain": ""
+            },
+            {
+                "text": "La mesure, les audits et l'amélioration",
+                "explain": ""
+            }
+        ],
+        "correct": 3,
+        "correctExplain": "Sans mesure ni audit, l'organisation ne peut pas savoir si son processus fonctionne : l'étape « vérifier » de la roue de Deming manque, et l'amélioration (« agir ») ne peut pas suivre."
+    },
+    {
+        "q": "Une PME québécoise de logiciel veut faire progresser son processus de test, aujourd'hui peu structuré, et pouvoir mesurer ses progrès par niveaux. Quel référentiel convient le mieux ?",
+        "options": [
+            {
+                "text": "La certification ISTQB de tous ses testeurs",
+                "explain": ""
+            },
+            {
+                "text": "TMMi, qui situe le processus de test sur une échelle de maturité et guide sa progression",
+                "explain": ""
+            },
+            {
+                "text": "ISO 9001:2026, pour obtenir une certification de l'entreprise",
+                "explain": ""
+            },
+            {
+                "text": "ISO/IEC/IEEE 90003, pour interpréter ISO 9001 dans le logiciel",
+                "explain": ""
+            }
+        ],
+        "correct": 1,
+        "correctExplain": "TMMi est le modèle de maturité du processus de test : il situe l'organisation (niveau 1 à 5) et indique quoi améliorer pour progresser. ISTQB forme des personnes, mais ne mesure pas la maturité du processus ; ISO 9001 et 90003 portent sur le système qualité dans son ensemble."
+    }
+];
+        let currentQuestion = 0;
+        let answers = new Array(questions.length).fill(null);
+        let answered = new Array(questions.length).fill(false);
+
+        function displayQuestion() {
+            const container = document.getElementById('quiz-container');
+            const item = questions[currentQuestion];
+            
+            let html = `<div class="question">${currentQuestion + 1}. ${item.q}</div>`;
+            const letters = ['A', 'B', 'C', 'D'];
+            item.options.forEach((opt, i) => {
+                let classes = '';
+                if (answers[currentQuestion] === i) {
+                    classes = 'selected ';
+                    if (i === item.correct) {
+                        classes += 'correct';
+                    } else {
+                        classes += 'incorrect';
+                    }
+                }
+                const disabledClass = answered[currentQuestion] ? 'disabled' : '';
+                html += `<div class="option ${classes} ${disabledClass}" onclick="${answered[currentQuestion] ? '' : `handleAnswerClick(${i})`}" style="${answered[currentQuestion] ? 'cursor: not-allowed;' : ''}"><span class="option-letter">${letters[i]}</span> ${opt.text}</div>`;
+            });
+            
+            container.innerHTML = html;
+            
+            if (answered[currentQuestion]) {
+                showFeedback();
+            } else {
+                document.getElementById('feedback').innerHTML = '';
+                document.getElementById('feedback').classList.remove('show');
+            }
+            
+            updateProgressBar();
+            updateNavigationButtons();
+            updateProgressInfo();
+        }
+
+        function handleAnswerClick(index) {
+            if (answered[currentQuestion]) return;
+            
+            answers[currentQuestion] = index;
+            answered[currentQuestion] = true;
+            
+            showFeedback();
+            updateProgressBar();
+            updateProgressInfo();
+            updateNavigationButtons();
+            displayQuestion();
+        }
+
+        function showFeedback() {
+            const feedbackDiv = document.getElementById('feedback');
+            const item = questions[currentQuestion];
+            const isCorrect = answers[currentQuestion] === item.correct;
+            const selectedOption = item.options[answers[currentQuestion]];
+            
+            feedbackDiv.className = 'feedback-container show ' + (isCorrect ? 'feedback-correct' : 'feedback-incorrect');
+            
+            let html = '';
+            
+            if (isCorrect) {
+                html += `
+                    <div class="feedback-header">Bonne réponse!</div>
+                    <div class="feedback-explanation">${item.correctExplain}</div>
+                `;
+            } else {
+                html += `
+                    <div class="feedback-header">Pas tout à fait</div>
+                    <div class="feedback-explanation">${selectedOption.explain}</div>
+                    <div class="correct-answer-box">
+                        <div class="correct-answer-label">✓ Bonne réponse:</div>
+                        <div>${item.options[item.correct].text}</div>
+                        <div style="margin-top: 8px; font-size: 0.9em;">${item.correctExplain}</div>
+                    </div>
+                `;
+            }
+            
+            feedbackDiv.innerHTML = html;
+        }
+
+        function updateProgressBar() {
+            const progressBar = document.getElementById('progressBar');
+            progressBar.innerHTML = '';
+            
+            for (let i = 0; i < questions.length; i++) {
+                const segment = document.createElement('div');
+                segment.className = 'progress-segment';
+                
+                if (!answered[i]) {
+                    segment.classList.add('unanswered');
+                } else if (answers[i] === questions[i].correct) {
+                    segment.classList.add('correct');
+                } else {
+                    segment.classList.add('incorrect');
+                }
+                
+                progressBar.appendChild(segment);
+            }
+        }
+
+        function updateNavigationButtons() {
+            const isAnswered = answered[currentQuestion];
+            document.getElementById('prevBtn').disabled = currentQuestion === 0 || !isAnswered;
+            document.getElementById('nextBtn').disabled = !isAnswered;
+            
+            if (currentQuestion === questions.length - 1) {
+                document.getElementById('nextBtn').textContent = 'Voir Résultat';
+            } else {
+                document.getElementById('nextBtn').textContent = 'Suivant →';
+            }
+        }
+
+        function updateProgressInfo() {
+            document.getElementById('question-counter').textContent = `Question ${currentQuestion + 1} / ${questions.length}`;
+            
+            let correctCount = 0;
+            let incorrectCount = 0;
+            
+            for (let i = 0; i < answers.length; i++) {
+                if (answered[i]) {
+                    if (answers[i] === questions[i].correct) {
+                        correctCount++;
+                    } else {
+                        incorrectCount++;
+                    }
+                }
+            }
+            
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('incorrect-count').textContent = incorrectCount;
+        }
+
+        function nextQuestion() {
+            if (currentQuestion === questions.length - 1) {
+                showFinalResults();
+                return;
+            }
+            
+            currentQuestion++;
+            displayQuestion();
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        function showFinalResults() {
+            let score = 0;
+            answers.forEach((answer, index) => {
+                if (answer === questions[index].correct) score++;
+            });
+            
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '<div class="question">Quiz terminé!</div>';
+            
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.className = 'feedback-container';
+            feedbackDiv.innerHTML = '';
+            
+            let recapHtml = '<div class="recap-title">Résumé de vos réponses</div>';
+            
+            questions.forEach((question, index) => {
+                const userAnswer = question.options[answers[index]];
+                const correctAnswer = question.options[question.correct];
+                const isCorrect = answers[index] === question.correct;
+                
+                recapHtml += `
+                    <div class="recap-card ${isCorrect ? 'correct' : 'incorrect'}">
+                        <div class="recap-number">Question ${index + 1} / ${questions.length}</div>
+                        <div class="recap-question">${question.q}</div>
+                        <div class="recap-answer-item user">
+                            <span class="recap-label">Votre réponse:</span>
+                            ${userAnswer.text}
+                            <span class="recap-result ${isCorrect ? 'correct' : 'incorrect'}">
+                                ${isCorrect ? '✓ Correct' : '✗ Incorrect'}
+                            </span>
+                        </div>
+                        ${!isCorrect ? `
+                            <div class="recap-answer-item correct-answer">
+                                <span class="recap-label">Bonne réponse:</span>
+                                ${correctAnswer.text}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            
+            document.getElementById('result').innerHTML = `
+                <div style="font-size: 2em; margin: 30px 0 20px;">Votre score : ${score} / ${questions.length}</div>
+                <div style="font-size: 1.1em; color: #555; margin-bottom: 30px;">Réussite : ${Math.round(score / questions.length * 100)}%</div>
+                <div class="recap-container">${recapHtml}</div>
+            `;
+            
+            document.getElementById('prevBtn').disabled = false;
+            document.getElementById('nextBtn').textContent = 'Recommencer';
+            document.getElementById('nextBtn').disabled = false;
+            document.getElementById('nextBtn').onclick = function() { location.reload(); };
+            document.getElementById('prevBtn').onclick = function() {
+                currentQuestion = questions.length - 1;
+                displayQuestion();
+            };
+        }
+
+        displayQuestion();
+    </script>
+</body>
+</html>
