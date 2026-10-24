@@ -370,5 +370,40 @@
     "title": "DOM, CSS et inspection avec DevTools",
     "path": "cours/ift-sql/quiz-ift-sql-cours4-s2.html",
     "questionsCount": 10
+  },
+  "q5m8r2v6": {
+    "course": "IFT-SQL",
+    "lesson": 5,
+    "title": "Organisation du travail et gestion des tâches",
+    "path": "cours/ift-sql/quiz-ift-sql-cours5.html",
+    "questionsCount": 10
+  },
+  "t6p2k9w4": {
+    "course": "IFT-SQL",
+    "lesson": 6,
+    "title": "Gestion du temps et des priorités",
+    "path": "cours/ift-sql/quiz-ift-sql-cours6.html",
+    "questionsCount": 10
+  },
+  "v7n3c5x8": {
+    "course": "IFT-SQL",
+    "lesson": 7,
+    "title": "Gestion du stress et autoréflexion",
+    "path": "cours/ift-sql/quiz-ift-sql-cours7.html",
+    "questionsCount": 10
+  },
+  "a8d4f1j6": {
+    "course": "IFT-SQL",
+    "lesson": 8,
+    "title": "Communication professionnelle",
+    "path": "cours/ift-sql/quiz-ift-sql-cours8.html",
+    "questionsCount": 10
+  },
+  "m9b5q2z7": {
+    "course": "IFT-SQL",
+    "lesson": 9,
+    "title": "Profil professionnel et réseautage",
+    "path": "cours/ift-sql/quiz-ift-sql-cours9.html",
+    "questionsCount": 10
   }
 }

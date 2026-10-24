@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Quiz - Gestion du stress et autoréflexion</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <div class="global-course-title">Initiation à la fonction de travail d'un spécialiste en qualité logicielle</div>
+    <h1>Quiz : Gestion du stress et autoréflexion (Cours 7)</h1>
+
+    <div class="progress-container">
+        <div class="progress-info">
+            <span id="question-counter">Question 1 / 10</span>
+            <div class="progress-stats">
+                <span class="stat-badge incorrect"><span class="stat-icon">✕</span><span id="incorrect-count">0</span></span>
+                <span class="stat-badge correct"><span class="stat-icon">✓</span><span id="correct-count">0</span></span>
+            </div>
+        </div>
+        <div class="progress-bar-wrapper" id="progressBar"></div>
+    </div>
+
+    <div id="quiz-container" class="card"></div>
+
+    <div id="feedback" class="feedback-container"></div>
+
+    <div class="quiz-navigation">
+        <button id="prevBtn" onclick="previousQuestion()">← Précédent</button>
+        <button id="nextBtn" onclick="nextQuestion()">Suivant →</button>
+    </div>
+
+    <div id="result"></div>
+
+    <script>
+        const questions = [
+    {
+        "q": "Selon le cours, qu'est-ce qu'un agent de stress ?",
+        "options": [
+            {
+                "text": "Un collègue chargé de surveiller le stress de l'équipe",
+                "explain": "Faux. Ce n'est pas une personne chargée d'un rôle."
+            },
+            {
+                "text": "La situation qui provoque la réaction de stress",
+                "explain": "Correct. Une échéance, une surcharge, un conflit ou une incertitude sont des agents de stress."
+            },
+            {
+                "text": "Un médicament contre le stress",
+                "explain": "Faux. Le terme désigne la cause du stress, pas un traitement."
+            },
+            {
+                "text": "Le symptôme le plus visible du stress",
+                "explain": "Faux. Les symptômes sont les effets ; l'agent de stress est la cause."
+            }
+        ],
+        "correct": 1,
+        "correctExplain": "Correct. Une échéance, une surcharge, un conflit ou une incertitude sont des agents de stress."
+    },
+    {
+        "q": "Lequel de ces exemples est un symptôme cognitif du stress ?",
+        "options": [
+            {
+                "text": "Des maux de tête",
+                "explain": "Faux. C'est un symptôme physique."
+            },
+            {
+                "text": "Une irritabilité pendant la mêlée",
+                "explain": "Faux. C'est un symptôme émotionnel."
+            },
+            {
+                "text": "Relire trois fois le même paragraphe sans le comprendre",
+                "explain": "Correct. La difficulté de concentration est un symptôme cognitif."
+            },
+            {
+                "text": "Sauter ses pauses",
+                "explain": "Faux. C'est un symptôme comportemental."
+            }
+        ],
+        "correct": 2,
+        "correctExplain": "Correct. La difficulté de concentration est un symptôme cognitif."
+    },
+    {
+        "q": "Quelle situation illustre plutôt un stress positif ?",
+        "options": [
+            {
+                "text": "Une démo devant la cliente demain : vous êtes concentré et motivé",
+                "explain": "Correct. Une pression ponctuelle, avec un but clair, mobilise l'énergie."
+            },
+            {
+                "text": "Trois semaines de soirées pour tenir une date",
+                "explain": "Faux. Une pression prolongée sans récupération épuise : c'est un stress négatif."
+            },
+            {
+                "text": "La peur constante de se tromper, sans retour de personne",
+                "explain": "Faux. L'inquiétude permanente et l'isolement sont nuisibles."
+            },
+            {
+                "text": "Des consignes contradictoires d'un jour à l'autre",
+                "explain": "Faux. Le sentiment de perte de contrôle est un stress négatif."
+            }
+        ],
+        "correct": 0,
+        "correctExplain": "Correct. Une pression ponctuelle, avec un but clair, mobilise l'énergie."
+    },
+    {
+        "q": "À quel moment s'applique la technique « Planifier avec une marge d'environ 40 % » ?",
+        "options": [
+            {
+                "text": "Pendant la situation stressante",
+                "explain": "Faux. Pendant, on agit sur le moment : respirer, faire une pause, exprimer un blocage."
+            },
+            {
+                "text": "Après la situation stressante",
+                "explain": "Faux. Après, on récupère et on analyse : couper le soir, rétrospective, cause racine."
+            },
+            {
+                "text": "Elle ne sert pas à gérer le stress",
+                "explain": "Faux. Une marge réaliste évite bien des situations stressantes."
+            },
+            {
+                "text": "Avant, pour prévenir",
+                "explain": "Correct. Une planification réaliste réduit d'avance les situations stressantes."
+            }
+        ],
+        "correct": 3,
+        "correctExplain": "Correct. Une planification réaliste réduit d'avance les situations stressantes."
+    },
+    {
+        "q": "Selon le cours, quelle est la meilleure stratégie face au stress au travail ?",
+        "options": [
+            {
+                "text": "Attendre qu'il passe tout seul",
+                "explain": "Faux. Sans action, les mêmes situations reviennent."
+            },
+            {
+                "text": "Agir en amont, sur l'organisation et les causes",
+                "explain": "Correct. Le stress est difficile à éliminer ; la meilleure solution est de prévenir les situations qui le provoquent."
+            },
+            {
+                "text": "Travailler plus vite pour en finir",
+                "explain": "Faux. Cela augmente souvent la pression et les erreurs."
+            },
+            {
+                "text": "Éviter d'en parler pour ne pas inquiéter l'équipe",
+                "explain": "Faux. Le dialogue est justement une technique de gestion du stress."
+            }
+        ],
+        "correct": 1,
+        "correctExplain": "Correct. Le stress est difficile à éliminer ; la meilleure solution est de prévenir les situations qui le provoquent."
+    },
+    {
+        "q": "Vous oubliez souvent des tâches prévues dans la journée. Quelle solution le cours propose-t-il ?",
+        "options": [
+            {
+                "text": "Tout noter dans un agenda et créer des routines",
+                "explain": "Correct. La mémoire de travail est limitée : ce qui est noté n'encombre plus l'esprit."
+            },
+            {
+                "text": "Faire plus d'efforts de mémoire",
+                "explain": "Faux. La mémoire de travail a des limites qu'aucun effort ne repousse vraiment."
+            },
+            {
+                "text": "Refuser toute nouvelle tâche",
+                "explain": "Faux. Le problème vient de l'oubli, pas du nombre de tâches."
+            },
+            {
+                "text": "Travailler le soir pour rattraper",
+                "explain": "Faux. Cela ajoute de la fatigue sans régler l'oubli."
+            }
+        ],
+        "correct": 0,
+        "correctExplain": "Correct. La mémoire de travail est limitée : ce qui est noté n'encombre plus l'esprit."
+    },
+    {
+        "q": "Dans une rétrospective, que faut-il éviter ?",
+        "options": [
+            {
+                "text": "Nommer ce qui a bien marché",
+                "explain": "Faux. C'est une des trois parties de la rétrospective."
+            },
+            {
+                "text": "Décider d'une ou deux actions concrètes",
+                "explain": "Faux. Les actions sont le résultat attendu de la rétrospective."
+            },
+            {
+                "text": "Blâmer des personnes plutôt que d'analyser ce qui a freiné l'équipe",
+                "explain": "Correct. La rétrospective parle des irritants et des causes, sans chercher de coupable."
+            },
+            {
+                "text": "Exprimer une frustration bloquante de façon factuelle",
+                "explain": "Faux. Le cours présente justement la rétrospective comme un lieu pour l'exprimer."
+            }
+        ],
+        "correct": 2,
+        "correctExplain": "Correct. La rétrospective parle des irritants et des causes, sans chercher de coupable."
+    },
+    {
+        "q": "Lequel de ces messages exprime le mieux une difficulté à son superviseur ?",
+        "options": [
+            {
+                "text": "« Je n'en peux plus, tout le monde me dérange ! »",
+                "explain": "Faux. Le message est émotif, sans faits ni proposition."
+            },
+            {
+                "text": "« Ce n'est pas ma faute si on est en retard. »",
+                "explain": "Faux. Le message cherche un coupable au lieu d'une solution."
+            },
+            {
+                "text": "Ne rien dire et travailler le soir",
+                "explain": "Faux. L'évitement est un symptôme comportemental qui aggrave la situation."
+            },
+            {
+                "text": "« Depuis lundi, j'ai reçu cinq demandes hors sprint ; les tests du paiement ont deux jours de retard. Peut-on faire passer ces demandes par Marc-André ? »",
+                "explain": "Correct. Les faits, l'impact, le besoin et une proposition."
+            }
+        ],
+        "correct": 3,
+        "correctExplain": "Correct. Les faits, l'impact, le besoin et une proposition."
+    },
+    {
+        "q": "Alex a travaillé trois soirs. En se demandant cinq fois « pourquoi ? », on arrive à « personne n'avait prévu de plan B pour l'environnement ». Quelle action vise la cause racine ?",
+        "options": [
+            {
+                "text": "Offrir un congé à Alex",
+                "explain": "Faux. C'est utile pour récupérer, mais la même situation se reproduira au prochain sprint."
+            },
+            {
+                "text": "Prévoir un environnement de secours et signaler toute panne à la mêlée du jour même",
+                "explain": "Correct. On agit sur la cause, ce qui évite que le même stress revienne."
+            },
+            {
+                "text": "Demander à Alex d'être plus rapide",
+                "explain": "Faux. La cause n'est pas la vitesse d'Alex mais l'absence de plan B."
+            },
+            {
+                "text": "Supprimer les tests du paiement",
+                "explain": "Faux. Cela met la qualité du produit en danger sans régler la cause."
+            }
+        ],
+        "correct": 1,
+        "correctExplain": "Correct. On agit sur la cause, ce qui évite que le même stress revienne."
+    },
+    {
+        "q": "Un collègue vous confie qu'il utilise un assistant d'IA comme seul soutien depuis des semaines, alors que son stress devient lourd. Selon le cours, quelle réponse est la plus juste ?",
+        "options": [
+            {
+                "text": "L'IA peut l'aider à s'organiser, mais elle ne remplace ni une personne de confiance ni une aide professionnelle : l'encourager à en parler (superviseur, PAE, services d'aide)",
+                "explain": "Correct. Le cours présente l'IA comme un outil, pas un thérapeute, et nomme des ressources gratuites et confidentielles."
+            },
+            {
+                "text": "C'est parfait : l'IA est disponible jour et nuit et suffit",
+                "explain": "Faux. L'IA peut aider à découper une tâche ou préparer une conversation, mais elle ne remplace pas une aide humaine."
+            },
+            {
+                "text": "Lui conseiller de garder ça pour lui pour ne pas inquiéter l'équipe",
+                "explain": "Faux. L'isolement aggrave le stress ; le cours encourage le dialogue."
+            },
+            {
+                "text": "Lui dire que le stress fait partie du métier et qu'il doit s'y habituer",
+                "explain": "Faux. Le stress prolongé est nuisible ; il faut agir sur ses causes et chercher du soutien."
+            }
+        ],
+        "correct": 0,
+        "correctExplain": "Correct. Le cours présente l'IA comme un outil, pas un thérapeute, et nomme des ressources gratuites et confidentielles."
+    }
+];
+        let currentQuestion = 0;
+        let answers = new Array(questions.length).fill(null);
+        let answered = new Array(questions.length).fill(false);
+
+        function displayQuestion() {
+            const container = document.getElementById('quiz-container');
+            const item = questions[currentQuestion];
+
+            let html = `<div class="question">${currentQuestion + 1}. ${item.q}</div>`;
+            const letters = ['A', 'B', 'C', 'D'];
+            item.options.forEach((opt, i) => {
+                let classes = '';
+                if (answers[currentQuestion] === i) {
+                    classes = 'selected ';
+                    if (i === item.correct) {
+                        classes += 'correct';
+                    } else {
+                        classes += 'incorrect';
+                    }
+                }
+                const disabledClass = answered[currentQuestion] ? 'disabled' : '';
+                html += `<div class="option ${classes} ${disabledClass}" onclick="${answered[currentQuestion] ? '' : `handleAnswerClick(${i})`}" style="${answered[currentQuestion] ? 'cursor: not-allowed;' : ''}"><span class="option-letter">${letters[i]}</span> ${opt.text}</div>`;
+            });
+
+            container.innerHTML = html;
+
+            if (answered[currentQuestion]) {
+                showFeedback();
+            } else {
+                document.getElementById('feedback').innerHTML = '';
+                document.getElementById('feedback').classList.remove('show');
+            }
+
+            updateProgressBar();
+            updateNavigationButtons();
+            updateProgressInfo();
+        }
+
+        function handleAnswerClick(index) {
+            if (answered[currentQuestion]) return;
+
+            answers[currentQuestion] = index;
+            answered[currentQuestion] = true;
+
+            showFeedback();
+            updateProgressBar();
+            updateProgressInfo();
+            updateNavigationButtons();
+            displayQuestion();
+        }
+
+        function showFeedback() {
+            const feedbackDiv = document.getElementById('feedback');
+            const item = questions[currentQuestion];
+            const isCorrect = answers[currentQuestion] === item.correct;
+            const selectedOption = item.options[answers[currentQuestion]];
+
+            feedbackDiv.className = 'feedback-container show ' + (isCorrect ? 'feedback-correct' : 'feedback-incorrect');
+
+            let html = '';
+
+            if (isCorrect) {
+                html += `
+                    <div class="feedback-header">Bonne réponse!</div>
+                    <div class="feedback-explanation">${item.correctExplain}</div>
+                `;
+            } else {
+                html += `
+                    <div class="feedback-header">Pas tout à fait</div>
+                    <div class="feedback-explanation">${selectedOption.explain}</div>
+                    <div class="correct-answer-box">
+                        <div class="correct-answer-label">✓ Bonne réponse:</div>
+                        <div>${item.options[item.correct].text}</div>
+                        <div style="margin-top: 8px; font-size: 0.9em;">${item.correctExplain}</div>
+                    </div>
+                `;
+            }
+
+            feedbackDiv.innerHTML = html;
+        }
+
+        function updateProgressBar() {
+            const progressBar = document.getElementById('progressBar');
+            progressBar.innerHTML = '';
+
+            for (let i = 0; i < questions.length; i++) {
+                const segment = document.createElement('div');
+                segment.className = 'progress-segment';
+
+                if (!answered[i]) {
+                    segment.classList.add('unanswered');
+                } else if (answers[i] === questions[i].correct) {
+                    segment.classList.add('correct');
+                } else {
+                    segment.classList.add('incorrect');
+                }
+
+                progressBar.appendChild(segment);
+            }
+        }
+
+        function updateNavigationButtons() {
+            const isAnswered = answered[currentQuestion];
+            document.getElementById('prevBtn').disabled = currentQuestion === 0 || !isAnswered;
+            document.getElementById('nextBtn').disabled = !isAnswered;
+
+            if (currentQuestion === questions.length - 1) {
+                document.getElementById('nextBtn').textContent = 'Voir Résultat';
+            } else {
+                document.getElementById('nextBtn').textContent = 'Suivant →';
+            }
+        }
+
+        function updateProgressInfo() {
+            document.getElementById('question-counter').textContent = `Question ${currentQuestion + 1} / ${questions.length}`;
+
+            let correctCount = 0;
+            let incorrectCount = 0;
+
+            for (let i = 0; i < answers.length; i++) {
+                if (answered[i]) {
+                    if (answers[i] === questions[i].correct) {
+                        correctCount++;
+                    } else {
+                        incorrectCount++;
+                    }
+                }
+            }
+
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('incorrect-count').textContent = incorrectCount;
+        }
+
+        function nextQuestion() {
+            if (currentQuestion === questions.length - 1) {
+                showFinalResults();
+                return;
+            }
+
+            currentQuestion++;
+            displayQuestion();
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        function showFinalResults() {
+            let score = 0;
+            answers.forEach((answer, index) => {
+                if (answer === questions[index].correct) score++;
+            });
+
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '<div class="question">Quiz terminé!</div>';
+
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.className = 'feedback-container';
+            feedbackDiv.innerHTML = '';
+
+            let recapHtml = '<div class="recap-title">Résumé de vos réponses</div>';
+
+            questions.forEach((question, index) => {
+                const userAnswer = question.options[answers[index]];
+                const correctAnswer = question.options[question.correct];
+                const isCorrect = answers[index] === question.correct;
+
+                recapHtml += `
+                    <div class="recap-card ${isCorrect ? 'correct' : 'incorrect'}">
+                        <div class="recap-number">Question ${index + 1} / ${questions.length}</div>
+                        <div class="recap-question">${question.q}</div>
+                        <div class="recap-answer-item user">
+                            <span class="recap-label">Votre réponse:</span>
+                            ${userAnswer.text}
+                            <span class="recap-result ${isCorrect ? 'correct' : 'incorrect'}">
+                                ${isCorrect ? '✓ Correct' : '✗ Incorrect'}
+                            </span>
+                        </div>
+                        ${!isCorrect ? `
+                            <div class="recap-answer-item correct-answer">
+                                <span class="recap-label">Bonne réponse:</span>
+                                ${correctAnswer.text}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+
+            document.getElementById('result').innerHTML = `
+                <div style="font-size: 2em; margin: 30px 0 20px;">Votre score : ${score} / ${questions.length}</div>
+                <div style="font-size: 1.1em; color: #555; margin-bottom: 30px;">Réussite : ${Math.round(score / questions.length * 100)}%</div>
+                <div class="recap-container">${recapHtml}</div>
+            `;
+
+            document.getElementById('prevBtn').disabled = false;
+            document.getElementById('nextBtn').textContent = 'Recommencer';
+            document.getElementById('nextBtn').disabled = false;
+            document.getElementById('nextBtn').onclick = function() { location.reload(); };
+            document.getElementById('prevBtn').onclick = function() {
+                currentQuestion = questions.length - 1;
+                displayQuestion();
+            };
+        }
+
+        displayQuestion();
+    </script>
+</body>
+</html>

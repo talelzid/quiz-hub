@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Quiz - Profil professionnel et réseautage</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <div class="global-course-title">Initiation à la fonction de travail d'un spécialiste en qualité logicielle</div>
+    <h1>Quiz : Profil professionnel et réseautage (Cours 9)</h1>
+
+    <div class="progress-container">
+        <div class="progress-info">
+            <span id="question-counter">Question 1 / 10</span>
+            <div class="progress-stats">
+                <span class="stat-badge incorrect"><span class="stat-icon">✕</span><span id="incorrect-count">0</span></span>
+                <span class="stat-badge correct"><span class="stat-icon">✓</span><span id="correct-count">0</span></span>
+            </div>
+        </div>
+        <div class="progress-bar-wrapper" id="progressBar"></div>
+    </div>
+
+    <div id="quiz-container" class="card"></div>
+
+    <div id="feedback" class="feedback-container"></div>
+
+    <div class="quiz-navigation">
+        <button id="prevBtn" onclick="previousQuestion()">← Précédent</button>
+        <button id="nextBtn" onclick="nextQuestion()">Suivant →</button>
+    </div>
+
+    <div id="result"></div>
+
+    <script>
+        const questions = [
+    {
+        "q": "Selon le cours, quel est le réseau professionnel de référence en Amérique du Nord ?",
+        "options": [
+            {
+                "text": "Viadeo",
+                "explain": "Faux. Viadeo est surtout présent en France."
+            },
+            {
+                "text": "Xing",
+                "explain": "Faux. Xing est surtout présent en Europe germanophone."
+            },
+            {
+                "text": "LinkedIn",
+                "explain": "Correct. C'est là que se trouvent la plupart des recruteurs et des professionnels de votre marché."
+            },
+            {
+                "text": "GitHub",
+                "explain": "Faux. GitHub sert à montrer du code et des projets ; il complète LinkedIn plus tard dans le programme."
+            }
+        ],
+        "correct": 2,
+        "correctExplain": "Correct. C'est là que se trouvent la plupart des recruteurs et des professionnels de votre marché."
+    },
+    {
+        "q": "Lequel de ces titres de profil est le plus efficace pour une personne en formation QA ?",
+        "options": [
+            {
+                "text": "Étudiant",
+                "explain": "Faux. Trop générique : aucun mot-clé du métier, rien sur ce que vous cherchez."
+            },
+            {
+                "text": "En formation QA | Tests fonctionnels et API (Postman) | À la recherche d'un stage",
+                "explain": "Correct. Spécifique, avec des mots-clés recherchés par les recruteurs et l'objectif."
+            },
+            {
+                "text": "À la recherche de nouvelles opportunités",
+                "explain": "Faux. Ne dit ni le domaine ni les compétences."
+            },
+            {
+                "text": "Expert QA, 10 ans d'expérience",
+                "explain": "Faux. C'est faux pour une personne en formation ; l'entrevue le révélerait."
+            }
+        ],
+        "correct": 1,
+        "correctExplain": "Correct. Spécifique, avec des mots-clés recherchés par les recruteurs et l'objectif."
+    },
+    {
+        "q": "Quelles sont les quatre idées du résumé de profil proposées au cours ?",
+        "options": [
+            {
+                "text": "Qui je suis, ce que j'apprends, ce que je cherche, ma valeur ajoutée",
+                "explain": "Correct. C'est la structure recommandée pour un résumé clair."
+            },
+            {
+                "text": "Mon salaire, mes vacances, mes horaires, mon adresse",
+                "explain": "Faux. Ces informations n'ont pas leur place dans un résumé public."
+            },
+            {
+                "text": "Mes loisirs, mes voyages, mes amis, mes animaux",
+                "explain": "Faux. Le résumé parle de votre profil professionnel."
+            },
+            {
+                "text": "Mes diplômes, rien d'autre",
+                "explain": "Faux. La formation a sa propre section ; le résumé raconte votre parcours et votre projet."
+            }
+        ],
+        "correct": 0,
+        "correctExplain": "Correct. C'est la structure recommandée pour un résumé clair."
+    },
+    {
+        "q": "Laquelle de ces photos de profil respecte les recommandations du cours ?",
+        "options": [
+            {
+                "text": "Un selfie de vacances avec des lunettes de soleil",
+                "explain": "Faux. Le visage doit être visible, sans filtre ni lunettes de soleil."
+            },
+            {
+                "text": "Une photo de groupe recadrée",
+                "explain": "Faux. Les photos de groupe ou coupées sont à éviter."
+            },
+            {
+                "text": "Le logo de votre équipe sportive",
+                "explain": "Faux. Le profil doit montrer votre visage."
+            },
+            {
+                "text": "Un portrait net, visage bien éclairé, tenue adaptée au secteur",
+                "explain": "Correct. C'est la photo qui inspire confiance."
+            }
+        ],
+        "correct": 3,
+        "correctExplain": "Correct. C'est la photo qui inspire confiance."
+    },
+    {
+        "q": "Pourquoi personnaliser l'adresse de son profil (linkedin.com/in/…) ?",
+        "options": [
+            {
+                "text": "Parce que c'est obligatoire pour s'inscrire",
+                "explain": "Faux. L'adresse par défaut fonctionne, mais elle n'est pas professionnelle."
+            },
+            {
+                "text": "Pour qu'elle soit lisible et facile à partager, par exemple prenom-nom-qa",
+                "explain": "Correct. Une adresse personnalisée remplace une suite de chiffres et se met facilement sur un CV."
+            },
+            {
+                "text": "Pour cacher son nom aux recruteurs",
+                "explain": "Faux. C'est l'inverse : on veut être trouvé."
+            },
+            {
+                "text": "Pour améliorer la qualité de sa photo",
+                "explain": "Faux. L'adresse et la photo sont indépendantes."
+            }
+        ],
+        "correct": 1,
+        "correctExplain": "Correct. Une adresse personnalisée remplace une suite de chiffres et se met facilement sur un CV."
+    },
+    {
+        "q": "Lequel de ces gestes est recommandé pour développer son réseau ?",
+        "options": [
+            {
+                "text": "Envoyer des centaines d'invitations sans message",
+                "explain": "Faux. Le cours privilégie la qualité à la quantité."
+            },
+            {
+                "text": "Commenter toutes les publications avec « Super ! »",
+                "explain": "Faux. Les commentaires doivent être pertinents."
+            },
+            {
+                "text": "Inviter avec un message personnalisé qui rappelle où vous vous êtes rencontrés",
+                "explain": "Correct. Une invitation personnalisée a beaucoup plus de chances d'être acceptée et crée un vrai lien."
+            },
+            {
+                "text": "Rejoindre le plus de groupes possible, actifs ou non",
+                "explain": "Faux. On choisit des groupes actifs et pertinents."
+            }
+        ],
+        "correct": 2,
+        "correctExplain": "Correct. Une invitation personnalisée a beaucoup plus de chances d'être acceptée et crée un vrai lien."
+    },
+    {
+        "q": "Pourquoi reprendre les mots-clés d'une offre d'emploi dans son CV et son profil ?",
+        "options": [
+            {
+                "text": "Parce que les systèmes de tri des candidatures (ATS) les recherchent",
+                "explain": "Correct. Sans ces mots-clés, une candidature peut être écartée avant d'être lue par un humain."
+            },
+            {
+                "text": "Pour copier l'offre mot pour mot",
+                "explain": "Faux. On reprend les mots-clés qui correspondent vraiment à vos compétences, pas tout le texte."
+            },
+            {
+                "text": "Pour paraître plus expérimenté qu'on ne l'est",
+                "explain": "Faux. Tout ce qui est affiché doit être vrai."
+            },
+            {
+                "text": "Ce n'est pas utile : les recruteurs lisent tous les CV en entier",
+                "explain": "Faux. Beaucoup d'entreprises utilisent un premier tri automatisé."
+            }
+        ],
+        "correct": 0,
+        "correctExplain": "Correct. Sans ces mots-clés, une candidature peut être écartée avant d'être lue par un humain."
+    },
+    {
+        "q": "Lequel de ces contenus ne devez-vous jamais publier sur votre profil ?",
+        "options": [
+            {
+                "text": "Votre formation à l'AEC",
+                "explain": "Faux. C'est une information utile et attendue."
+            },
+            {
+                "text": "Un article sur les tests d'accessibilité",
+                "explain": "Faux. Partager une ressource utile est une bonne pratique."
+            },
+            {
+                "text": "Votre recherche de stage",
+                "explain": "Faux. Le dire aide les recruteurs à vous trouver."
+            },
+            {
+                "text": "Une capture d'écran d'un logiciel que vous testez pour un client",
+                "explain": "Correct. C'est une information confidentielle : elle ne doit jamais être publiée."
+            }
+        ],
+        "correct": 3,
+        "correctExplain": "Correct. C'est une information confidentielle : elle ne doit jamais être publiée."
+    },
+    {
+        "q": "Rachid, en reconversion, affiche « Selenium (expert) » et « Cypress (expert) » alors qu'il débute. Quel conseil lui donner ?",
+        "options": [
+            {
+                "text": "Garder ces mentions : elles attirent les recruteurs",
+                "explain": "Faux. L'entrevue technique révélera l'écart, et sa crédibilité en souffrira."
+            },
+            {
+                "text": "Ajouter encore plus d'outils pour se démarquer",
+                "explain": "Faux. Une longue liste d'outils non maîtrisés n'impressionne pas les recruteurs."
+            },
+            {
+                "text": "N'afficher que les compétences qu'il maîtrise et mettre en valeur ce que son ancien métier apporte (rigueur, sens du détail)",
+                "explain": "Correct. Un profil vrai et une reconversion bien présentée sont de vrais atouts."
+            },
+            {
+                "text": "Supprimer son profil",
+                "explain": "Faux. Le problème se corrige facilement ; le profil reste utile."
+            }
+        ],
+        "correct": 2,
+        "correctExplain": "Correct. Un profil vrai et une reconversion bien présentée sont de vrais atouts."
+    },
+    {
+        "q": "Une IA rédige ce résumé pour vous : « Expert QA certifié ISTQB Advanced, je maîtrise Selenium, Playwright, JMeter et Appium. Passionné de qualité, je cherche un stage. » Quelle démarche est la plus juste ?",
+        "options": [
+            {
+                "text": "Le publier tel quel : l'IA écrit mieux que moi",
+                "explain": "Faux. Le texte contient des affirmations fausses, que l'entrevue révélera."
+            },
+            {
+                "text": "Retirer ce qui est faux ou exagéré, remplacer le générique par un exemple concret, et garder ce qui est vrai (la recherche de stage)",
+                "explain": "Correct. L'IA donne un point de départ ; le résumé final doit être vrai et sonner comme vous."
+            },
+            {
+                "text": "Ajouter d'autres outils pour paraître encore plus compétent",
+                "explain": "Faux. Cela aggrave le problème."
+            },
+            {
+                "text": "Demander à l'IA si son texte est vrai et la croire",
+                "explain": "Faux. L'IA ne connaît pas votre parcours ; c'est à vous de vérifier."
+            }
+        ],
+        "correct": 1,
+        "correctExplain": "Correct. L'IA donne un point de départ ; le résumé final doit être vrai et sonner comme vous."
+    }
+];
+        let currentQuestion = 0;
+        let answers = new Array(questions.length).fill(null);
+        let answered = new Array(questions.length).fill(false);
+
+        function displayQuestion() {
+            const container = document.getElementById('quiz-container');
+            const item = questions[currentQuestion];
+
+            let html = `<div class="question">${currentQuestion + 1}. ${item.q}</div>`;
+            const letters = ['A', 'B', 'C', 'D'];
+            item.options.forEach((opt, i) => {
+                let classes = '';
+                if (answers[currentQuestion] === i) {
+                    classes = 'selected ';
+                    if (i === item.correct) {
+                        classes += 'correct';
+                    } else {
+                        classes += 'incorrect';
+                    }
+                }
+                const disabledClass = answered[currentQuestion] ? 'disabled' : '';
+                html += `<div class="option ${classes} ${disabledClass}" onclick="${answered[currentQuestion] ? '' : `handleAnswerClick(${i})`}" style="${answered[currentQuestion] ? 'cursor: not-allowed;' : ''}"><span class="option-letter">${letters[i]}</span> ${opt.text}</div>`;
+            });
+
+            container.innerHTML = html;
+
+            if (answered[currentQuestion]) {
+                showFeedback();
+            } else {
+                document.getElementById('feedback').innerHTML = '';
+                document.getElementById('feedback').classList.remove('show');
+            }
+
+            updateProgressBar();
+            updateNavigationButtons();
+            updateProgressInfo();
+        }
+
+        function handleAnswerClick(index) {
+            if (answered[currentQuestion]) return;
+
+            answers[currentQuestion] = index;
+            answered[currentQuestion] = true;
+
+            showFeedback();
+            updateProgressBar();
+            updateProgressInfo();
+            updateNavigationButtons();
+            displayQuestion();
+        }
+
+        function showFeedback() {
+            const feedbackDiv = document.getElementById('feedback');
+            const item = questions[currentQuestion];
+            const isCorrect = answers[currentQuestion] === item.correct;
+            const selectedOption = item.options[answers[currentQuestion]];
+
+            feedbackDiv.className = 'feedback-container show ' + (isCorrect ? 'feedback-correct' : 'feedback-incorrect');
+
+            let html = '';
+
+            if (isCorrect) {
+                html += `
+                    <div class="feedback-header">Bonne réponse!</div>
+                    <div class="feedback-explanation">${item.correctExplain}</div>
+                `;
+            } else {
+                html += `
+                    <div class="feedback-header">Pas tout à fait</div>
+                    <div class="feedback-explanation">${selectedOption.explain}</div>
+                    <div class="correct-answer-box">
+                        <div class="correct-answer-label">✓ Bonne réponse:</div>
+                        <div>${item.options[item.correct].text}</div>
+                        <div style="margin-top: 8px; font-size: 0.9em;">${item.correctExplain}</div>
+                    </div>
+                `;
+            }
+
+            feedbackDiv.innerHTML = html;
+        }
+
+        function updateProgressBar() {
+            const progressBar = document.getElementById('progressBar');
+            progressBar.innerHTML = '';
+
+            for (let i = 0; i < questions.length; i++) {
+                const segment = document.createElement('div');
+                segment.className = 'progress-segment';
+
+                if (!answered[i]) {
+                    segment.classList.add('unanswered');
+                } else if (answers[i] === questions[i].correct) {
+                    segment.classList.add('correct');
+                } else {
+                    segment.classList.add('incorrect');
+                }
+
+                progressBar.appendChild(segment);
+            }
+        }
+
+        function updateNavigationButtons() {
+            const isAnswered = answered[currentQuestion];
+            document.getElementById('prevBtn').disabled = currentQuestion === 0 || !isAnswered;
+            document.getElementById('nextBtn').disabled = !isAnswered;
+
+            if (currentQuestion === questions.length - 1) {
+                document.getElementById('nextBtn').textContent = 'Voir Résultat';
+            } else {
+                document.getElementById('nextBtn').textContent = 'Suivant →';
+            }
+        }
+
+        function updateProgressInfo() {
+            document.getElementById('question-counter').textContent = `Question ${currentQuestion + 1} / ${questions.length}`;
+
+            let correctCount = 0;
+            let incorrectCount = 0;
+
+            for (let i = 0; i < answers.length; i++) {
+                if (answered[i]) {
+                    if (answers[i] === questions[i].correct) {
+                        correctCount++;
+                    } else {
+                        incorrectCount++;
+                    }
+                }
+            }
+
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('incorrect-count').textContent = incorrectCount;
+        }
+
+        function nextQuestion() {
+            if (currentQuestion === questions.length - 1) {
+                showFinalResults();
+                return;
+            }
+
+            currentQuestion++;
+            displayQuestion();
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        function showFinalResults() {
+            let score = 0;
+            answers.forEach((answer, index) => {
+                if (answer === questions[index].correct) score++;
+            });
+
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '<div class="question">Quiz terminé!</div>';
+
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.className = 'feedback-container';
+            feedbackDiv.innerHTML = '';
+
+            let recapHtml = '<div class="recap-title">Résumé de vos réponses</div>';
+
+            questions.forEach((question, index) => {
+                const userAnswer = question.options[answers[index]];
+                const correctAnswer = question.options[question.correct];
+                const isCorrect = answers[index] === question.correct;
+
+                recapHtml += `
+                    <div class="recap-card ${isCorrect ? 'correct' : 'incorrect'}">
+                        <div class="recap-number">Question ${index + 1} / ${questions.length}</div>
+                        <div class="recap-question">${question.q}</div>
+                        <div class="recap-answer-item user">
+                            <span class="recap-label">Votre réponse:</span>
+                            ${userAnswer.text}
+                            <span class="recap-result ${isCorrect ? 'correct' : 'incorrect'}">
+                                ${isCorrect ? '✓ Correct' : '✗ Incorrect'}
+                            </span>
+                        </div>
+                        ${!isCorrect ? `
+                            <div class="recap-answer-item correct-answer">
+                                <span class="recap-label">Bonne réponse:</span>
+                                ${correctAnswer.text}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+
+            document.getElementById('result').innerHTML = `
+                <div style="font-size: 2em; margin: 30px 0 20px;">Votre score : ${score} / ${questions.length}</div>
+                <div style="font-size: 1.1em; color: #555; margin-bottom: 30px;">Réussite : ${Math.round(score / questions.length * 100)}%</div>
+                <div class="recap-container">${recapHtml}</div>
+            `;
+
+            document.getElementById('prevBtn').disabled = false;
+            document.getElementById('nextBtn').textContent = 'Recommencer';
+            document.getElementById('nextBtn').disabled = false;
+            document.getElementById('nextBtn').onclick = function() { location.reload(); };
+            document.getElementById('prevBtn').onclick = function() {
+                currentQuestion = questions.length - 1;
+                displayQuestion();
+            };
+        }
+
+        displayQuestion();
+    </script>
+</body>
+</html>

@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Quiz - Communication professionnelle</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <div class="global-course-title">Initiation à la fonction de travail d'un spécialiste en qualité logicielle</div>
+    <h1>Quiz : Communication professionnelle (Cours 8)</h1>
+
+    <div class="progress-container">
+        <div class="progress-info">
+            <span id="question-counter">Question 1 / 10</span>
+            <div class="progress-stats">
+                <span class="stat-badge incorrect"><span class="stat-icon">✕</span><span id="incorrect-count">0</span></span>
+                <span class="stat-badge correct"><span class="stat-icon">✓</span><span id="correct-count">0</span></span>
+            </div>
+        </div>
+        <div class="progress-bar-wrapper" id="progressBar"></div>
+    </div>
+
+    <div id="quiz-container" class="card"></div>
+
+    <div id="feedback" class="feedback-container"></div>
+
+    <div class="quiz-navigation">
+        <button id="prevBtn" onclick="previousQuestion()">← Précédent</button>
+        <button id="nextBtn" onclick="nextQuestion()">Suivant →</button>
+    </div>
+
+    <div id="result"></div>
+
+    <script>
+        const questions = [
+    {
+        "q": "Lequel de ces exemples est une communication formelle et écrite ?",
+        "options": [
+            {
+                "text": "Un message rapide sur Teams à une collègue",
+                "explain": "Faux. C'est écrit, mais informel."
+            },
+            {
+                "text": "Une discussion à la pause café",
+                "explain": "Faux. C'est oral et informel."
+            },
+            {
+                "text": "Un courriel à la cliente pour reporter une démo",
+                "explain": "Correct. Écrit, formel, il laisse une trace et engage l'équipe."
+            },
+            {
+                "text": "Une démo devant la cliente",
+                "explain": "Faux. C'est formel, mais oral."
+            }
+        ],
+        "correct": 2,
+        "correctExplain": "Correct. Écrit, formel, il laisse une trace et engage l'équipe."
+    },
+    {
+        "q": "Quel canal convient le mieux pour signaler une anomalie dans le panier ?",
+        "options": [
+            {
+                "text": "Un ticket Jira",
+                "explain": "Correct. L'anomalie sera tracée, assignée, corrigée puis retestée."
+            },
+            {
+                "text": "Un message sur Teams",
+                "explain": "Faux. Le message se perdra : une anomalie doit être suivie dans l'outil prévu."
+            },
+            {
+                "text": "Une discussion à la pause café",
+                "explain": "Faux. Aucune trace, aucun suivi."
+            },
+            {
+                "text": "L'intranet de l'entreprise",
+                "explain": "Faux. L'intranet sert aux informations générales et durables."
+            }
+        ],
+        "correct": 0,
+        "correctExplain": "Correct. L'anomalie sera tracée, assignée, corrigée puis retestée."
+    },
+    {
+        "q": "Selon le cours, quelles sont les quatre décisions possibles devant un courriel ?",
+        "options": [
+            {
+                "text": "Lire, relire, transférer, oublier",
+                "explain": "Faux. Ce ne sont pas les quatre décisions proposées."
+            },
+            {
+                "text": "Répondre, planifier, archiver, supprimer",
+                "explain": "Correct. Une décision par courriel, en une seule lecture."
+            },
+            {
+                "text": "Urgent, important, délégué, éliminé",
+                "explain": "Faux. Ce sont plutôt des notions de la matrice d'Eisenhower."
+            },
+            {
+                "text": "Ouvrir, marquer non lu, signaler, imprimer",
+                "explain": "Faux. Marquer comme non lu repousse la décision au lieu de la prendre."
+            }
+        ],
+        "correct": 1,
+        "correctExplain": "Correct. Une décision par courriel, en une seule lecture."
+    },
+    {
+        "q": "Que signifient les lettres O, C, D, É pour rédiger un courriel efficace ?",
+        "options": [
+            {
+                "text": "Ouverture, corps, détails, émoji",
+                "explain": "Faux. Un courriel professionnel n'a pas besoin d'émoji, et ce n'est pas la structure du cours."
+            },
+            {
+                "text": "Objectif, contraintes, dépendances, échéancier",
+                "explain": "Faux. Ces mots viennent de la planification, pas de la rédaction d'un courriel."
+            },
+            {
+                "text": "Origine, copie, destinataire, envoi",
+                "explain": "Faux. Ce sont des champs techniques, pas une structure de rédaction."
+            },
+            {
+                "text": "Objet précis, contexte bref, demande claire, échéance",
+                "explain": "Correct. C'est la structure proposée pour un courriel efficace."
+            }
+        ],
+        "correct": 3,
+        "correctExplain": "Correct. C'est la structure proposée pour un courriel efficace."
+    },
+    {
+        "q": "Vous recevez la notification Jira « LS-171 est passée à l'état Résolu ». Que faites-vous ?",
+        "options": [
+            {
+                "text": "Je la supprime : c'est une notification automatique",
+                "explain": "Faux. Elle annonce une tâche pour vous."
+            },
+            {
+                "text": "Je l'archive : l'anomalie est réglée",
+                "explain": "Faux. Elle n'est réglée qu'une fois retestée par le QA."
+            },
+            {
+                "text": "Je planifie le retest de l'anomalie",
+                "explain": "Correct. Une anomalie résolue doit être retestée : c'est une tâche à placer dans votre agenda."
+            },
+            {
+                "text": "Je réponds à Karim pour le remercier",
+                "explain": "Faux. Ce n'est pas l'action qui compte ici : le retest l'est."
+            }
+        ],
+        "correct": 2,
+        "correctExplain": "Correct. Une anomalie résolue doit être retestée : c'est une tâche à placer dans votre agenda."
+    },
+    {
+        "q": "Lequel de ces gestes fait partie des bonnes pratiques du courriel présentées au cours ?",
+        "options": [
+            {
+                "text": "Garder la messagerie ouverte toute la journée pour répondre vite",
+                "explain": "Faux. Le cours recommande l'inverse : traiter les courriels à des moments fixes."
+            },
+            {
+                "text": "Activer toutes les notifications contextuelles",
+                "explain": "Faux. Elles interrompent le travail (loi de Carlson)."
+            },
+            {
+                "text": "Traiter ses courriels à des moments fixes et viser une boîte vide en fin de journée",
+                "explain": "Correct. On garde le contrôle du courriel au lieu de le subir."
+            },
+            {
+                "text": "Répondre à tous les courriels dans la minute",
+                "explain": "Faux. Les courriels qui demandent du temps doivent être planifiés."
+            }
+        ],
+        "correct": 2,
+        "correctExplain": "Correct. On garde le contrôle du courriel au lieu de le subir."
+    },
+    {
+        "q": "Vous êtes en désaccord tendu avec un développeur sur la gravité d'une anomalie. Quel canal choisir ?",
+        "options": [
+            {
+                "text": "Un long courriel avec toute l'équipe en copie",
+                "explain": "Faux. L'écrit envenime souvent un sujet sensible, et la copie à tous met de la pression."
+            },
+            {
+                "text": "Une conversation de vive voix, en personne ou en visio",
+                "explain": "Correct. Un sujet sensible se discute de vive voix ; on confirme ensuite la décision par écrit."
+            },
+            {
+                "text": "Un commentaire sec dans le ticket Jira",
+                "explain": "Faux. Jira sert à tracer, pas à régler un désaccord tendu."
+            },
+            {
+                "text": "Ne rien dire et baisser la gravité",
+                "explain": "Faux. Le QA doit défendre une évaluation factuelle de la gravité."
+            }
+        ],
+        "correct": 1,
+        "correctExplain": "Correct. Un sujet sensible se discute de vive voix ; on confirme ensuite la décision par écrit."
+    },
+    {
+        "q": "Lequel de ces éléments est une bonne pratique pour une réunion ?",
+        "options": [
+            {
+                "text": "Inviter le plus de monde possible, au cas où",
+                "explain": "Faux. Seules les bonnes personnes doivent être invitées."
+            },
+            {
+                "text": "Laisser la discussion durer tant qu'il y a des choses à dire",
+                "explain": "Faux. C'est la loi de Parkinson : la réunion remplira tout le temps disponible."
+            },
+            {
+                "text": "Ne pas prendre de notes pour aller plus vite",
+                "explain": "Faux. Sans compte rendu, les décisions s'oublient."
+            },
+            {
+                "text": "Envoyer le jour même un compte rendu court avec les décisions, les actions et les responsables",
+                "explain": "Correct. Le compte rendu transforme la réunion en engagements suivis."
+            }
+        ],
+        "correct": 3,
+        "correctExplain": "Correct. Le compte rendu transforme la réunion en engagements suivis."
+    },
+    {
+        "q": "Une IA vous propose un courriel qui contient : « Nous vous garantissons que tout sera corrigé d'ici demain matin. » Que faites-vous ?",
+        "options": [
+            {
+                "text": "Je supprime cette phrase : c'est une promesse que personne n'a confirmée",
+                "explain": "Correct. Vous signez le message : vous êtes responsable de chaque engagement qu'il contient."
+            },
+            {
+                "text": "Je la garde : elle rassure la cliente",
+                "explain": "Faux. Une promesse non tenue détruira la confiance de la cliente."
+            },
+            {
+                "text": "Je la garde, mais en ajoutant un émoji pour l'adoucir",
+                "explain": "Faux. Le problème est le contenu, pas le ton."
+            },
+            {
+                "text": "Je l'envoie et je préviens l'équipe ensuite",
+                "explain": "Faux. Vous engageriez l'équipe sans son accord."
+            }
+        ],
+        "correct": 0,
+        "correctExplain": "Correct. Vous signez le message : vous êtes responsable de chaque engagement qu'il contient."
+    },
+    {
+        "q": "Lundi à 16 h 55, vous découvrez que le paiement ne fonctionne plus en production. Julien est votre superviseur. Que faites-vous en premier ?",
+        "options": [
+            {
+                "text": "Je lui envoie un courriel et je pars : il le lira demain matin",
+                "explain": "Faux. Une urgence ne doit pas dépendre du moment où quelqu'un lira ses courriels."
+            },
+            {
+                "text": "J'écris un message dans le canal général de l'entreprise",
+                "explain": "Faux. Vous alerteriez tout le monde sans vous assurer que la bonne personne a reçu l'information."
+            },
+            {
+                "text": "Je l'appelle pour m'assurer qu'il reçoit l'information tout de suite, puis je consigne l'incident dans Jira",
+                "explain": "Correct. L'urgence passe par un appel ; la trace et le suivi passent par l'outil."
+            },
+            {
+                "text": "J'attends la mêlée de demain pour en parler",
+                "explain": "Faux. Une panne de paiement en production ne peut pas attendre."
+            }
+        ],
+        "correct": 2,
+        "correctExplain": "Correct. L'urgence passe par un appel ; la trace et le suivi passent par l'outil."
+    }
+];
+        let currentQuestion = 0;
+        let answers = new Array(questions.length).fill(null);
+        let answered = new Array(questions.length).fill(false);
+
+        function displayQuestion() {
+            const container = document.getElementById('quiz-container');
+            const item = questions[currentQuestion];
+
+            let html = `<div class="question">${currentQuestion + 1}. ${item.q}</div>`;
+            const letters = ['A', 'B', 'C', 'D'];
+            item.options.forEach((opt, i) => {
+                let classes = '';
+                if (answers[currentQuestion] === i) {
+                    classes = 'selected ';
+                    if (i === item.correct) {
+                        classes += 'correct';
+                    } else {
+                        classes += 'incorrect';
+                    }
+                }
+                const disabledClass = answered[currentQuestion] ? 'disabled' : '';
+                html += `<div class="option ${classes} ${disabledClass}" onclick="${answered[currentQuestion] ? '' : `handleAnswerClick(${i})`}" style="${answered[currentQuestion] ? 'cursor: not-allowed;' : ''}"><span class="option-letter">${letters[i]}</span> ${opt.text}</div>`;
+            });
+
+            container.innerHTML = html;
+
+            if (answered[currentQuestion]) {
+                showFeedback();
+            } else {
+                document.getElementById('feedback').innerHTML = '';
+                document.getElementById('feedback').classList.remove('show');
+            }
+
+            updateProgressBar();
+            updateNavigationButtons();
+            updateProgressInfo();
+        }
+
+        function handleAnswerClick(index) {
+            if (answered[currentQuestion]) return;
+
+            answers[currentQuestion] = index;
+            answered[currentQuestion] = true;
+
+            showFeedback();
+            updateProgressBar();
+            updateProgressInfo();
+            updateNavigationButtons();
+            displayQuestion();
+        }
+
+        function showFeedback() {
+            const feedbackDiv = document.getElementById('feedback');
+            const item = questions[currentQuestion];
+            const isCorrect = answers[currentQuestion] === item.correct;
+            const selectedOption = item.options[answers[currentQuestion]];
+
+            feedbackDiv.className = 'feedback-container show ' + (isCorrect ? 'feedback-correct' : 'feedback-incorrect');
+
+            let html = '';
+
+            if (isCorrect) {
+                html += `
+                    <div class="feedback-header">Bonne réponse!</div>
+                    <div class="feedback-explanation">${item.correctExplain}</div>
+                `;
+            } else {
+                html += `
+                    <div class="feedback-header">Pas tout à fait</div>
+                    <div class="feedback-explanation">${selectedOption.explain}</div>
+                    <div class="correct-answer-box">
+                        <div class="correct-answer-label">✓ Bonne réponse:</div>
+                        <div>${item.options[item.correct].text}</div>
+                        <div style="margin-top: 8px; font-size: 0.9em;">${item.correctExplain}</div>
+                    </div>
+                `;
+            }
+
+            feedbackDiv.innerHTML = html;
+        }
+
+        function updateProgressBar() {
+            const progressBar = document.getElementById('progressBar');
+            progressBar.innerHTML = '';
+
+            for (let i = 0; i < questions.length; i++) {
+                const segment = document.createElement('div');
+                segment.className = 'progress-segment';
+
+                if (!answered[i]) {
+                    segment.classList.add('unanswered');
+                } else if (answers[i] === questions[i].correct) {
+                    segment.classList.add('correct');
+                } else {
+                    segment.classList.add('incorrect');
+                }
+
+                progressBar.appendChild(segment);
+            }
+        }
+
+        function updateNavigationButtons() {
+            const isAnswered = answered[currentQuestion];
+            document.getElementById('prevBtn').disabled = currentQuestion === 0 || !isAnswered;
+            document.getElementById('nextBtn').disabled = !isAnswered;
+
+            if (currentQuestion === questions.length - 1) {
+                document.getElementById('nextBtn').textContent = 'Voir Résultat';
+            } else {
+                document.getElementById('nextBtn').textContent = 'Suivant →';
+            }
+        }
+
+        function updateProgressInfo() {
+            document.getElementById('question-counter').textContent = `Question ${currentQuestion + 1} / ${questions.length}`;
+
+            let correctCount = 0;
+            let incorrectCount = 0;
+
+            for (let i = 0; i < answers.length; i++) {
+                if (answered[i]) {
+                    if (answers[i] === questions[i].correct) {
+                        correctCount++;
+                    } else {
+                        incorrectCount++;
+                    }
+                }
+            }
+
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('incorrect-count').textContent = incorrectCount;
+        }
+
+        function nextQuestion() {
+            if (currentQuestion === questions.length - 1) {
+                showFinalResults();
+                return;
+            }
+
+            currentQuestion++;
+            displayQuestion();
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        function showFinalResults() {
+            let score = 0;
+            answers.forEach((answer, index) => {
+                if (answer === questions[index].correct) score++;
+            });
+
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '<div class="question">Quiz terminé!</div>';
+
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.className = 'feedback-container';
+            feedbackDiv.innerHTML = '';
+
+            let recapHtml = '<div class="recap-title">Résumé de vos réponses</div>';
+
+            questions.forEach((question, index) => {
+                const userAnswer = question.options[answers[index]];
+                const correctAnswer = question.options[question.correct];
+                const isCorrect = answers[index] === question.correct;
+
+                recapHtml += `
+                    <div class="recap-card ${isCorrect ? 'correct' : 'incorrect'}">
+                        <div class="recap-number">Question ${index + 1} / ${questions.length}</div>
+                        <div class="recap-question">${question.q}</div>
+                        <div class="recap-answer-item user">
+                            <span class="recap-label">Votre réponse:</span>
+                            ${userAnswer.text}
+                            <span class="recap-result ${isCorrect ? 'correct' : 'incorrect'}">
+                                ${isCorrect ? '✓ Correct' : '✗ Incorrect'}
+                            </span>
+                        </div>
+                        ${!isCorrect ? `
+                            <div class="recap-answer-item correct-answer">
+                                <span class="recap-label">Bonne réponse:</span>
+                                ${correctAnswer.text}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+
+            document.getElementById('result').innerHTML = `
+                <div style="font-size: 2em; margin: 30px 0 20px;">Votre score : ${score} / ${questions.length}</div>
+                <div style="font-size: 1.1em; color: #555; margin-bottom: 30px;">Réussite : ${Math.round(score / questions.length * 100)}%</div>
+                <div class="recap-container">${recapHtml}</div>
+            `;
+
+            document.getElementById('prevBtn').disabled = false;
+            document.getElementById('nextBtn').textContent = 'Recommencer';
+            document.getElementById('nextBtn').disabled = false;
+            document.getElementById('nextBtn').onclick = function() { location.reload(); };
+            document.getElementById('prevBtn').onclick = function() {
+                currentQuestion = questions.length - 1;
+                displayQuestion();
+            };
+        }
+
+        displayQuestion();
+    </script>
+</body>
+</html>
