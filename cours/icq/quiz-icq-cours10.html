@@ -2,17 +2,477 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
-    <title>Quiz ICQ - Cours 10</title>
+    <title>Quiz - La veille technologique</title>
     <link rel="stylesheet" href="../../css/style.css">
 </head>
 <body>
     <div class="global-course-title">Initiation aux concepts qualité</div>
-    <h1>Quiz : Cours 10</h1>
-    <div class="card">
-        <div class="question">Ce quiz est en préparation.</div>
-        <p>Le contenu sera ajouté prochainement.</p>
+    <h1>Quiz : La veille technologique (Cours 10)</h1>
+
+    <div class="progress-container">
+        <div class="progress-info">
+            <span id="question-counter">Question 1 / 10</span>
+            <div class="progress-stats">
+                <span class="stat-badge incorrect"><span class="stat-icon">✕</span><span id="incorrect-count">0</span></span>
+                <span class="stat-badge correct"><span class="stat-icon">✓</span><span id="correct-count">0</span></span>
+            </div>
+        </div>
+        <div class="progress-bar-wrapper" id="progressBar"></div>
     </div>
+
+    <div id="quiz-container" class="card"></div>
+
+    <div id="feedback" class="feedback-container"></div>
+
+    <div class="quiz-navigation">
+        <button id="prevBtn" onclick="previousQuestion()">← Précédent</button>
+        <button id="nextBtn" onclick="nextQuestion()">Suivant →</button>
+    </div>
+
+    <div id="result"></div>
+
+    <script>
+        const questions = [
+    {
+        "q": "Qu'est-ce qui distingue la veille active de la veille passive ?",
+        "options": [
+            {
+                "text": "La veille active se fait tous les jours, la passive une fois par mois",
+                "explain": ""
+            },
+            {
+                "text": "La veille active part de besoins définis et va chercher l'information dans des sources choisies ; la passive lit ce qui arrive au hasard",
+                "explain": ""
+            },
+            {
+                "text": "La veille active utilise des outils payants",
+                "explain": ""
+            },
+            {
+                "text": "La veille active est réservée aux responsables qualité",
+                "explain": ""
+            }
+        ],
+        "correct": 1,
+        "correctExplain": "La veille active sait quoi chercher et pourquoi : axes, mots-clés, sources sélectionnées, alertes ciblées. La veille passive se contente du fil d'actualité, au gré des algorithmes : beaucoup de bruit, peu d'actions."
+    },
+    {
+        "q": "Dans quel ordre se déroulent les étapes du cycle de veille ?",
+        "options": [
+            {
+                "text": "Définir les besoins, collecter, traiter et analyser, diffuser et exploiter",
+                "explain": ""
+            },
+            {
+                "text": "Collecter, définir les besoins, diffuser, traiter",
+                "explain": ""
+            },
+            {
+                "text": "Traiter, collecter, diffuser, définir les besoins",
+                "explain": ""
+            },
+            {
+                "text": "Diffuser, collecter, traiter, définir les besoins",
+                "explain": ""
+            }
+        ],
+        "correct": 0,
+        "correctExplain": "Le cycle suit la logique PDCA : définir les besoins (Plan), collecter (Do), traiter et analyser (Check), diffuser et exploiter (Act). Le bilan relance ensuite le cycle avec des axes et des sources ajustés."
+    },
+    {
+        "q": "Laquelle de ces sources est une source primaire ?",
+        "options": [
+            {
+                "text": "Un billet de blogue qui commente le nouveau syllabus ISTQB",
+                "explain": ""
+            },
+            {
+                "text": "Une publication LinkedIn qui résume une conférence",
+                "explain": ""
+            },
+            {
+                "text": "Les notes de version publiées par l'éditeur de l'outil sur GitHub",
+                "explain": ""
+            },
+            {
+                "text": "Un article de magazine qui compare trois outils de test",
+                "explain": ""
+            }
+        ],
+        "correct": 2,
+        "correctExplain": "Une source primaire est celle qui crée l'information ou la décide : l'éditeur de l'outil pour ses notes de version, l'ISO pour ses normes, le Centre canadien pour la cybersécurité pour ses alertes. Les autres choix rapportent ou commentent : ce sont des sources secondaires ou communautaires."
+    },
+    {
+        "q": "Lors de la faille Log4Shell (décembre 2021), le gouvernement du Québec a fermé près de 4 000 sites par précaution. Quelle leçon en tire-t-on pour la veille ?",
+        "options": [
+            {
+                "text": "La veille est inutile, car les failles arrivent sans prévenir",
+                "explain": ""
+            },
+            {
+                "text": "Il faut éviter toutes les bibliothèques libres",
+                "explain": ""
+            },
+            {
+                "text": "Seuls les gouvernements doivent faire de la veille sécurité",
+                "explain": ""
+            },
+            {
+                "text": "Recevoir l'alerte tôt ne suffit pas : il faut aussi savoir quelles applications contiennent le composant touché pour réagir vite",
+                "explain": ""
+            }
+        ],
+        "correct": 3,
+        "correctExplain": "L'alerte du Centre gouvernemental de cyberdéfense est arrivée le jour même. Mais sans inventaire des composants, il fallait tout vérifier, d'où la fermeture massive. Veille sécurité et inventaire des composants vont de pair."
+    },
+    {
+        "q": "Un éditeur affirme sur LinkedIn que son outil « élimine 100 % des tests manuels ». Que faites-vous de cette information ?",
+        "options": [
+            {
+                "text": "Je la diffuse tout de suite à l'équipe : l'éditeur connaît son outil",
+                "explain": ""
+            },
+            {
+                "text": "Je la classe « à vérifier » : intérêt commercial et affirmation absolue ; je cherche un essai indépendant avant toute recommandation",
+                "explain": ""
+            },
+            {
+                "text": "Je l'ignore : LinkedIn n'est jamais une source valable",
+                "explain": ""
+            },
+            {
+                "text": "J'achète l'outil pour le tester",
+                "explain": ""
+            }
+        ],
+        "correct": 1,
+        "correctExplain": "Deux signaux d'alarme de la grille : l'auteur a intérêt à le dire, et l'affirmation est absolue. Le réseau sert à repérer des tendances, mais la décision se prend sur une information recoupée ou une preuve de concept."
+    },
+    {
+        "q": "Un collègue vous montre un résumé produit par un assistant d'IA sur la nouvelle édition d'une norme, sans aucune source citée. Que devez-vous faire avant d'en tirer une fiche de veille ?",
+        "options": [
+            {
+                "text": "Rien : les assistants d'IA sont à jour",
+                "explain": ""
+            },
+            {
+                "text": "Demander à l'assistant de reformuler le résumé",
+                "explain": ""
+            },
+            {
+                "text": "Remonter à la source primaire (l'organisme de normalisation) pour vérifier les faits et la date",
+                "explain": ""
+            },
+            {
+                "text": "Ajouter une mention « généré par IA » et le diffuser tel quel",
+                "explain": ""
+            }
+        ],
+        "correct": 2,
+        "correctExplain": "Une IA est un assistant, pas une source : elle peut inventer des faits, citer des références qui n'existent pas ou présenter une information dépassée. Toute information venue d'une IA remonte à sa source primaire avant d'entrer dans une fiche."
+    },
+    {
+        "q": "Vous voulez une alerte Google sur les comparatifs de k6 et de JMeter, sans les tutoriels. Quelle requête est correcte ?",
+        "options": [
+            {
+                "text": "\"JMeter vs k6\" AND comparison NOT tutorial",
+                "explain": ""
+            },
+            {
+                "text": "k6 or JMeter comparison NOT tutorial",
+                "explain": ""
+            },
+            {
+                "text": "\"k6 OR JMeter comparison -tutorial",
+                "explain": ""
+            },
+            {
+                "text": "(k6 OR JMeter) comparison -tutorial",
+                "explain": ""
+            }
+        ],
+        "correct": 3,
+        "correctExplain": "AND et NOT ne sont pas des opérateurs de Google : les mots se cumulent d'eux-mêmes et l'exclusion se fait avec le signe moins collé au mot. OR s'écrit en majuscules. Le troisième choix contient en plus un guillemet non fermé."
+    },
+    {
+        "q": "Votre agrégateur gratuit permet 3 dossiers. Vos axes prioritaires sont les normes, la sécurité et l'automatisation. Quelle organisation respecte les règles vues en classe ?",
+        "options": [
+            {
+                "text": "Un dossier par axe, chacun avec au moins une source primaire, et les flux RSS des alertes Google rangés dans le bon dossier",
+                "explain": ""
+            },
+            {
+                "text": "Un dossier « Tout » avec toutes les sources, et deux dossiers vides pour plus tard",
+                "explain": ""
+            },
+            {
+                "text": "Un dossier par type de site : blogues, magazines, réseaux sociaux",
+                "explain": ""
+            },
+            {
+                "text": "Un dossier par jour de la semaine",
+                "explain": ""
+            }
+        ],
+        "correct": 0,
+        "correctExplain": "Un dossier par axe permet de lire chaque axe à son rythme (la sécurité chaque jour, le reste chaque semaine). Chaque dossier compte au moins une source primaire, et les alertes livrées en RSS rejoignent leur axe : tout arrive au même endroit."
+    },
+    {
+        "q": "Vous apprenez qu'une nouvelle édition d'ISO 9001 a été publiée. Le manuel qualité de StationPlus cite encore l'ancienne. Quelle fiche de veille est la plus utile ?",
+        "options": [
+            {
+                "text": "« ISO 9001 a changé. Article intéressant à lire. »",
+                "explain": ""
+            },
+            {
+                "text": "Un copier-coller de l'article complet, envoyé à toute l'entreprise",
+                "explain": ""
+            },
+            {
+                "text": "Source ISO (primaire) et date ; résumé en trois lignes ; impact : notre manuel cite l'ancienne édition ; action : mettre à jour les références et vérifier l'échéancier de transition avec l'auditeur ; pour : responsable qualité et direction",
+                "explain": ""
+            },
+            {
+                "text": "Une alerte Google sur « ISO 9001 » envoyée aux développeurs",
+                "explain": ""
+            }
+        ],
+        "correct": 2,
+        "correctExplain": "Une fiche utile tient sur une page et contient les 8 rubriques : source et date, axe, résumé, fiabilité, impact pour l'équipe, action proposée et destinataires. Sans action ni destinataire, ce n'est qu'un résumé de lecture."
+    },
+    {
+        "q": "La direction de StationPlus veut évaluer la veille de l'équipe et propose de compter le nombre d'articles partagés par chaque testeur. Que lui recommandez-vous ?",
+        "options": [
+            {
+                "text": "D'accepter : plus d'articles partagés, c'est une meilleure veille",
+                "explain": ""
+            },
+            {
+                "text": "De compter plutôt le nombre de sources suivies par personne",
+                "explain": ""
+            },
+            {
+                "text": "D'arrêter de mesurer la veille",
+                "explain": ""
+            },
+            {
+                "text": "De refuser cette mesure, qui pousserait à partager n'importe quoi ; suivre plutôt, pour l'équipe, les actions lancées grâce à la veille et le délai de réaction aux alertes critiques",
+                "explain": ""
+            }
+        ],
+        "correct": 3,
+        "correctExplain": "Le but de la veille est l'action (démarche GQM, cours 9). Compter les articles récompense le volume et provoque l'effet décrit par la loi de Goodhart. On mesure les actions déclenchées, la réactivité et la part de sources primaires, au niveau de l'équipe."
+    }
+];
+        let currentQuestion = 0;
+        let answers = new Array(questions.length).fill(null);
+        let answered = new Array(questions.length).fill(false);
+
+        function displayQuestion() {
+            const container = document.getElementById('quiz-container');
+            const item = questions[currentQuestion];
+
+            let html = `<div class="question">${currentQuestion + 1}. ${item.q}</div>`;
+            const letters = ['A', 'B', 'C', 'D'];
+            item.options.forEach((opt, i) => {
+                let classes = '';
+                if (answers[currentQuestion] === i) {
+                    classes = 'selected ';
+                    if (i === item.correct) {
+                        classes += 'correct';
+                    } else {
+                        classes += 'incorrect';
+                    }
+                }
+                const disabledClass = answered[currentQuestion] ? 'disabled' : '';
+                html += `<div class="option ${classes} ${disabledClass}" onclick="${answered[currentQuestion] ? '' : `handleAnswerClick(${i})`}" style="${answered[currentQuestion] ? 'cursor: not-allowed;' : ''}"><span class="option-letter">${letters[i]}</span> ${opt.text}</div>`;
+            });
+
+            container.innerHTML = html;
+
+            if (answered[currentQuestion]) {
+                showFeedback();
+            } else {
+                document.getElementById('feedback').innerHTML = '';
+                document.getElementById('feedback').classList.remove('show');
+            }
+
+            updateProgressBar();
+            updateNavigationButtons();
+            updateProgressInfo();
+        }
+
+        function handleAnswerClick(index) {
+            if (answered[currentQuestion]) return;
+
+            answers[currentQuestion] = index;
+            answered[currentQuestion] = true;
+
+            showFeedback();
+            updateProgressBar();
+            updateProgressInfo();
+            updateNavigationButtons();
+            displayQuestion();
+        }
+
+        function showFeedback() {
+            const feedbackDiv = document.getElementById('feedback');
+            const item = questions[currentQuestion];
+            const isCorrect = answers[currentQuestion] === item.correct;
+            const selectedOption = item.options[answers[currentQuestion]];
+
+            feedbackDiv.className = 'feedback-container show ' + (isCorrect ? 'feedback-correct' : 'feedback-incorrect');
+
+            let html = '';
+
+            if (isCorrect) {
+                html += `
+                    <div class="feedback-header">Bonne réponse!</div>
+                    <div class="feedback-explanation">${item.correctExplain}</div>
+                `;
+            } else {
+                html += `
+                    <div class="feedback-header">Pas tout à fait</div>
+                    <div class="feedback-explanation">${selectedOption.explain}</div>
+                    <div class="correct-answer-box">
+                        <div class="correct-answer-label">✓ Bonne réponse:</div>
+                        <div>${item.options[item.correct].text}</div>
+                        <div style="margin-top: 8px; font-size: 0.9em;">${item.correctExplain}</div>
+                    </div>
+                `;
+            }
+
+            feedbackDiv.innerHTML = html;
+        }
+
+        function updateProgressBar() {
+            const progressBar = document.getElementById('progressBar');
+            progressBar.innerHTML = '';
+
+            for (let i = 0; i < questions.length; i++) {
+                const segment = document.createElement('div');
+                segment.className = 'progress-segment';
+
+                if (!answered[i]) {
+                    segment.classList.add('unanswered');
+                } else if (answers[i] === questions[i].correct) {
+                    segment.classList.add('correct');
+                } else {
+                    segment.classList.add('incorrect');
+                }
+
+                progressBar.appendChild(segment);
+            }
+        }
+
+        function updateNavigationButtons() {
+            const isAnswered = answered[currentQuestion];
+            document.getElementById('prevBtn').disabled = currentQuestion === 0 || !isAnswered;
+            document.getElementById('nextBtn').disabled = !isAnswered;
+
+            if (currentQuestion === questions.length - 1) {
+                document.getElementById('nextBtn').textContent = 'Voir Résultat';
+            } else {
+                document.getElementById('nextBtn').textContent = 'Suivant →';
+            }
+        }
+
+        function updateProgressInfo() {
+            document.getElementById('question-counter').textContent = `Question ${currentQuestion + 1} / ${questions.length}`;
+
+            let correctCount = 0;
+            let incorrectCount = 0;
+
+            for (let i = 0; i < answers.length; i++) {
+                if (answered[i]) {
+                    if (answers[i] === questions[i].correct) {
+                        correctCount++;
+                    } else {
+                        incorrectCount++;
+                    }
+                }
+            }
+
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('incorrect-count').textContent = incorrectCount;
+        }
+
+        function nextQuestion() {
+            if (currentQuestion === questions.length - 1) {
+                showFinalResults();
+                return;
+            }
+
+            currentQuestion++;
+            displayQuestion();
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        function showFinalResults() {
+            let score = 0;
+            answers.forEach((answer, index) => {
+                if (answer === questions[index].correct) score++;
+            });
+
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '<div class="question">Quiz terminé!</div>';
+
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.className = 'feedback-container';
+            feedbackDiv.innerHTML = '';
+
+            let recapHtml = '<div class="recap-title">Résumé de vos réponses</div>';
+
+            questions.forEach((question, index) => {
+                const userAnswer = question.options[answers[index]];
+                const correctAnswer = question.options[question.correct];
+                const isCorrect = answers[index] === question.correct;
+
+                recapHtml += `
+                    <div class="recap-card ${isCorrect ? 'correct' : 'incorrect'}">
+                        <div class="recap-number">Question ${index + 1} / ${questions.length}</div>
+                        <div class="recap-question">${question.q}</div>
+                        <div class="recap-answer-item user">
+                            <span class="recap-label">Votre réponse:</span>
+                            ${userAnswer.text}
+                            <span class="recap-result ${isCorrect ? 'correct' : 'incorrect'}">
+                                ${isCorrect ? '✓ Correct' : '✗ Incorrect'}
+                            </span>
+                        </div>
+                        ${!isCorrect ? `
+                            <div class="recap-answer-item correct-answer">
+                                <span class="recap-label">Bonne réponse:</span>
+                                ${correctAnswer.text}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+
+            document.getElementById('result').innerHTML = `
+                <div style="font-size: 2em; margin: 30px 0 20px;">Votre score : ${score} / ${questions.length}</div>
+                <div style="font-size: 1.1em; color: #555; margin-bottom: 30px;">Réussite : ${Math.round(score / questions.length * 100)}%</div>
+                <div class="recap-container">${recapHtml}</div>
+            `;
+
+            document.getElementById('prevBtn').disabled = false;
+            document.getElementById('nextBtn').textContent = 'Recommencer';
+            document.getElementById('nextBtn').disabled = false;
+            document.getElementById('nextBtn').onclick = function() { location.reload(); };
+            document.getElementById('prevBtn').onclick = function() {
+                currentQuestion = questions.length - 1;
+                displayQuestion();
+            };
+        }
+
+        displayQuestion();
+    </script>
 </body>
 </html>

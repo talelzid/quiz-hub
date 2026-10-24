@@ -2,17 +2,477 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
-    <title>Quiz ICQ - Cours 9</title>
+    <title>Quiz - Mesure et métriques</title>
     <link rel="stylesheet" href="../../css/style.css">
 </head>
 <body>
     <div class="global-course-title">Initiation aux concepts qualité</div>
-    <h1>Quiz : Cours 9</h1>
-    <div class="card">
-        <div class="question">Ce quiz est en préparation.</div>
-        <p>Le contenu sera ajouté prochainement.</p>
+    <h1>Quiz : Mesure et métriques (Cours 9)</h1>
+
+    <div class="progress-container">
+        <div class="progress-info">
+            <span id="question-counter">Question 1 / 10</span>
+            <div class="progress-stats">
+                <span class="stat-badge incorrect"><span class="stat-icon">✕</span><span id="incorrect-count">0</span></span>
+                <span class="stat-badge correct"><span class="stat-icon">✓</span><span id="correct-count">0</span></span>
+            </div>
+        </div>
+        <div class="progress-bar-wrapper" id="progressBar"></div>
     </div>
+
+    <div id="quiz-container" class="card"></div>
+
+    <div id="feedback" class="feedback-container"></div>
+
+    <div class="quiz-navigation">
+        <button id="prevBtn" onclick="previousQuestion()">← Précédent</button>
+        <button id="nextBtn" onclick="nextQuestion()">Suivant →</button>
+    </div>
+
+    <div id="result"></div>
+
+    <script>
+        const questions = [
+    {
+        "q": "Une équipe compte 40 défauts dans un module de 25 000 lignes, calcule 1,6 défaut par KLOC et déclenche une alerte parce que le seuil est de 1,0. Qu'est-ce qui constitue l'indicateur ?",
+        "options": [
+            {
+                "text": "Le nombre de 40 défauts",
+                "explain": ""
+            },
+            {
+                "text": "Les 25 000 lignes de code",
+                "explain": ""
+            },
+            {
+                "text": "La densité de 1,6 défaut par KLOC, comparée au seuil de 1,0 pour décider",
+                "explain": ""
+            },
+            {
+                "text": "La formule défauts / KLOC",
+                "explain": ""
+            }
+        ],
+        "correct": 2,
+        "correctExplain": "40 défauts et 25 000 lignes sont des mesures (valeurs brutes). La densité de défauts, obtenue par une formule, est une métrique. Elle devient un indicateur quand on la compare à un seuil pour guider une décision (ISO/IEC/IEEE 15939)."
+    },
+    {
+        "q": "Dans la démarche GQM, par quoi commence-t-on ?",
+        "options": [
+            {
+                "text": "Par les métriques que l'outil d'analyse fournit déjà",
+                "explain": ""
+            },
+            {
+                "text": "Par le but que l'on veut atteindre",
+                "explain": ""
+            },
+            {
+                "text": "Par les questions posées par la direction",
+                "explain": ""
+            },
+            {
+                "text": "Par les seuils des indicateurs",
+                "explain": ""
+            }
+        ],
+        "correct": 1,
+        "correctExplain": "GQM part du but (Goal), en déduit les questions à se poser (Question), puis choisit les métriques qui y répondent (Metric). On évite ainsi de mesurer ce qui est facile au lieu de ce qui est utile."
+    },
+    {
+        "q": "Le délai moyen de correction des anomalies appartient à quelle famille de métriques ?",
+        "options": [
+            {
+                "text": "Les métriques du produit",
+                "explain": ""
+            },
+            {
+                "text": "Les métriques du processus",
+                "explain": ""
+            },
+            {
+                "text": "Les métriques du projet",
+                "explain": ""
+            },
+            {
+                "text": "Les métriques de Halstead",
+                "explain": ""
+            }
+        ],
+        "correct": 1,
+        "correctExplain": "Le délai de correction mesure l'efficacité de la façon de produire : c'est une métrique de processus. La taille ou la complexité caractérisent le produit ; l'effort, l'avancement et le budget relèvent du projet."
+    },
+    {
+        "q": "Pourquoi ne faut-il pas comparer le nombre de lignes de code (LOC) de deux équipes qui utilisent des langages et des outils de comptage différents ?",
+        "options": [
+            {
+                "text": "Parce que les LOC ne se calculent que sur du code Java",
+                "explain": ""
+            },
+            {
+                "text": "Parce qu'une même ligne peut être comptée de plusieurs façons, et qu'un même traitement demande plus ou moins de lignes selon le langage",
+                "explain": ""
+            },
+            {
+                "text": "Parce que les LOC comptent les lignes vides",
+                "explain": ""
+            },
+            {
+                "text": "Parce que les LOC mesurent la qualité du code, pas sa taille",
+                "explain": ""
+            }
+        ],
+        "correct": 1,
+        "correctExplain": "Le comptage dépend de la convention (commentaires, accolades, instructions sur plusieurs lignes) et du langage. Sans convention commune, les chiffres ne sont pas comparables. Et les LOC ne mesurent ni la qualité ni la productivité."
+    },
+    {
+        "q": "Que nous apprend le nombre cyclomatique V(G) d'une fonction ?",
+        "options": [
+            {
+                "text": "Le nombre de lignes de la fonction",
+                "explain": ""
+            },
+            {
+                "text": "Le nombre de défauts qu'elle contient",
+                "explain": ""
+            },
+            {
+                "text": "Le nombre de chemins indépendants, donc le nombre minimal de cas de test pour les parcourir tous",
+                "explain": ""
+            },
+            {
+                "text": "Le temps nécessaire pour l'écrire",
+                "explain": ""
+            }
+        ],
+        "correct": 2,
+        "correctExplain": "V(G) = e − n + 2 = nombre de décisions + 1. Il compte les chemins indépendants du graphe de flot de contrôle : c'est le nombre minimal de cas de test pour les couvrir, et un signal de risque au-delà de 10."
+    },
+    {
+        "q": "Une direction exige 100 % de couverture du code. Quelques semaines plus tard, la couverture est parfaite, mais les défauts en production n'ont pas diminué. Quel phénomène reconnaît-on ?",
+        "options": [
+            {
+                "text": "La loi de Goodhart : la mesure, devenue un objectif, a été manipulée (tests sans vérification qui passent toujours)",
+                "explain": ""
+            },
+            {
+                "text": "Le paradoxe du pesticide : les tests ne trouvent plus rien",
+                "explain": ""
+            },
+            {
+                "text": "Une erreur de calcul du nombre cyclomatique",
+                "explain": ""
+            },
+            {
+                "text": "Le principe selon lequel les tests exhaustifs sont possibles",
+                "explain": ""
+            }
+        ],
+        "correct": 0,
+        "correctExplain": "Quand une mesure devient un objectif, elle cesse d'être une bonne mesure. On peut exécuter tout le code sans rien vérifier. Il fallait croiser avec la couverture des exigences et le taux de défauts trouvés (DRE)."
+    },
+    {
+        "q": "Un fichier contient 200 lignes (LOC, sans les lignes vides), dont 30 lignes de commentaires. Quelle est sa densité de commentaires ?",
+        "options": [
+            {
+                "text": "13 %",
+                "explain": ""
+            },
+            {
+                "text": "15 %",
+                "explain": ""
+            },
+            {
+                "text": "17,6 %",
+                "explain": ""
+            },
+            {
+                "text": "85 %",
+                "explain": ""
+            }
+        ],
+        "correct": 1,
+        "correctExplain": "Densité de commentaires = CLOC / LOC = 30 / 200 = 15 %. Le piège : diviser par NCLOC (30 / 170 ≈ 17,6 %). 85 % correspond à la part des lignes de code (NCLOC / LOC = 170 / 200)."
+    },
+    {
+        "q": "Une fonction contient une boucle « tant que », un « si » dans cette boucle, et un « si / sinon si » (deux conditions) après la boucle. Quel est son nombre cyclomatique V(G) ?",
+        "options": [
+            {
+                "text": "3",
+                "explain": ""
+            },
+            {
+                "text": "4",
+                "explain": ""
+            },
+            {
+                "text": "5",
+                "explain": ""
+            },
+            {
+                "text": "6",
+                "explain": ""
+            }
+        ],
+        "correct": 2,
+        "correctExplain": "On compte les décisions : la boucle (1), le « si » de la boucle (1), le « si » et le « sinon si » (2), soit 4 décisions. V(G) = 4 + 1 = 5 : il faut au moins 5 cas de test pour parcourir les chemins indépendants."
+    },
+    {
+        "q": "Pour la version 1.2 de StationPlus, l'équipe a trouvé 45 défauts pendant les tests ; les usagers en ont signalé 5 en production. Le seuil de la DRE est de 90 %. Quelle conclusion est juste ?",
+        "options": [
+            {
+                "text": "DRE = 5 / 45 ≈ 11 % : alerte rouge",
+                "explain": ""
+            },
+            {
+                "text": "DRE = 45 / 50 = 90 % : l'indicateur est dans la cible, de justesse",
+                "explain": ""
+            },
+            {
+                "text": "DRE = 45 / 45 = 100 % : les tests sont parfaits",
+                "explain": ""
+            },
+            {
+                "text": "DRE = 5 / 50 = 10 % : il faut doubler l'effort de test",
+                "explain": ""
+            }
+        ],
+        "correct": 1,
+        "correctExplain": "DRE = défauts trouvés avant livraison / total des défauts = 45 / (45 + 5) = 90 %. Le seuil (≥ 90 %) est atteint de justesse : on surveillera la tendance à la version suivante plutôt que de se fier à la seule valeur du jour."
+    },
+    {
+        "q": "Le directeur de StationPlus propose d'afficher chaque semaine le nombre de défauts trouvés par chaque testeur et d'accorder une prime au premier du classement. Que lui recommandez-vous ?",
+        "options": [
+            {
+                "text": "D'accepter : plus de défauts trouvés signifie toujours une meilleure qualité",
+                "explain": ""
+            },
+            {
+                "text": "D'accepter, mais en affichant aussi le nombre de lignes de code par développeur",
+                "explain": ""
+            },
+            {
+                "text": "De refuser : une métrique qui juge les personnes sera manipulée (doublons, défauts découpés) ; suivre plutôt la DRE et la gravité des défauts, pour l'équipe",
+                "explain": ""
+            },
+            {
+                "text": "De refuser, et d'arrêter de mesurer le processus de test",
+                "explain": ""
+            }
+        ],
+        "correct": 2,
+        "correctExplain": "Règle 5 : mesurer le travail, pas les personnes. Une prime au nombre de défauts pousse aux doublons et au découpage des défauts (loi de Goodhart). Il faut plutôt croiser la DRE et la gravité, au niveau de l'équipe, et suivre leur tendance."
+    }
+];
+        let currentQuestion = 0;
+        let answers = new Array(questions.length).fill(null);
+        let answered = new Array(questions.length).fill(false);
+
+        function displayQuestion() {
+            const container = document.getElementById('quiz-container');
+            const item = questions[currentQuestion];
+
+            let html = `<div class="question">${currentQuestion + 1}. ${item.q}</div>`;
+            const letters = ['A', 'B', 'C', 'D'];
+            item.options.forEach((opt, i) => {
+                let classes = '';
+                if (answers[currentQuestion] === i) {
+                    classes = 'selected ';
+                    if (i === item.correct) {
+                        classes += 'correct';
+                    } else {
+                        classes += 'incorrect';
+                    }
+                }
+                const disabledClass = answered[currentQuestion] ? 'disabled' : '';
+                html += `<div class="option ${classes} ${disabledClass}" onclick="${answered[currentQuestion] ? '' : `handleAnswerClick(${i})`}" style="${answered[currentQuestion] ? 'cursor: not-allowed;' : ''}"><span class="option-letter">${letters[i]}</span> ${opt.text}</div>`;
+            });
+
+            container.innerHTML = html;
+
+            if (answered[currentQuestion]) {
+                showFeedback();
+            } else {
+                document.getElementById('feedback').innerHTML = '';
+                document.getElementById('feedback').classList.remove('show');
+            }
+
+            updateProgressBar();
+            updateNavigationButtons();
+            updateProgressInfo();
+        }
+
+        function handleAnswerClick(index) {
+            if (answered[currentQuestion]) return;
+
+            answers[currentQuestion] = index;
+            answered[currentQuestion] = true;
+
+            showFeedback();
+            updateProgressBar();
+            updateProgressInfo();
+            updateNavigationButtons();
+            displayQuestion();
+        }
+
+        function showFeedback() {
+            const feedbackDiv = document.getElementById('feedback');
+            const item = questions[currentQuestion];
+            const isCorrect = answers[currentQuestion] === item.correct;
+            const selectedOption = item.options[answers[currentQuestion]];
+
+            feedbackDiv.className = 'feedback-container show ' + (isCorrect ? 'feedback-correct' : 'feedback-incorrect');
+
+            let html = '';
+
+            if (isCorrect) {
+                html += `
+                    <div class="feedback-header">Bonne réponse!</div>
+                    <div class="feedback-explanation">${item.correctExplain}</div>
+                `;
+            } else {
+                html += `
+                    <div class="feedback-header">Pas tout à fait</div>
+                    <div class="feedback-explanation">${selectedOption.explain}</div>
+                    <div class="correct-answer-box">
+                        <div class="correct-answer-label">✓ Bonne réponse:</div>
+                        <div>${item.options[item.correct].text}</div>
+                        <div style="margin-top: 8px; font-size: 0.9em;">${item.correctExplain}</div>
+                    </div>
+                `;
+            }
+
+            feedbackDiv.innerHTML = html;
+        }
+
+        function updateProgressBar() {
+            const progressBar = document.getElementById('progressBar');
+            progressBar.innerHTML = '';
+
+            for (let i = 0; i < questions.length; i++) {
+                const segment = document.createElement('div');
+                segment.className = 'progress-segment';
+
+                if (!answered[i]) {
+                    segment.classList.add('unanswered');
+                } else if (answers[i] === questions[i].correct) {
+                    segment.classList.add('correct');
+                } else {
+                    segment.classList.add('incorrect');
+                }
+
+                progressBar.appendChild(segment);
+            }
+        }
+
+        function updateNavigationButtons() {
+            const isAnswered = answered[currentQuestion];
+            document.getElementById('prevBtn').disabled = currentQuestion === 0 || !isAnswered;
+            document.getElementById('nextBtn').disabled = !isAnswered;
+
+            if (currentQuestion === questions.length - 1) {
+                document.getElementById('nextBtn').textContent = 'Voir Résultat';
+            } else {
+                document.getElementById('nextBtn').textContent = 'Suivant →';
+            }
+        }
+
+        function updateProgressInfo() {
+            document.getElementById('question-counter').textContent = `Question ${currentQuestion + 1} / ${questions.length}`;
+
+            let correctCount = 0;
+            let incorrectCount = 0;
+
+            for (let i = 0; i < answers.length; i++) {
+                if (answered[i]) {
+                    if (answers[i] === questions[i].correct) {
+                        correctCount++;
+                    } else {
+                        incorrectCount++;
+                    }
+                }
+            }
+
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('incorrect-count').textContent = incorrectCount;
+        }
+
+        function nextQuestion() {
+            if (currentQuestion === questions.length - 1) {
+                showFinalResults();
+                return;
+            }
+
+            currentQuestion++;
+            displayQuestion();
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        function showFinalResults() {
+            let score = 0;
+            answers.forEach((answer, index) => {
+                if (answer === questions[index].correct) score++;
+            });
+
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '<div class="question">Quiz terminé!</div>';
+
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.className = 'feedback-container';
+            feedbackDiv.innerHTML = '';
+
+            let recapHtml = '<div class="recap-title">Résumé de vos réponses</div>';
+
+            questions.forEach((question, index) => {
+                const userAnswer = question.options[answers[index]];
+                const correctAnswer = question.options[question.correct];
+                const isCorrect = answers[index] === question.correct;
+
+                recapHtml += `
+                    <div class="recap-card ${isCorrect ? 'correct' : 'incorrect'}">
+                        <div class="recap-number">Question ${index + 1} / ${questions.length}</div>
+                        <div class="recap-question">${question.q}</div>
+                        <div class="recap-answer-item user">
+                            <span class="recap-label">Votre réponse:</span>
+                            ${userAnswer.text}
+                            <span class="recap-result ${isCorrect ? 'correct' : 'incorrect'}">
+                                ${isCorrect ? '✓ Correct' : '✗ Incorrect'}
+                            </span>
+                        </div>
+                        ${!isCorrect ? `
+                            <div class="recap-answer-item correct-answer">
+                                <span class="recap-label">Bonne réponse:</span>
+                                ${correctAnswer.text}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+
+            document.getElementById('result').innerHTML = `
+                <div style="font-size: 2em; margin: 30px 0 20px;">Votre score : ${score} / ${questions.length}</div>
+                <div style="font-size: 1.1em; color: #555; margin-bottom: 30px;">Réussite : ${Math.round(score / questions.length * 100)}%</div>
+                <div class="recap-container">${recapHtml}</div>
+            `;
+
+            document.getElementById('prevBtn').disabled = false;
+            document.getElementById('nextBtn').textContent = 'Recommencer';
+            document.getElementById('nextBtn').disabled = false;
+            document.getElementById('nextBtn').onclick = function() { location.reload(); };
+            document.getElementById('prevBtn').onclick = function() {
+                currentQuestion = questions.length - 1;
+                displayQuestion();
+            };
+        }
+
+        displayQuestion();
+    </script>
 </body>
 </html>

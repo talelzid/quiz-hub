@@ -318,26 +318,23 @@
   "i8q6e2s4": {
     "course": "ICQ",
     "lesson": 8,
-    "title": "Cours 8 (contenu à venir)",
-    "path": "cours/icq/quiz-icq-cours8.html"
+    "title": "Les activités de contrôle qualité dans le cycle de vie",
+    "path": "cours/icq/quiz-icq-cours8.html",
+    "questionsCount": 10
   },
   "i9q7f3t5": {
     "course": "ICQ",
     "lesson": 9,
-    "title": "Cours 9 (contenu à venir)",
-    "path": "cours/icq/quiz-icq-cours9.html"
+    "title": "Mesure et métriques",
+    "path": "cours/icq/quiz-icq-cours9.html",
+    "questionsCount": 10
   },
   "i0q8g4u6": {
     "course": "ICQ",
     "lesson": 10,
-    "title": "Cours 10 (contenu à venir)",
-    "path": "cours/icq/quiz-icq-cours10.html"
-  },
-  "i1q9h5v7": {
-    "course": "ICQ",
-    "lesson": 11,
-    "title": "Cours 11 (contenu à venir)",
-    "path": "cours/icq/quiz-icq-cours11.html"
+    "title": "La veille technologique",
+    "path": "cours/icq/quiz-icq-cours10.html",
+    "questionsCount": 10
   },
   "k3w8t5n1": {
     "course": "IFT-SQL",

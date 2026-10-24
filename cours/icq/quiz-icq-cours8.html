@@ -2,17 +2,477 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
-    <title>Quiz ICQ - Cours 8</title>
+    <title>Quiz - Les activités de contrôle qualité dans le cycle de vie</title>
     <link rel="stylesheet" href="../../css/style.css">
 </head>
 <body>
     <div class="global-course-title">Initiation aux concepts qualité</div>
-    <h1>Quiz : Cours 8</h1>
-    <div class="card">
-        <div class="question">Ce quiz est en préparation.</div>
-        <p>Le contenu sera ajouté prochainement.</p>
+    <h1>Quiz : Les activités de contrôle qualité dans le cycle de vie (Cours 8)</h1>
+
+    <div class="progress-container">
+        <div class="progress-info">
+            <span id="question-counter">Question 1 / 10</span>
+            <div class="progress-stats">
+                <span class="stat-badge incorrect"><span class="stat-icon">✕</span><span id="incorrect-count">0</span></span>
+                <span class="stat-badge correct"><span class="stat-icon">✓</span><span id="correct-count">0</span></span>
+            </div>
+        </div>
+        <div class="progress-bar-wrapper" id="progressBar"></div>
     </div>
+
+    <div id="quiz-container" class="card"></div>
+
+    <div id="feedback" class="feedback-container"></div>
+
+    <div class="quiz-navigation">
+        <button id="prevBtn" onclick="previousQuestion()">← Précédent</button>
+        <button id="nextBtn" onclick="nextQuestion()">Suivant →</button>
+    </div>
+
+    <div id="result"></div>
+
+    <script>
+        const questions = [
+    {
+        "q": "Quelle question résume la validation ?",
+        "options": [
+            {
+                "text": "Construisons-nous le produit correctement ?",
+                "explain": ""
+            },
+            {
+                "text": "Construisons-nous le bon produit ?",
+                "explain": ""
+            },
+            {
+                "text": "Le code respecte-t-il les normes de codage ?",
+                "explain": ""
+            },
+            {
+                "text": "Les tests unitaires couvrent-ils toutes les branches ?",
+                "explain": ""
+            }
+        ],
+        "correct": 1,
+        "correctExplain": "La validation vérifie que le produit répond au besoin réel des utilisateurs (« le bon produit »). La vérification, elle, contrôle que chaque livrable est conforme à ce que l'étape précédente a spécifié (« le produit correctement »)."
+    },
+    {
+        "q": "Laquelle de ces activités est une technique de test statique ?",
+        "options": [
+            {
+                "text": "Exécuter les tests de régression automatisés",
+                "explain": ""
+            },
+            {
+                "text": "Simuler 500 usagers simultanés avec JMeter",
+                "explain": ""
+            },
+            {
+                "text": "Relire le code d'une méthode avec une liste de vérification",
+                "explain": ""
+            },
+            {
+                "text": "Dérouler un parcours d'achat complet dans l'application",
+                "explain": ""
+            }
+        ],
+        "correct": 2,
+        "correctExplain": "Le test statique examine un livrable sans l'exécuter : revues, inspections, analyse statique. Les trois autres choix exécutent le logiciel : ce sont des tests dynamiques."
+    },
+    {
+        "q": "Lequel de ces termes désigne un niveau de test, et non un type de test ?",
+        "options": [
+            {
+                "text": "Test de performance",
+                "explain": ""
+            },
+            {
+                "text": "Test d'intégration",
+                "explain": ""
+            },
+            {
+                "text": "Test boîte blanche",
+                "explain": ""
+            },
+            {
+                "text": "Test non fonctionnel",
+                "explain": ""
+            }
+        ],
+        "correct": 1,
+        "correctExplain": "Un niveau de test dit sur quel objet on teste (composant, intégration, système, acceptation). Un type de test dit dans quel but on teste (fonctionnel, non fonctionnel, boîte blanche…). Le test d'intégration est un niveau."
+    },
+    {
+        "q": "Dans une revue, quel rôle anime la réunion, veille au respect du temps et garde les échanges centrés sur le livrable ?",
+        "options": [
+            {
+                "text": "L'auteur",
+                "explain": ""
+            },
+            {
+                "text": "Le secrétaire (scribe)",
+                "explain": ""
+            },
+            {
+                "text": "Le modérateur (facilitateur)",
+                "explain": ""
+            },
+            {
+                "text": "Le vérificateur",
+                "explain": ""
+            }
+        ],
+        "correct": 2,
+        "correctExplain": "Le modérateur conduit la réunion : il donne la parole, ramène la discussion sur les défauts (et non sur les solutions ou sur les personnes) et gère le temps. Le secrétaire consigne, l'auteur répond aux questions, le vérificateur contrôle les corrections après la revue."
+    },
+    {
+        "q": "Pourquoi une revue des exigences peut-elle trouver des défauts qu'aucun test dynamique ne trouverait à ce moment ?",
+        "options": [
+            {
+                "text": "Parce qu'elle exécute le logiciel plus rapidement",
+                "explain": ""
+            },
+            {
+                "text": "Parce qu'elle s'applique avant que le code existe et vise directement les ambiguïtés et les contradictions du document",
+                "explain": ""
+            },
+            {
+                "text": "Parce qu'elle remplace les tests d'acceptation",
+                "explain": ""
+            },
+            {
+                "text": "Parce qu'elle est toujours menée par le client",
+                "explain": ""
+            }
+        ],
+        "correct": 1,
+        "correctExplain": "Au moment de la revue des exigences, il n'y a rien à exécuter. La revue détecte des défauts directement dans le document (ambiguïtés, contradictions, exigences non testables) avant qu'ils deviennent des fautes dans le code."
+    },
+    {
+        "q": "Une équipe simule 1 000 usagers simultanés sur l'application complète, en préproduction, pour mesurer les temps de réponse. Comment classer ce test ?",
+        "options": [
+            {
+                "text": "Niveau composant, type fonctionnel",
+                "explain": ""
+            },
+            {
+                "text": "Niveau intégration, type boîte blanche",
+                "explain": ""
+            },
+            {
+                "text": "Niveau système, type non fonctionnel",
+                "explain": ""
+            },
+            {
+                "text": "Niveau acceptation, type fonctionnel",
+                "explain": ""
+            }
+        ],
+        "correct": 2,
+        "correctExplain": "On teste le système complet (niveau système) pour évaluer une caractéristique de qualité, l'efficacité de performance (type non fonctionnel). Le test de charge peut aussi servir à l'acceptation si le contrat fixe des temps de réponse."
+    },
+    {
+        "q": "Quelle pratique illustre le mieux le shift-left ?",
+        "options": [
+            {
+                "text": "Ajouter une semaine de tests manuels juste avant la livraison",
+                "explain": ""
+            },
+            {
+                "text": "Faire participer un testeur à la rédaction et à la revue des récits utilisateurs, avant le développement",
+                "explain": ""
+            },
+            {
+                "text": "Surveiller les erreurs en production avec un outil de journalisation",
+                "explain": ""
+            },
+            {
+                "text": "Confier tous les tests à une équipe externe après le développement",
+                "explain": ""
+            }
+        ],
+        "correct": 1,
+        "correctExplain": "Le shift-left déplace les activités de contrôle qualité vers le début du cycle de vie : on trouve les défauts là où ils naissent, au moment où ils coûtent le moins cher. La surveillance en production relève plutôt du shift-right."
+    },
+    {
+        "q": "Une équipe organise une revue avec des rôles définis, une préparation individuelle à l'aide d'une liste de vérification, un journal des défauts, des métriques et un suivi des corrections. De quel type de revue s'agit-il ?",
+        "options": [
+            {
+                "text": "Une revue informelle",
+                "explain": ""
+            },
+            {
+                "text": "Une relecture guidée (walkthrough)",
+                "explain": ""
+            },
+            {
+                "text": "Une revue technique",
+                "explain": ""
+            },
+            {
+                "text": "Une inspection",
+                "explain": ""
+            }
+        ],
+        "correct": 3,
+        "correctExplain": "L'inspection est la revue la plus formelle : rôles définis, préparation individuelle, liste de vérification, critères d'entrée et de sortie, métriques et suivi. La relecture guidée est menée par l'auteur ; la revue technique vise surtout le consensus technique."
+    },
+    {
+        "q": "En production, des clients de StationPlus cumulent des points sur des achats annulés. L'exigence disait seulement : « Le client gagne des points à chaque achat. » Quelle activité de contrôle qualité aurait pu intercepter ce défaut le plus tôt, au moindre coût ?",
+        "options": [
+            {
+                "text": "Le test d'acceptation par les utilisateurs",
+                "explain": ""
+            },
+            {
+                "text": "Le test de charge avant la mise en production",
+                "explain": ""
+            },
+            {
+                "text": "La revue des exigences, avec une liste de vérification sur les cas d'exception",
+                "explain": ""
+            },
+            {
+                "text": "La revue de code de la méthode de calcul des points",
+                "explain": ""
+            }
+        ],
+        "correct": 2,
+        "correctExplain": "Le défaut est né dans l'exigence, incomplète (le cas de l'annulation n'est pas traité). La revue des exigences est la première activité qui pouvait le voir. La revue de code ou l'acceptation auraient pu le trouver aussi, mais plus tard et à un coût plus élevé."
+    },
+    {
+        "q": "Les développeurs viennent de corriger le calcul des points de StationPlus. Quels tests faut-il mener en priorité, et dans quel ordre ?",
+        "options": [
+            {
+                "text": "Un test de confirmation de l'anomalie corrigée, puis des tests de régression sur les fonctions voisines",
+                "explain": ""
+            },
+            {
+                "text": "Seulement des tests de régression, puisque la correction a été revue",
+                "explain": ""
+            },
+            {
+                "text": "Un test de performance, puis un test d'acceptation",
+                "explain": ""
+            },
+            {
+                "text": "Aucun test : la revue de code suffit pour une petite correction",
+                "explain": ""
+            }
+        ],
+        "correct": 0,
+        "correctExplain": "On confirme d'abord que l'anomalie a disparu (test de confirmation), puis on vérifie que la modification n'a rien cassé ailleurs (tests de régression). Ce sont les tests liés aux changements, applicables à tous les niveaux."
+    }
+];
+        let currentQuestion = 0;
+        let answers = new Array(questions.length).fill(null);
+        let answered = new Array(questions.length).fill(false);
+
+        function displayQuestion() {
+            const container = document.getElementById('quiz-container');
+            const item = questions[currentQuestion];
+
+            let html = `<div class="question">${currentQuestion + 1}. ${item.q}</div>`;
+            const letters = ['A', 'B', 'C', 'D'];
+            item.options.forEach((opt, i) => {
+                let classes = '';
+                if (answers[currentQuestion] === i) {
+                    classes = 'selected ';
+                    if (i === item.correct) {
+                        classes += 'correct';
+                    } else {
+                        classes += 'incorrect';
+                    }
+                }
+                const disabledClass = answered[currentQuestion] ? 'disabled' : '';
+                html += `<div class="option ${classes} ${disabledClass}" onclick="${answered[currentQuestion] ? '' : `handleAnswerClick(${i})`}" style="${answered[currentQuestion] ? 'cursor: not-allowed;' : ''}"><span class="option-letter">${letters[i]}</span> ${opt.text}</div>`;
+            });
+
+            container.innerHTML = html;
+
+            if (answered[currentQuestion]) {
+                showFeedback();
+            } else {
+                document.getElementById('feedback').innerHTML = '';
+                document.getElementById('feedback').classList.remove('show');
+            }
+
+            updateProgressBar();
+            updateNavigationButtons();
+            updateProgressInfo();
+        }
+
+        function handleAnswerClick(index) {
+            if (answered[currentQuestion]) return;
+
+            answers[currentQuestion] = index;
+            answered[currentQuestion] = true;
+
+            showFeedback();
+            updateProgressBar();
+            updateProgressInfo();
+            updateNavigationButtons();
+            displayQuestion();
+        }
+
+        function showFeedback() {
+            const feedbackDiv = document.getElementById('feedback');
+            const item = questions[currentQuestion];
+            const isCorrect = answers[currentQuestion] === item.correct;
+            const selectedOption = item.options[answers[currentQuestion]];
+
+            feedbackDiv.className = 'feedback-container show ' + (isCorrect ? 'feedback-correct' : 'feedback-incorrect');
+
+            let html = '';
+
+            if (isCorrect) {
+                html += `
+                    <div class="feedback-header">Bonne réponse!</div>
+                    <div class="feedback-explanation">${item.correctExplain}</div>
+                `;
+            } else {
+                html += `
+                    <div class="feedback-header">Pas tout à fait</div>
+                    <div class="feedback-explanation">${selectedOption.explain}</div>
+                    <div class="correct-answer-box">
+                        <div class="correct-answer-label">✓ Bonne réponse:</div>
+                        <div>${item.options[item.correct].text}</div>
+                        <div style="margin-top: 8px; font-size: 0.9em;">${item.correctExplain}</div>
+                    </div>
+                `;
+            }
+
+            feedbackDiv.innerHTML = html;
+        }
+
+        function updateProgressBar() {
+            const progressBar = document.getElementById('progressBar');
+            progressBar.innerHTML = '';
+
+            for (let i = 0; i < questions.length; i++) {
+                const segment = document.createElement('div');
+                segment.className = 'progress-segment';
+
+                if (!answered[i]) {
+                    segment.classList.add('unanswered');
+                } else if (answers[i] === questions[i].correct) {
+                    segment.classList.add('correct');
+                } else {
+                    segment.classList.add('incorrect');
+                }
+
+                progressBar.appendChild(segment);
+            }
+        }
+
+        function updateNavigationButtons() {
+            const isAnswered = answered[currentQuestion];
+            document.getElementById('prevBtn').disabled = currentQuestion === 0 || !isAnswered;
+            document.getElementById('nextBtn').disabled = !isAnswered;
+
+            if (currentQuestion === questions.length - 1) {
+                document.getElementById('nextBtn').textContent = 'Voir Résultat';
+            } else {
+                document.getElementById('nextBtn').textContent = 'Suivant →';
+            }
+        }
+
+        function updateProgressInfo() {
+            document.getElementById('question-counter').textContent = `Question ${currentQuestion + 1} / ${questions.length}`;
+
+            let correctCount = 0;
+            let incorrectCount = 0;
+
+            for (let i = 0; i < answers.length; i++) {
+                if (answered[i]) {
+                    if (answers[i] === questions[i].correct) {
+                        correctCount++;
+                    } else {
+                        incorrectCount++;
+                    }
+                }
+            }
+
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('incorrect-count').textContent = incorrectCount;
+        }
+
+        function nextQuestion() {
+            if (currentQuestion === questions.length - 1) {
+                showFinalResults();
+                return;
+            }
+
+            currentQuestion++;
+            displayQuestion();
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        function showFinalResults() {
+            let score = 0;
+            answers.forEach((answer, index) => {
+                if (answer === questions[index].correct) score++;
+            });
+
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '<div class="question">Quiz terminé!</div>';
+
+            const feedbackDiv = document.getElementById('feedback');
+            feedbackDiv.className = 'feedback-container';
+            feedbackDiv.innerHTML = '';
+
+            let recapHtml = '<div class="recap-title">Résumé de vos réponses</div>';
+
+            questions.forEach((question, index) => {
+                const userAnswer = question.options[answers[index]];
+                const correctAnswer = question.options[question.correct];
+                const isCorrect = answers[index] === question.correct;
+
+                recapHtml += `
+                    <div class="recap-card ${isCorrect ? 'correct' : 'incorrect'}">
+                        <div class="recap-number">Question ${index + 1} / ${questions.length}</div>
+                        <div class="recap-question">${question.q}</div>
+                        <div class="recap-answer-item user">
+                            <span class="recap-label">Votre réponse:</span>
+                            ${userAnswer.text}
+                            <span class="recap-result ${isCorrect ? 'correct' : 'incorrect'}">
+                                ${isCorrect ? '✓ Correct' : '✗ Incorrect'}
+                            </span>
+                        </div>
+                        ${!isCorrect ? `
+                            <div class="recap-answer-item correct-answer">
+                                <span class="recap-label">Bonne réponse:</span>
+                                ${correctAnswer.text}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+
+            document.getElementById('result').innerHTML = `
+                <div style="font-size: 2em; margin: 30px 0 20px;">Votre score : ${score} / ${questions.length}</div>
+                <div style="font-size: 1.1em; color: #555; margin-bottom: 30px;">Réussite : ${Math.round(score / questions.length * 100)}%</div>
+                <div class="recap-container">${recapHtml}</div>
+            `;
+
+            document.getElementById('prevBtn').disabled = false;
+            document.getElementById('nextBtn').textContent = 'Recommencer';
+            document.getElementById('nextBtn').disabled = false;
+            document.getElementById('nextBtn').onclick = function() { location.reload(); };
+            document.getElementById('prevBtn').onclick = function() {
+                currentQuestion = questions.length - 1;
+                displayQuestion();
+            };
+        }
+
+        displayQuestion();
+    </script>
 </body>
 </html>
